@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="shortcut icon" href="images/icon.svg"/>
+
+  <link rel= "stylesheet" href= "index.css">
+  <link rel= "stylesheet" href= "next.css">
+  <link rel="stylesheet" href= "popup.css">
+
+
+  <title>Get More From Your Insurance</title>
+</head>
+
+<body>
+	<header class="header">
+    <div class='header-container'>
+      <div class="logo-container">
+        <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" id='logo'>
+          <g transform="translate(35, 150) scale(1.1)">
+            <!-- OpenBook text with Montserrat font -->
+            <text font-family="'Montserrat'" font-size="55" font-weight="800" text-anchor="left" fill="#7fb3d5" letter-spacing="-.5" transform="skewX(-2.5)">
+              <tspan x="0" y="0">open<tspan dx="0" font-weight="800">b</tspan><tspan letter-spacing="1" font-weight="700">oo</tspan>k</tspan><tspan font-size="13" dx="5" dy="5" font-weight="1000">™</tspan></tspan>
+            </text>
+            <path d="M215 -15 L225 -15" stroke="#7fb3d5" stroke-width="4" stroke-linecap="round" />
+            <path d="M200 15 Q 220 30 240 15" stroke="#7fb3d5" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(-43,-6) scale(1.2)"/>
+            <circle cx="202" cy="-17" r="2.5" fill="#7fb3d5" />
+            <circle cx="239" cy="-17" r="2.5" fill="#7fb3d5" />
+          </g>
+        </svg>
+      </div>
+      <div class="navigation">
+       <button class="menu-button">
+        <div class="hamburger">
+         <div></div>
+         <div></div>
+         <div></div>
+       </div>
+     </button>
+   </div>
+ </div>
+</header>
+<div id="mobile-menu" class="hidden-menu">
+  <div class="menu-item" onclick="window.location.href='mailto:contact@openbookbenefits.com'">Contact us:<br><br><span style=
+    "color:#aaa; text-decoration:underline; font-size:16px">contact@openbookbenefits.com</div>
+  </div>
+
+
+  <div class='content'>
+
+    <div class='h2-div'><h2><span id='h2-line-1'>Get more <span id='typed-text'>benefit</span><span id='cursor-container'></span></span><br>from your insurance.</h2></div>
+
+    <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg" id="picture">
+      <!-- Filters Definition -->
+      <defs>
+        <!-- Refined bottom shadow gradient -->
+        <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#000000;stop-opacity:0.04"/>
+          <stop offset="70%" style="stop-color:#000000;stop-opacity:0.02"/>
+          <stop offset="100%" style="stop-color:#000000;stop-opacity:0.0"/>
+        </linearGradient>
+        <!-- Blur filter for softer shadow -->
+        <filter id="blurFilter" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+        </filter>
+        <!-- Paper texture pattern -->
+        <pattern id="paperTexture" patternUnits="userSpaceOnUse" width="100" height="100" patternTransform="scale(0.5)">
+          <rect width="100" height="100" fill="#f8f8f8"/>
+          <rect width="100" height="100" fill="#efefef" opacity="0.3"/>
+        </pattern>
+        <!-- Glow filter for magical elements -->
+        <filter id="glowFilter" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        <!-- Filter for main inkblot (restored to original) -->
+        <filter id="inkblotFilter" x="-50%" y="-50%" width="200%" height="200%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" seed="3" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+        <!-- Improved small splatter filter -->
+        <filter id="smallSplatterFilter" x="-50%" y="-50%" width="200%" height="200%">
+          <feTurbulence type="turbulence" baseFrequency="0.15" numOctaves="3" seed="15" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+          <feGaussianBlur stdDeviation="0.8"/>
+        </filter>
+        <!-- Texture pattern for inkblot -->
+        <pattern id="inkblotTexture" patternUnits="userSpaceOnUse" width="50" height="50" patternTransform="scale(0.5)">
+          <rect width="50" height="50" fill="#ffffff" opacity="0.05"/>
+          <circle cx="10" cy="10" r="5" fill="#ffffff" opacity="0.05"/>
+          <circle cx="40" cy="40" r="7" fill="#ffffff" opacity="0.05"/>
+          <circle cx="25" cy="20" r="4" fill="#ffffff" opacity="0.05"/>
+        </pattern>
+        <!-- Glass reflection gradient -->
+        <linearGradient id="glassReflection" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:white;stop-opacity:0.4"/>
+          <stop offset="100%" style="stop-color:white;stop-opacity:0"/>
+        </linearGradient>
+        <!-- Blue glass gradient -->
+        <radialGradient id="blueGlassGradient" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+          <stop offset="0%" style="stop-color:#d4f1f9;stop-opacity:0.7"/>
+          <stop offset="85%" style="stop-color:#a3d5f5;stop-opacity:0.5"/>
+          <stop offset="100%" style="stop-color:#3498db;stop-opacity:0.4"/>
+        </radialGradient>
+        <!-- Enhanced blue inkblot gradient -->
+        <radialGradient id="inkblotGradient" cx="50%" cy="50%" r="70%" fx="40%" fy="40%">
+          <stop offset="0%" style="stop-color:#d4f1f9;stop-opacity:0.9"/>
+          <stop offset="60%" style="stop-color:#a3d5f5;stop-opacity:0.7"/>
+          <stop offset="100%" style="stop-color:#3498db;stop-opacity:0.5"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Background -->
+      <rect x="0" y="0" width="500" height="400" rx="30" fill="transparent"/>
+
+      <!-- Enhanced Light Blue Inkblot Background with better layering and gradients -->
+      <!-- Main inkblot background (restored closer to original) -->
+      <g transform="translate(7.5, 77.5) scale(1.0)">
+        <!-- Main large inkblot -->
+        <path d="M250,200 C350,180 380,100 300,50 C220,0 180,50 150,40 C120,30 50,60 70,140 C90,220 150,220 250,200 Z" fill="#d4f1f9" opacity="0.5" filter="url(#inkblotFilter)"/>
+        <!-- Third inkblot layer -->
+        <path d="M300,250 C380,240 400,180 380,130 C360,80 300,60 230,90 C160,120 150,180 190,230 C230,280 220,260 300,250 Z" fill="#d4f1f9" opacity="0.5" filter="url(#inkblotFilter)"/>
+      </g>
+
+      <!-- Improved small inkblots - using path shapes instead of circles -->
+      <g>
+        <!-- Small inkblot 1 -->
+        <path d="M380,135 C385,130 390,133 392,138 C394,143 391,148 386,150 C381,152 375,148 373,143 C371,138 375,133 380,135 Z" transform="translate(-15,0)"
+        fill="#d4f1f9" opacity=".8" filter="url(#smallSplatterFilter)"/>
+
+        <path d="M380,135 C385,130 390,133 392,138 C394,143 391,148 386,150 C381,152 375,148 373,143 C371,138 375,133 380,135 Z" transform="translate(-322.5,20)"
+        fill="#d4f1f9" opacity=".9" filter="url(#smallSplatterFilter)"/>
+
+
+         <path d="M380,135 C385,130 390,133 392,138 C394,143 391,148 386,150 C381,152 375,148 373,143 C371,138 375,133 380,135 Z" transform="translate(15,40)"
+        fill="#d4f1f9" opacity=".8" filter="url(#smallSplatterFilter)"/>
+
+        <!-- Small inkblot 7 -->
+        <path d="M65,270 C68,268 72,269 74,272 C76,275 75,280 72,282 C69,284 65,283 63,280 C61,277 62,272 65,270 Z" transform="translate(17.5,0)"
+        fill="#d4f1f9" opacity="1" filter="url(#smallSplatterFilter)"/>
+
+        <!-- Small inkblot 8 -->
+        <path d="M320,90 C321,89 323,89 324,90 C325,91 325,93 324,94 C323,95 321,95 320,94 C319,93 319,91 320,90 Z" transform="scale(1.4) translate(-70,-10)"
+        fill="#d4f1f9" opacity=".8" filter="url(#smallSplatterFilter)"/>
+      </g>
+
+      <!-- Main Content Area -->
+      <g transform="translate(50, 70)">
+        <!-- Open Book - 205px height -->
+        <g transform="translate(180, 130) rotate(-10) scale(1)">
+          <!-- Book outer border/frame -->
+          <rect x="-110" y="-70" width="220" height="185" rx="8" fill="transparent" stroke="rgba(41, 128, 185, 0.7)" stroke-width="6.5">
+            <!-- Subtle pulsing animation for the border -->
+            <animate attributeName="stroke-opacity" values="0.7;0.9;0.7" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <!-- Left Page -->
+          <path d="M-105,-70 C-100,-73, -5,-73, 0,-70 L0,115 L-105,112 Z" fill="url(#paperTexture)" stroke="#dddddd" stroke-width="1.5"/>
+          <!-- Right Page -->
+          <path d="M0,-70 C5,-73, 100,-73, 105,-70 L105,112 L0,115 Z" fill="url(#paperTexture)" stroke="#dddddd" stroke-width="1.5"/>
+          <!-- Book Spine -->
+          <path d="M-3,-70 C-1,-73, 1,-73, 3,-70 L3,115 C1,118, -1,118, -3,115 Z" fill="rgba(41, 128, 185, 0.9)" stroke="rgba(41, 128, 185, 0.85)" stroke-width="1.5"/>
+          <!-- Page Content Lines - Left Page with consistent blue color -->
+          <g transform="translate(-80,-45)">
+            <rect width="60" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
+            <rect y="15" width="40" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
+            <line x1="0" y1="35" x2="65" y2="35" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="50" x2="65" y2="50" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="65" x2="65" y2="65" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="80" x2="65" y2="80" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="95" x2="65" y2="95" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="110" x2="65" y2="110" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="125" x2="65" y2="125" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+          </g>
+          <!-- Page Content Lines - Right Page with consistent blue color -->
+          <g transform="translate(15,-45)">
+            <rect width="60" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
+            <rect y="15" width="40" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
+            <line x1="0" y1="35" x2="65" y2="35" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="50" x2="65" y2="50" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="65" x2="65" y2="65" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="80" x2="65" y2="80" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="95" x2="45" y2="95" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="110" x2="65" y2="110" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+            <line x1="0" y1="125" x2="55" y2="125" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
+          </g>
+          <!-- Page Shadows for Dimension -->
+          <path d="M-105,-70 L-105,112 L-102,114 L-102,-68 Z" fill="#d0d0d0" opacity="0.6"/>
+          <path d="M105,-70 L105,112 L102,114 L102,-68 Z" fill="#d0d0d0" opacity="0.6"/>
+          <!-- Page fold shadow -->
+          <path d="M-2,-70 C-1,-72 1,-72 2,-70 L2,115 C1,113 -1,113 -2,115 Z" fill="#d0d0d0" opacity="0.2"/>
+          <!-- Bookmark Ribbon (no animation now) -->
+          <path d="M70,-70 L70,-25 L65,-35 L60,-25 L60,-70 Z" fill="#e74c3c" opacity="0.9"/>
+        </g>
+
+        <!-- Magnifying Glass - MOVED MORE DOWN AND RIGHT (No Zoom Effect) -->
+        <g id="magnifyingGlass" transform="translate(-280,-320) scale(1.8)">
+          <!-- Animation that makes the glass gently float -->
+          <animateTransform 
+          attributeName="transform" 
+          type="translate" 
+          values="0,0; 5,2; 0,5; -3,2; 0,0" 
+          dur="12.5s" 
+          repeatCount="indefinite" 
+          additive="sum" 
+          calcMode="spline" 
+          keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
+
+          <!-- Handle - Blue metallic with gradient -->
+          <path d="M305,270 L328,293" stroke="#2980b9" opacity="0.8" stroke-width="7" stroke-linecap="round">
+            <animate attributeName="stroke" values="#2980b9;#3498db;#2980b9" dur="8s" repeatCount="indefinite"/>
+          </path>
+
+          <!-- Glass Ring - Matching blue theme -->
+          <circle cx="290" cy="255" r="20" fill="none" stroke="#2980b9" opacity="0.8" stroke-width="4">
+            <animate attributeName="stroke" values="#2980b9;#3498db;#2980b9" dur="8s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Glass Lens - Transparent with color -->
+          <circle cx="290" cy="255" r="16" fill="url(#blueGlassGradient)">
+            <animate attributeName="opacity" values="0.8;0.6;0.8" dur="8s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Enhanced reflections on glass -->
+          <path d="M280,245 Q285,240 290,245" stroke="white" stroke-width="1.5" fill="none" opacity="0.7"/>
+          <path d="M284,247 Q288,243 292,246" stroke="white" stroke-width="1" fill="none" opacity="0.5"/>
+          <circle cx="285" cy="250" r="3" fill="url(#glassReflection)"/>
+          <circle cx="287" cy="247" r="1.5" fill="white" opacity="0.4"/>
+        </g>
+      </g>
+
+      <!-- Refined bottom shadow -->
+      <ellipse cx="230" cy="385" rx="110" ry="8" fill="url(#shadowGradient)" filter="url(#blurFilter)" transform="rotate(-6)"/>
+    </svg>
+
+
+
+
+
+
+    <form id="main-form" autocomplete='off' autocorrect="off">
+     <div id="form-sans-submit">
+      <div class="input-container">
+       <input type="text" id="fullName" name="fullName" placeholder="Full Name" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go">
+       <i class="fas fa-user"></i>
+     </div>
+     <div class="input-container">
+       <input type="tel" id="dob" name="dob" placeholder="Date of Birth" autocomplete="off" spellcheck="false"> 
+       <i class="fas fa-calendar"></i>
+     </div>
+     <div class="input-container">
+       <input type="text" id="memberId" name="memberId" placeholder="Member ID" autocomplete="off" spellcheck="false" enterkeyhint="go">
+       <i class="fas fa-id-card" id="card-icon"></i>
+     </div>
+   </div>
+ </form>
+
+
+</div>
+
+<div class='content-bottom'>
+
+  <button type="submit" id="submit" onclick="formValidation()"><i class='fas fa-arrow-left'></i><span>Continue</span><i class='fas fa-arrow-right'></i></i></button>
+
+  <div id="learn-more-container">
+    <a href="#" id="learn-more-link" onclick="showHowItWorks(event)">How does this work?</a>
+  </div>
+
+</div>
+
+
+</body>
+
+
+
+
+<!-- Orientation Warning: -->
+<h1 id='orientation-warning'>This website can only be used on mobile, in portrait mode.</h1>
+<!-- Next Stuff: -->
+<div class="loading-container">
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+</div>
+<div id="tabs-div">
+  <div class="tab" id='tab1'>
+    <i class="fas fa-list"></i>
+    <span>Summary</span>
+  </div>
+  <div class="tab" id='tab2'>
+    <i class="fas fa-check-circle"></i>
+    <span>Coverage</span>
+  </div>
+  <div class="tab" id='tab3'>
+    <i class="fas fa-info"></i>
+    <span>More Info</span>
+  </div>
+  <div id='tabs-line'></div>
+</div>
+<div class='second-content'></div>
+
+</body>
+
+
+
+<script src="transitions.js"></script>
+
+<script>
+  /* MENU BUTTON TRANSITION FEEDBACK */
+  const menuButton = document.querySelector('.menu-button');
+  const menu = document.getElementById('mobile-menu');
+
+  function toggleMenu() 
+  {
+    menu.classList.toggle('show');
+    menuButton.classList.add('menu-tap-feedback');
+    setTimeout(() => {
+      menuButton.classList.remove('menu-tap-feedback');
+    }, 150);
+  }
+  menuButton.addEventListener('click', toggleMenu);
+  menuButton.addEventListener('touchend', toggleMenu);
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+
+  function checkDeviceAndOrientation() 
+  {
+    const warning = document.getElementById('orientation-warning');
+    const tabsDiv = document.getElementById('tabs-div');
+    const popup = document.getElementById('procedure-popup');
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    const isPhone = window.innerWidth <= 768;
+
+    if (!isPortrait || !isPhone) {
+      warning.style.display = 'flex';
+
+    // Hide tabs when in landscape mode
+    if (tabsDiv) {
+      tabsDiv.style.visibility = 'hidden';
+    }
+    
+    // Hide popup if it exists and is visible
+    if (popup && popup.style.display === 'flex') {
+      popup.style.display = 'none';
+    }
+  } else {
+    warning.style.display = 'none';
+    
+    // Show tabs when back in portrait mode
+    if (tabsDiv) {
+      tabsDiv.style.visibility = 'visible';
+    }
+  }
+}
+
+// Run on load and on resize/orientation change
+window.addEventListener('load', checkDeviceAndOrientation);
+window.addEventListener('resize', checkDeviceAndOrientation);
+window.addEventListener('orientationchange', checkDeviceAndOrientation);
+
+</script>
+
+
+</html>
