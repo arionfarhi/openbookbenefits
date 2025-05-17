@@ -16,7 +16,7 @@ const variables = [
   ["Frequencies:", ["Cleaning: twice per year"],
     ["Exams & X-Rray: twice per year"],
     ["Crown: once per 5 years"]
-  ], //THE CLEANING AND EXAM AND XRAYS WILL ALWAYS BE THERE
+  ], //THE CLEANING + EXAM AND XRAYS WILL ALWAYS BE THERE
   ["Active Waiting Periods:", ["Basic: 06/01/2025"]] //Inputs: Prev, Basic, Major -- will have to parse myself to see if active
 ];
 
