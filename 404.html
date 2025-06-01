@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="icon" href="images/icon.svg" type="image/svg+xml">
+    <title>Page Not Found - openbook</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400..900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Montserrat", sans-serif;
+            background-color: rgba(41, 128, 185, 0.025);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            background-color: white;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            padding-left: 7.5px;
+            height: 54px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #logo {
+            height: 75px;
+            background-color: none;
+            padding: 0px;
+            margin: 0px;
+            position: relative;
+            bottom: 14.5px;
+            cursor: pointer;
+        }
+        
+        .logo-tap-feedback {
+            transform: scale(0.96);
+            opacity: 0.85;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        
+        /* Main Content */
+        .error-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* Mobile adjustments for content positioning */
+        @media (max-width: 768px) {
+            .error-container {
+                justify-content: flex-start;
+                padding-top: 60px;
+            }
+        }
+        
+        .error-icon {
+            font-size: 120px;
+            color: rgba(41, 128, 185, 0.75);
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+        
+        .error-title {
+            font-size: 48px;
+            font-weight: 800;
+            color: rgba(41, 128, 185, 0.75);
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        
+        .error-subtitle {
+            font-size: 24px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background-color: rgba(41, 128, 185, 0.75);
+            color: white;
+            box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
+        }
+        
+        .btn-primary:hover, .btn-primary:active {
+            background-color: rgba(41, 128, 185, 0.85);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: rgba(41, 128, 185, 0.75);
+            border: 2px solid rgba(41, 128, 185, 0.75);
+        }
+        
+        .btn-secondary:hover, .btn-secondary:active {
+            background-color: rgba(41, 128, 185, 0.05);
+            transform: translateY(-1px);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            .error-icon {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 36px;
+            }
+            
+            .error-subtitle {
+                font-size: 20px;
+            }
+            
+            .error-message {
+                font-size: 14px;
+            }
+            
+            .action-buttons {
+                max-width: 280px;
+            }
+        }
+        
+        /* Ripple effect */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class='header-container'>
+            <div class="logo-container">
+                <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" id='logo' onclick="goHome()">
+                    <g transform="translate(35, 150) scale(1.1)">
+                        <!-- OpenBook text with Montserrat font -->
+                        <text font-family="'Montserrat'" font-size="55" font-weight="800" text-anchor="left" fill="#7fb3d5" letter-spacing="-.5" transform="skewX(-2.5)">
+                            <tspan x="0" y="0">open<tspan dx="0" font-weight="800">b</tspan><tspan letter-spacing="1" font-weight="700">oo</tspan>k</tspan><tspan font-size="13" dx="5" dy="5" font-weight="1000"></tspan></tspan>
+                        </text>
+                        <path d="M215 -15 L225 -15" stroke="#7fb3d5" stroke-width="4" stroke-linecap="round" />
+                        <path d="M200 15 Q 220 30 240 15" stroke="#7fb3d5" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(-43,-6) scale(1.2)"/>
+                        <circle cx="202" cy="-17" r="2.5" fill="#7fb3d5" />
+                        <circle cx="239" cy="-17" r="2.5" fill="#7fb3d5" />
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- Error Content -->
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        
+        <h1 class="error-title">404</h1>
+        <h2 class="error-subtitle">Page Not Found</h2>
+        
+        <p class="error-message">
+            Oops! The page you're looking for seems to have wandered off. 
+            Don't worry though - your insurance benefits are still right where you left them.
+        </p>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary" onclick="addRipple(event)">
+                <i class="fas fa-home"></i> Go Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Logo tap feedback
+        const logo = document.getElementById('logo');
+        
+        logo.addEventListener('touchstart', () => {
+            logo.classList.add('logo-tap-feedback');
+        });
+        
+        logo.addEventListener('touchend', () => {
+            setTimeout(() => {
+                logo.classList.remove('logo-tap-feedback');
+            }, 150);
+        });
+        
+        // Navigation functions
+        function goHome() {
+            window.location.href = "/";
+        }
+        
+        // Ripple effect for buttons
+        function addRipple(event) {
+            const button = event.currentTarget;
+            const rect = button.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.classList.add('ripple');
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+        
+        // Add click ripple effects to all buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', addRipple);
+        });
+    </script>
+</body>
+</html>

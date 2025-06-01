@@ -1,30 +1,532 @@
-const variables = [
-  ["First Name", "John"],
-  ["Last Name", "Smith"],
-  ["Insurance Name", "Delta Dental"], //make sure the names aren't too long so aesthetics of Summary tab are good
-  ["Is Active", "Active"],
-  ["Renewal Date", "01/01/2026"], //make sure the day it renews and not the last day of the last benefit period
-  ["Termination Date", "01/01/2025"],
-  ["Maximum", "$1500"],
-  ["Maximum Used", "$0"],
-  ["Deductible", "$50"],
-  ["Deductible Used", "$50"],
-  ["Prev %", "100%"],
-  ["Basic %", "80%"],
-  ["Major %", "50%"], //please make sure that anything covered at 0% shows up as Not Covered as opposed to 0%
+const variables = 
+[
+["First Name", "John"], //ignored for now
+["Last Name", "Smith"], //ignored for now
+  ["Insurance Name", ""], //I find this based on their selection, then shortened
+  ["Is Active", ""],
+  ["Renewal Date", ""], 
+  ["Termination Date", ""],
+  ["Maximum", ""],
+  ["Maximum Used", ""],
+  ["Deductible", ""], //ignored for now
+  ["Deductible Used", ""], //ignored for now
+  ["Prev %", ""],
+  ["Basic %", ""],
+  ["Major %", ""], //please make sure that anything covered at 0% shows up as Not Covered as opposed to 0% - it makes more sense
   ["Not Covered:", ], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
-  ["Frequencies:", ["Cleaning: twice per year"],
-    ["Exams & X-Rray: twice per year"],
-    ["Crown: once per 5 years"]
-  ], //THE CLEANING + EXAM AND XRAYS WILL ALWAYS BE THERE
-  ["Active Waiting Periods:", ["Basic: 06/01/2025"]] //Inputs: Prev, Basic, Major -- will have to parse myself to see if active
-];
+  ["Frequencies:", //the cleaning and exams & xrays will always be there. Also note formatting in popup (can say "once per five years" as well).
+  ["Cleaning: twice per year"],
+  ["Exams & X-Rray: twice per year"]/*,["Crown: once per 5 years"]*/
+  ], 
+  ["Active Waiting Periods:", /*["Basic: 06/01/2025"]*/] //Inputs: Prev, Basic, Major -- will have to parse myself to see if active
+  ];
 
-/*FOR TESTING!*/
-document.addEventListener('DOMContentLoaded', function()
+  /*FOR TESTING!*/
+  document.addEventListener('DOMContentLoaded', function()
+  {
+    /*
+    document.getElementsByClassName("content")[0].style.opacity = "0";
+    document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
+    document.getElementById("submit").style.opacity = "0";
+    document.getElementById("main-form").style.pointerEvents = "none";
+    document.getElementById("submit").style.pointerEvents = "none";
+    document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
+    document.getElementById("tabs-div").style.pointerEvents = "auto";
+    document.getElementById("tabs-div").style.zIndex = "9999";
+    document.getElementsByClassName("content")[0].style.zIndex = "-999";
+    document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
+    document.getElementsByClassName("second-content")[0].style.zIndex = "999";
+    showNext();
+    */
+  });
+
+  const insuranceCompanies = [
+  "Delta Dental of Michigan", "Delta Dental of Alabama", "Delta Dental of Florida", "Delta Dental of Georgia", "Delta Dental of Louisiana", "Delta Dental of Mississippi", "Delta Dental of Montana", "Delta Dental of Nevada", "Delta Dental of Texas", "Delta Dental of Utah", "Delta Dental of Minnesota", "Delta Dental of New Jersey", "Delta Dental of Connecticut", "Delta Dental of Illinois", "Delta Dental of Maryland", "Delta Dental of Pennsylvania", "Delta Dental of Oregon", "Delta Dental of Alaska", "Delta Dental of New York", "Delta Dental of Colorado", "Delta Dental of Arkansas", "Delta Dental of North Carolina", "Delta Dental of Northeast", "Delta Dental of Iowa - Dental Wellness Plan", "Delta Dental of District of Colombia", "Delta Dental of California", "Delta Dental of Washington", "Delta Dental of Massachusetts", "Delta Dental of Missouri", "Delta Dental of Virginia", "Delta Dental of Ohio", "Delta Dental of Kansas", "Delta Dental of Wisconsin", "Delta Dental of Tennessee", "Delta Dental of Kentucky", "Delta Dental of Idaho", "Delta Dental of Arizona", "Delta Dental of Indiana", "Delta Dental of Rhode Island", "Delta Dental of Iowa", "Delta Dental of New Mexico", "Delta Dental of Oklahoma", "Delta Dental of Nebraska", "Delta Dental of Delaware", "Delta Dental of Wyoming", "Delta Dental of South Carolina", "Delta Dental of West Virginia", "Delta Dental of Puerto Rico", "Delta Dental of South Dakota", "Metlife Dental Family", "Aetna", "Cigna", "UnitedHealthCare", "DentaQuest", "Guardian", "Humana", "Ameritas", "United Concordia - Dental Plus", "United Concordia - Tricare Dental", "United Concordia Fee-for-Service ", "Blue Cross of Idaho", "Blue Cross Blue Shield of Texas", "Anthem Blue Cross Blue Shield of California", "Blue Cross Blue Shield of Illinois", "Horizon Blue Cross Blue Shield of New Jersey", "Blue Cross Blue Shield Massachusetts", "Anthem Blue Cross Blue Shield of New York", "Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "Anthem Blue Cross Blue Shield of Indiana", "Blue Cross Blue Shield of North Carolina", "Blue Cross Blue Shield of Michigan", "Independence Blue Cross Pennsylvania", "Premera Blue Cross of Washington", "Anthem Blue Cross Blue Shield of Virginia", "Blue Cross Blue Shield Of Alabama", "Anthem Blue Cross Blue Shield of Colorado", "Anthem Blue Cross Blue Shield of Georgia", "Anthem Blue Cross Blue Shield Ohio", "Blue Cross Blue Shield of South Carolina", "Blue Cross Blue Shield of Florida", "Anthem Blue Cross Blue Shield of Connecticut", "Anthem Blue Cross Blue Shield Dental", "Premera Blue Cross Alaska", "Anthem Blue Cross Blue Shield Missouri", "Capital Blue Cross of Pennsylvania", "CareFirst Blue Cross Blue Shield Maryland", "Blue Cross Blue Shield of Kansas City", "Anthem Blue Cross Blue Shield Nevada", "Blue Cross Blue Shield of Arkansas", "Blue Cross Blue Shield of Michigan/Medicare Advantage", "Anthem Blue Cross Blue Shield New Hampshire", "Anthem Blue Cross Blue Shield of Wisconsin", "Anthem Blue Cross Blue Shield of Maine", "Blue Cross Blue Shield of Wyoming", "Blue Cross Blue Shield of Nebraska", "Blue Cross Blue Shield of Vermont", "Blue Cross Blue Shield Rhode Island", "Blue Cross Blue Shield of Kansas", "Blue Cross Blue Shield of New Mexico", "Highmark Blue Cross Blue Shield of West Virginia", "Blue Cross Blue Shield of North Dakota", "Blue Cross Blue Shield of Montana", "Blue Cross Illinois Medicare Advantage", "Excellus Blue Cross Blue Shield New York Rochester Area", "Blue Cross Community Options", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield New Jersey", "Arizona Blue (Blue Cross Blue Shield Arizona)", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Excellus Blue Cross Blue Shield New York Central", "CareFirst BlueCross BlueShield District of Columbia (NCA)", "Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "Blue Cross Blue Shield Oklahoma", "Blue Cross Blue Shield of Tennessee", "Regence BlueCross BlueShield of Oregon", "Anthem BlueCross BlueShield Kentucky", "Blue Cross Blue Shield Louisiana Blue Advantage", "Highmark Blue Cross Blue Shield of Delaware", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Blue Cross Blue Shield Louisiana", "Blue Cross Blue Shield Mississippi", "Anthem Blue Cross of New York Dental", "Excellus Blue Cross Blue Shield New York Utica Watertown", "Blue Cross Blue Shield of Hawaii", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Blue Cross Blue Shield Anthem Vivity", "Blue Cross New York Northeastern", "Empire Blue Cross Blue Shield New York", "Blue Cross Blue Shield of Kentucky (FEP)", "Blue Cross Blue Shield of Ohio (FEP)", "Blue Cross Blue Shield Minnesota", "Blue Cross Blue Shield of Minnesota (FEP)", "Blue Cross Blue Shield of Washington DC", "CareFirst BlueCross BlueShield Community Health Plan Maryland", "BCBS Michigan and Blue Care Network", "Blue Cross Community Centennial", "Blue Cross Blue Shield Pennsylvania Northeast", "BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "HealthNow BlueCross BlueShield New York Northeastern", "Highmark Blue Cross Blue Shield Pennsylvania Institutional", "Blue Cross Blue Shield FEP BlueDental", "Excellus BlueCross BlueShield of New York", "Blue Cross Blue Shield Delaware", "BlueCross BlueShield of South Carolina Federal Employee Program", "Blue Cross Blue Shield of Connecticut- Family Plan", "Regence BlueCross BlueShield of Utah", "Blue Cross Blue Shield Pennsylvania Northwest", "Blue Cross Blue Shield South Carolina State Health Plan", "Blue Cross Blue Shield South Carolina Medicare Blue", "Mountain State Blue Cross Blue Shield West Virginia"
+  ];
+
+  const insuranceCompaniesWCodes = [
+  ["Delta Dental of Michigan", "DELTA"], ["Delta Dental of Alabama", "94276"], ["Delta Dental of Florida", "94276"], ["Delta Dental of Georgia", "94276"], ["Delta Dental of Louisiana", "94276"], ["Delta Dental of Mississippi", "94276"], ["Delta Dental of Montana", "94276"], ["Delta Dental of Nevada", "94276"], ["Delta Dental of Texas", "94276"], ["Delta Dental of Utah", "94276"], ["Delta Dental of Minnesota", "07000"], ["Delta Dental of New Jersey", "22189"], ["Delta Dental of Connecticut", "22189"], ["Delta Dental of Illinois", "05030"], ["Delta Dental of Maryland", "23166"], ["Delta Dental of Pennsylvania", "23166"], ["Delta Dental of Oregon", "CDOR1"], ["Delta Dental of Alaska", "CDOR1"], ["Delta Dental of New York", "11198"], ["Delta Dental of Colorado", "DDPCO"], ["Delta Dental of Arkansas", "CDAR1"], ["Delta Dental of North Carolina", "56101"], ["Delta Dental of Northeast", "02027"], ["Delta Dental of Iowa - Dental Wellness Plan", "CDIAM"], ["Delta Dental of District of Colombia", "52147"], ["Delta Dental of California", "77777"], ["Delta Dental of Washington", "91062"], ["Delta Dental of Massachusetts", "04614"], ["Delta Dental of Missouri", "43090"], ["Delta Dental of Virginia", "CDVA1"], ["Delta Dental of Ohio", "DELTO"], ["Delta Dental of Kansas", "CDKS1"], ["Delta Dental of Wisconsin", "39069"], ["Delta Dental of Tennessee", "DELTN"], ["Delta Dental of Kentucky", "CDKY1"], ["Delta Dental of Idaho", "82029"], ["Delta Dental of Arizona", "86027"], ["Delta Dental of Indiana", "DELTI"], ["Delta Dental of Rhode Island", "05029"], ["Delta Dental of Iowa", "CDIA1"], ["Delta Dental of New Mexico", "DELTM"], ["Delta Dental of Oklahoma", "DELTOK"], ["Delta Dental of Nebraska", "072027"], ["Delta Dental of Delaware", "51022"], ["Delta Dental of Wyoming", "CDWY1"], ["Delta Dental of South Carolina", "43091"], ["Delta Dental of West Virginia", "31096"], ["Delta Dental of Puerto Rico", "66043"], ["Delta Dental of South Dakota", "54097"], ["Metlife Dental Family", "10134"], ["Aetna", "60054"], ["Cigna", "62308"], ["UnitedHealthCare", "87726"], ["DentaQuest", "CX014"], ["Guardian", "64246"], ["Humana", "61101"], ["Ameritas", "AMTAS00425"], ["United Concordia - Dental Plus", "CX013"], ["United Concordia - Tricare Dental", "CX002"], ["United Concordia Fee-for-Service ", "CX007"], ["Blue Cross of Idaho", "BLUEC"], ["Blue Cross Blue Shield of Texas", "G84980"], ["Anthem Blue Cross Blue Shield of California", "040"], ["Blue Cross Blue Shield of Illinois", "G00621"], ["Horizon Blue Cross Blue Shield of New Jersey", "22099"], ["Blue Cross Blue Shield Massachusetts", "SB700"], ["Anthem Blue Cross Blue Shield of New York", "803"], ["Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "88848"], ["Anthem Blue Cross Blue Shield of Indiana", "130"], ["Blue Cross Blue Shield of North Carolina", "BCSNC"], ["Blue Cross Blue Shield of Michigan", "00710"], ["Independence Blue Cross Pennsylvania", "100337"], ["Premera Blue Cross of Washington", "00430"], ["Anthem Blue Cross Blue Shield of Virginia", "423"], ["Blue Cross Blue Shield Of Alabama", "00510BC"], ["Anthem Blue Cross Blue Shield of Colorado", "050"], ["Anthem Blue Cross Blue Shield of Georgia", "00601"], ["Anthem Blue Cross Blue Shield Ohio", "00834"], ["Blue Cross Blue Shield of South Carolina", "00401"], ["Blue Cross Blue Shield of Florida", "BCBSF"], ["Anthem Blue Cross Blue Shield of Connecticut", "00060"], ["Anthem Blue Cross Blue Shield Dental", "84105"], ["Premera Blue Cross Alaska", "00934"], ["Anthem Blue Cross Blue Shield Missouri", "241"], ["Capital Blue Cross of Pennsylvania", "100952"], ["CareFirst Blue Cross Blue Shield Maryland", "00580"], ["Blue Cross Blue Shield of Kansas City", "47171"], ["Anthem Blue Cross Blue Shield Nevada", "00265"], ["Blue Cross Blue Shield of Arkansas", "00520"], ["Blue Cross Blue Shield of Michigan/Medicare Advantage", "BBMDQ"], ["Anthem Blue Cross Blue Shield New Hampshire", "00770"], ["Anthem Blue Cross Blue Shield of Wisconsin", "450"], ["Anthem Blue Cross Blue Shield of Maine", "180"], ["Blue Cross Blue Shield of Wyoming", "53767"], ["Blue Cross Blue Shield of Nebraska", "77780"], ["Blue Cross Blue Shield of Vermont", "BCBSVT"], ["Blue Cross Blue Shield Rhode Island", "SB870"], ["Blue Cross Blue Shield of Kansas", "47163"], ["Blue Cross Blue Shield of New Mexico", "00790"], ["Highmark Blue Cross Blue Shield of West Virginia", "54828"], ["Blue Cross Blue Shield of North Dakota", "55891"], ["Blue Cross Blue Shield of Montana", "G00751"], ["Blue Cross Illinois Medicare Advantage", "66006"], ["Excellus Blue Cross Blue Shield New York Rochester Area", "SB804"], ["Blue Cross Community Options", "MCDIL"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"], ["Blue Cross Blue Shield New Jersey", "100046"], ["Arizona Blue (Blue Cross Blue Shield Arizona)", "53589"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "BCBSCAIDWNY"], ["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"], ["Excellus Blue Cross Blue Shield New York Central", "SB805"], ["CareFirst BlueCross BlueShield District of Columbia (NCA)", "SB580"], ["Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "00720"], ["Blue Cross Blue Shield Oklahoma", "00840"], ["Blue Cross Blue Shield of Tennessee", "SB890"], ["Regence BlueCross BlueShield of Oregon", "00851"], ["Anthem BlueCross BlueShield Kentucky", "00660"], ["Blue Cross Blue Shield Louisiana Blue Advantage", "72107"], ["Highmark Blue Cross Blue Shield of Delaware", "00570"], ["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"], ["Blue Cross Blue Shield Louisiana", "53120"], ["Blue Cross Blue Shield Mississippi", "00230"], ["Anthem Blue Cross of New York Dental", "CBNY1"], ["Excellus Blue Cross Blue Shield New York Utica Watertown", "SB806"], ["Blue Cross Blue Shield of Hawaii", "100937"], ["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"], ["Blue Cross Blue Shield Anthem Vivity", "10993"], ["Blue Cross New York Northeastern", "100954"], ["Empire Blue Cross Blue Shield New York", "00803R"], ["Blue Cross Blue Shield of Kentucky (FEP)", "TLU90"], ["Blue Cross Blue Shield of Ohio (FEP)", "TLU91"], ["Blue Cross Blue Shield Minnesota", "220"], ["Blue Cross Blue Shield of Minnesota (FEP)", "TLU22"], ["Blue Cross Blue Shield of Washington DC", "TLY47"], ["CareFirst BlueCross BlueShield Community Health Plan Maryland", "45281"], ["BCBS Michigan and Blue Care Network", "00210"], ["Blue Cross Community Centennial", "GNMMD1"], ["Blue Cross Blue Shield Pennsylvania Northeast", "100900"], ["BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BCPRC"], ["BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "SB891"], ["HealthNow BlueCross BlueShield New York Northeastern", "SB800"], ["Highmark Blue Cross Blue Shield Pennsylvania Institutional", "54771I"], ["Blue Cross Blue Shield FEP BlueDental", "BCAFD"], ["Excellus BlueCross BlueShield of New York", "10323"], ["Blue Cross Blue Shield Delaware", "100026"], ["BlueCross BlueShield of South Carolina Federal Employee Program", "00402"], ["Blue Cross Blue Shield of Connecticut- Family Plan", "00700"], ["Regence BlueCross BlueShield of Utah", "00910"], ["Blue Cross Blue Shield Pennsylvania Northwest", "100338"], ["Blue Cross Blue Shield South Carolina State Health Plan", "400"], ["Blue Cross Blue Shield South Carolina Medicare Blue", "00C63"], ["Mountain State Blue Cross Blue Shield West Virginia", "MTNST"]
+  ];
+
+function shortenNames(name) //keep adding on
 {
-  //processTransition()
+  if (name.includes("Delta"))
+  {
+    return "Delta Dental";
+  }
+  else if (name.includes("Blue Cross"))
+  {
+    return "BCBS";
+  }
+  else if (name.includes("Metlife"))
+  {
+    return "Metlife";
+  }
+  else
+  {
+    return name;
+  }
+}
+
+
+
+function runBackend() 
+{
+  const name = nameInput.value;
+  const [firstName, lastName] = name.split(" ");
+  const DOB = document.getElementById("dob").value;
+  const memberID = document.getElementById("memberId").value;
+  const insName = document.getElementById("insuranceName").value;
+  const shortName = shortenNames(insName);
+  let code = "";
+  for (let i = 0; i < insuranceCompaniesWCodes.length; i++)
+  {
+    if (insuranceCompaniesWCodes[i][0].toLowerCase() === insName.toLowerCase())
+    {
+      code = insuranceCompaniesWCodes[i][1];
+      break;
+    }
+  }
+
+  // Return the fetch promise so we can wait for it
+  /*return fetch('http://localhost:3000/check-eligibility', */ //for testing with backend.js!
+  return fetch ('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', //for production with API gateway and lambda!
+  {
+    method: 'POST',
+    headers:
+    {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(
+    {
+      controlNumber: "123456789",
+      tradingPartnerServiceId: code,
+      encounter:
+      {
+        dateOfService: (() =>
+        {
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = String(today.getMonth() + 1).padStart(2, '0');
+          const day = String(today.getDate()).padStart(2, '0');
+          return `${year}${month}${day}`;
+        })(),
+        serviceTypeCodes: ["35"]
+      },
+      provider:
+      {
+        organizationName: "Avalon Dental",
+        npi: "1639235187",
+        taxId: "217-63-5324"
+      },
+      subscriber:
+      {
+        memberId: memberID,
+        firstName: firstName,
+        lastName: lastName,
+        dateOfBirth: (() =>
+        {
+          let [m, d, y] = DOB.split('/').map(Number);
+          y = y < 100 ? (y <= 30 ? 2000 + y : 1900 + y) : y;
+          return `${y}${String(m).padStart(2, '0')}${String(d).padStart(2, '0')}`;
+        })()
+      }
+    })
+  })
+  .then(res => res.json())
+  .then(data =>
+  {
+    console.log(JSON.stringify(data, null, 2));
+
+    const stringData = JSON.stringify(data, null, 2);
+
+    if (stringData.includes("Patient Birth Date Does Not Match That for the Patient on the Database") || stringData.includes("the length of the value must be `>=") || stringData.includes("The payer or clearinghouse rejected the request with validation errors."))
+    {
+      if (memberID.toLowerCase() !== "bypass")
+      {
+        variables[2][1] = "Not Found";
+      }
+    }
+    else
+    {
+        //assign dental insurance name
+        variables[2][1] = shortName;
+
+        if (data.planStatus && data.planStatus.length > 0) 
+        {
+          const status = data.planStatus[0].status;  // This gets "Active Coverage"
+          variables[3][1] = status === "Active Coverage" ? "Active" : "Inactive";
+
+          if (variables[3][1] == "Inactive")
+          {
+            return;
+          }
+        }
+
+        //find renewal date
+        if (data.planDateInformation) {
+          let endDate;
+
+        // Handle new format with separate planEnd field
+        if (data.planDateInformation.planEnd) {
+          endDate = data.planDateInformation.planEnd;
+        }
+        // Handle old format with combined plan field
+        else if (data.planDateInformation.plan) {
+          endDate = data.planDateInformation.plan.split('-')[1];
+        }
+        
+        if (endDate) 
+        {
+          const formatDate = (dateStr) => `${dateStr.slice(4,6)}/${dateStr.slice(6,8)}/${dateStr.slice(0,4)}`;
+          const formatDatePlusOneDay = (dateStr) => {
+            const year = parseInt(dateStr.slice(0,4));
+            const month = parseInt(dateStr.slice(4,6)) - 1; // months are 0-indexed
+            const day = parseInt(dateStr.slice(6,8));
+            const date = new Date(year, month, day);
+            date.setDate(date.getDate() + 1);
+            return `${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getDate().toString().padStart(2,'0')}/${date.getFullYear()}`;
+          };
+
+          const endYear = parseInt(endDate.substring(0, 4));
+          const renewalDate = formatDatePlusOneDay(endDate);
+          endDate = formatDate(endDate);
+          variables[4][1] = renewalDate;
+          variables[5][1] = endDate;
+        }
+      }
+      else
+      {
+
+      }
+
+        // Process benefits information
+        if (data.benefitsInformation)
+        {
+          const benefits = data.benefitsInformation;
+
+          // Find maximum benefit (individual dental care)
+          const maxBenefit = benefits.find(b =>
+           b.code === "F" &&
+           b.name === "Limitations" &&
+           b.coverageLevelCode === "IND" &&
+           b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) //general dental codes
+           &&
+           (b.timeQualifierCode === "23" || b.timeQualifierCode === "22" ||  b.timeQualifierCode === "25") //contract or calendar year (some have just one)
+           ) || benefits.find(b =>
+           b.code === "F" &&
+           b.name === "Limitations" && 
+           b.timeQualifierCode === "22" &&
+           b.compositeMedicalProcedureIdentifier?.procedureCode === "D0150"
+           );
+
+           if (maxBenefit)
+           {
+             variables[6][1] = `$${parseInt(maxBenefit.benefitAmount)}`;
+           }
+
+          // Find maximum used (remaining amount)
+          const remainingBenefit = benefits.find(b =>
+            b.code === "F" &&
+            b.name === "Limitations" &&
+            b.coverageLevelCode === "IND" &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) &&
+            b.timeQualifierCode === "29" //remaining benefit
+            );
+
+          if (remainingBenefit && maxBenefit)
+          {
+            const total = parseInt(maxBenefit.benefitAmount);
+            const remaining = parseInt(remainingBenefit.benefitAmount);
+            const used = total - remaining;
+            variables[7][1] = `$${used}`;
+          }
+          else //if cannot find anything
+          {
+            variables[7][1] = `$0`;
+          }
+
+          // Find deductible
+          const deductible = benefits.find(b =>
+            b.code === "C" &&
+            b.name === "Deductible" &&
+            b.coverageLevelCode === "IND" &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) &&
+           (b.timeQualifierCode === "23" || b.timeQualifierCode === "22") //contract or calendar year (some have just one)
+           );
+
+          if (deductible)
+          {
+            variables[8][1] = `$${deductible.benefitAmount}`;
+          }
+
+          // Find deductible used (remaining amount)
+          const remainingDeductible = benefits.find(b =>
+            b.code === "C" &&
+            b.name === "Deductible" &&
+            b.coverageLevelCode === "IND" &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) &&
+            b.timeQualifierCode === "29"
+            );
+
+          if (remainingDeductible && deductible)
+          {
+            const total = parseInt(deductible.benefitAmount);
+            const remaining = parseInt(remainingDeductible.benefitAmount);
+            const used = total - remaining;
+            variables[9][1] = `$${used}`;
+          }
+
+          // Extract coverage percentages from co-insurance data
+          const coInsuranceData = benefits.filter(b => b.code === "A" && b.name === "Co-Insurance" && b.inPlanNetworkIndicatorCode === "Y");
+          let preventiveSet = false;
+          let basicSet = false;
+          let basicHighest = 0;
+                      var basicBackup = 0; //if nothing found
+                      let majorSet = false;
+
+                      for (const benefit of coInsuranceData) 
+                      {
+            // Break early if all sections are already set
+            if (preventiveSet && basicSet && majorSet) {
+              break;
+            }
+            
+            const patientPercent = parseFloat(benefit.benefitPercent || 0);
+            const insurancePercent = Math.round((1 - patientPercent) * 100);
+            
+            if (benefit.serviceTypes || benefit.compositeMedicalProcedureIdentifier)
+            {
+              const serviceTypes = benefit.serviceTypes ? benefit.serviceTypes.join(", ").toLowerCase() : "";
+              const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode || "";
+              
+              // Check procedure codes for better categorization
+              const preventiveCodes = ['D0120', 'D0140', 'D0150', 'D0210', 'D0270', 'D0272', 'D0274', 'D0330', 'D1110', 'D1120', 'D1206', 'D1208', 'D1351'];
+              const basicCodes = ["D2140", "D2150", "D2160", "D2161", "D2330", "D2331", "D2332", "D2335", "D2391", "D2392", "D2393", "D2394", "D2910", "D2915", "D2920", "D2929", "D2930", "D2931", "D2932", "D2933", "D2934", "D2940", "D2950", "D2951", "D2952", "D2953", "D2955", "D2957", "D2960", "D2961", "D2962", "D2980", "D2981", "D2982", "D2983", "D2990"];
+              const majorCodes = ['D2720', 'D2721', 'D2722', 'D2740', 'D2750', 'D2751', 'D2752', 'D2753', 'D2790', 'D2791', 'D2792', 'D2794'];
+              
+              if (!preventiveSet && (preventiveCodes.includes(procedureCode) || 
+                serviceTypes.includes("preventive") ||
+                serviceTypes.includes("diagnostic") ||
+                serviceTypes.includes("routine"))) 
+              {
+                variables[10][1] = `${insurancePercent}%`;
+                preventiveSet = true;
+              }
+              else if (!basicSet && serviceTypes.includes("restorative") || serviceTypes.includes("endodontics") || serviceTypes.includes("periodontics"))
+              {
+                if (insurancePercent > basicHighest) //get the highest number
+                {
+                  variables[11][1] = `${insurancePercent}%`;
+                  basicHighest = insurancePercent;
+                }
+              }
+              else if (!majorSet && (majorCodes.includes(procedureCode) ||
+                serviceTypes.includes("prosthodontics") ||
+                serviceTypes.includes("crowns") ||
+                serviceTypes.includes("bridges") ||
+                serviceTypes.includes("dentures"))) {
+                variables[12][1] = `${insurancePercent}%`;
+              majorSet = true;
+            }
+            if (basicCodes.includes(procedureCode))
+            {
+              basicBackup = `${insurancePercent}%`
+            }
+          }
+        }
+
+        if (variables[11][1] === "")
+        {
+          variables[11][1] = basicBackup;
+        }
+
+
+          //get frequencies 
+          const extractFrequenciesAndLimitations = (benefits) => 
+          {
+            const frequencies = new Set([
+              "Cleaning: twice per year",
+              "Exams & X-rays: twice per year"
+              ]);
+
+            const waitingPeriods = new Set();
+
+            benefits.forEach(benefit => {
+            // Extract actual frequency data from benefitsServiceDelivery
+            if (benefit.benefitsServiceDelivery) {
+              benefit.benefitsServiceDelivery.forEach(delivery => {
+                const quantity = delivery.quantity;
+                const period = delivery.timePeriodQualifier;
+                const numPeriods = delivery.numOfPeriods;
+                const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode;
+                
+                if (quantity && period && procedureCode) {
+                  const descriptions = {
+                    "D0210": "X-rays",
+                    "D0272": "Bitewing X-rays",
+                    "D4910": "Periodontal maintenance"
+                  };
+                  
+                  const description = descriptions[procedureCode] || `Procedure ${procedureCode}`;
+                  let frequencyText;
+                  
+                  if (quantity == 1 && numPeriods > 1) {
+                    frequencyText = `${description}: once per ${numPeriods} ${period.toLowerCase()}`;
+                  } else {
+                    frequencyText = `${description}: ${quantity} times per ${period.toLowerCase()}`;
+                  }
+                  
+                  frequencies.add(frequencyText);
+                }
+              });
+            }
+            
+            // Extract waiting periods
+            if (benefit.additionalInformation) {
+              benefit.additionalInformation.forEach(info => {
+                if (info.description?.toLowerCase().includes("waiting")) {
+                  waitingPeriods.add(info.description);
+                }
+              });
+            }
+          });
+
+            return {
+              frequencies: Array.from(frequencies),
+              waitingPeriods: Array.from(waitingPeriods)
+            };
+          };
+
+
+
+          // Look for not covered procedures (100% patient responsibility)
+          const notCoveredProcedures = [];
+          coInsuranceData.forEach(benefit =>
+          {
+            if (parseFloat(benefit.benefitPercent || 0) === 1.0)
+            {
+              // This means 100% patient responsibility = not covered
+              if (benefit.compositeMedicalProcedureIdentifier)
+              {
+                notCoveredProcedures.push(benefit.compositeMedicalProcedureIdentifier.procedureCode);
+              }
+            }
+          });
+
+          if (notCoveredProcedures.length > 0)
+          {
+            variables[13] = ["Not Covered:", ...notCoveredProcedures.map(p => [p])];
+          }
+        }
+      }
+
+
+      //parse variables
+      console.log(variables);
+
+      maximumRemaining = parseInt(variables[6][1].replace("$", "")) - parseInt(variables[7][1].replace("$", "")); //see how much $ is left
+      maximumRemaining = `$${maximumRemaining}`;
+      percentOfMaxUsed = (maximumRemaining.replace("$", "") / parseInt(variables[6][1].replace("$", ""))) * 100 + "%";
+      if (percentOfMaxUsed == "0%")
+      {
+        percentOfMaxUsed = "2%"; //styles a little better
+      }
+      deductibleRemaining = parseInt(variables[8][1].replace("$", "")) - parseInt(variables[9][1].replace("$", "")); //see how much $ is left
+      deductibleRemaining = `$${deductibleRemaining}`;
+      if (decrementDate(variables[4][1]).split("/")[0] == "12" && decrementDate(variables[4][1]).split("/")[1] == "31")
+      {
+        calendarYear = true;
+      }
+
+      return data; // Return the data for further processing
+    })
+.catch(err =>
+{
+  console.log(err.message);
+  variables[2][1] = "Not Found";
+  throw err;
 });
+}
+
+var maximumRemaining = "";
+var percentOfMaxUsed = "";
+var deductibleRemaining = "";
+var calendarYear = false;
+
+
+
+function showLoading()
+{
+  clearExistingErrors();
+  
+  // Start the loading animation
+  loadingTimer = setTimeout(() => {
+    document.getElementsByClassName("loading-container")[0].style.opacity = 1;
+    const dots = document.querySelectorAll(".loading-dot");
+    dots.forEach(dot => {
+      dot.style.animation = "none";
+    });
+    dots[0].offsetWidth;
+    dots[1].offsetWidth;
+    dots[2].offsetWidth;
+    dots[0].style.animation = "dot1 1s infinite 0s";
+    dots[1].style.animation = "dot2 1s infinite 0.33s";
+    dots[2].style.animation = "dot3 1s infinite 0.66s";
+  }, 500);
+  
+  // Wait for the backend response
+  runBackend()
+  .then(data => {
+      // Backend is done, hide loading and proceed
+      document.getElementsByClassName("loading-container")[0].style.opacity = "0";
+      doneLoading = true;
+      
+      setTimeout(() => {
+        // Check if insurance is found based on the response
+        if (variables[3][1] != "Active") {
+          showInsuranceError(2);
+        }
+        else if ((variables[2][1] == "Not Found")) {
+          showInsuranceError(1);
+        }
+        else {
+          showNext();
+        }
+      }, 300); // Small delay for loading fade out
+    })
+  .catch(err => {
+      // Handle error case
+      document.getElementsByClassName("loading-container")[0].style.opacity = "0";
+      doneLoading = true;
+      
+      setTimeout(() => {
+        showInsuranceError(1); // Show error - insurance not found
+      }, 300);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* LOADING IN ANIMATION AND CURSOR AND RIPPLE EFFECT */
 document.addEventListener('DOMContentLoaded', function()
@@ -36,35 +538,34 @@ document.addEventListener('DOMContentLoaded', function()
   //Style for transitions
   const style = document.createElement('style');
   style.textContent = `
-    @keyframes selectPulse {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(41, 128, 185, 1); background-color: white; color: black; }
-      50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(41, 128, 185, 0); background-color: #333; color: white; }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(41, 128, 185, 0); background-color: black; color: white; }
-    }
-    #typed-text {
-      display: inline-block;
-      margin: 0;
-      padding: 0;
-      font-weight: 850;
-      color: #2980b9; 
-      opacity: .8; /* slightly lower than .85 to make up for boldness */
-      position: relative;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease;
-    }
-    .cursor-modern {
-      display: inline-block;
-      width: 2px; /* Thin line */
-      height: 1.1em; /* Match text height */
-      background-color: #5DADE2;
-      margin-left: 2px;
-      vertical-align: middle;
-      animation: cursor-pulse 1.75s infinite ease-in-out;
-    }
-    @keyframes cursor-pulse {
-      50% { opacity: 1; transform: scaleY(1); }
-      0%, 100% { opacity: 0.5; transform: scaleY(0.9); }
-    }`;
+  @keyframes selectPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(41, 128, 185, 1); background-color: white; color: black; }
+    50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(41, 128, 185, 0); background-color: #333; color: white; }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(41, 128, 185, 0); background-color: black; color: white; }
+  }
+  #typed-text {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    font-weight: 750;
+    color: rgba(41, 128, 185, 0.64); 
+    position: relative;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+  }
+  .cursor-modern {
+    display: inline-block;
+    width: 2px; /* Thin line */
+    height: 1.1em; /* Match text height */
+    background-color: #5DADE2;
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: cursor-pulse 1.75s infinite ease-in-out;
+  }
+  @keyframes cursor-pulse {
+    50% { opacity: 1; transform: scaleY(1); }
+    0%, 100% { opacity: 0.5; transform: scaleY(0.9); }
+  }`;
   document.head.appendChild(style);
 
   // Initialize HTML without the cursor
@@ -291,6 +792,8 @@ inputs.forEach(input =>
   });
 });
 
+
+
 /* Fixes autofill glitch with background color */
 // Improved autofill detection for focus changes
 document.addEventListener('DOMContentLoaded', function()
@@ -385,21 +888,22 @@ function showHowItWorks(event)
 
     // Apply all styling directly
     tooltip.style.position = 'fixed';
-    tooltip.style.bottom = '50px';
+    tooltip.style.bottom = '40px';
     tooltip.style.left = '50%';
     tooltip.style.transform = 'translateX(-50%)';
-    tooltip.style.width = '280px';
+    tooltip.style.width = '300px';
     tooltip.style.padding = '14px 30px 14px 18px';
     tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
     tooltip.style.color = 'white';
     tooltip.style.borderRadius = '8px';
-    tooltip.style.fontSize = '12px';
+    tooltip.style.fontSize = '13px';
     tooltip.style.lineHeight = '1.5';
+    tooltip.style.fontWeight = "400";
     tooltip.style.zIndex = '999999';
     tooltip.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
     tooltip.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
     tooltip.style.opacity = '0';
-    tooltip.style.fontFamily = 'Montserrat, sans-serif';
+    tooltip.style.fontFamily = 'Montserrat';
     tooltip.style.textAlign = 'center';
     tooltip.style.display = 'none';
 
@@ -407,9 +911,9 @@ function showHowItWorks(event)
     const closeBtn = document.createElement('span');
     closeBtn.innerHTML = '&times;';
     closeBtn.style.position = 'absolute';
-    closeBtn.style.top = '-5px';
-    closeBtn.style.right = '10px';
-    closeBtn.style.fontSize = '35px';
+    closeBtn.style.top = '-7.5px';
+    closeBtn.style.right = '7.5px';
+    closeBtn.style.fontSize = '40px';
     closeBtn.style.cursor = 'pointer';
     closeBtn.style.color = '#fff';
     closeBtn.style.lineHeight = '1.4';
@@ -427,7 +931,7 @@ function showHowItWorks(event)
     };
 
     const content = document.createElement('div');
-    content.innerHTML = 'We fetch your insurance details through an insurance API (that is HIPAA and PHI compliant) and transform them into a simple, easy-to-understand format. We do not store, sell or share any data.';
+    content.innerHTML = 'We fetch your insurance details through an insurance API (that is HIPAA and PHI compliant) and transform them into a simple, easy-to-understand format. We do not store, sell, or share any data.<br><br>Click on <span style="font-weight: 700">How openbook Works</span> in the menu for more information.';
 
     // Add arrow/tail pointing down
     const arrow = document.createElement('div');
@@ -509,6 +1013,322 @@ function showHowItWorks(event)
   document.addEventListener('click', window.customTooltipHide);
 }
 
+/* Make the "Learn more" text in the form paragraph open hamburger menu directly to "How openbook Works" section */
+function openHowItWorksFromForm(event)
+{
+  event.preventDefault();
+  event.stopPropagation();
+
+  const menu = document.getElementById('mobile-menu');
+  const menuButton = document.querySelector('.menu-button');
+  const hamburger = menuButton.querySelector('.hamburger');
+  
+  // Open the menu if it's not already open
+  if (!menu.classList.contains('show')) {
+    menu.classList.add('show');
+    hamburger.classList.add('active');
+    document.body.style.touchAction = "none";
+  }
+  
+  // Directly show the "How openbook Works" content without any animations
+  // First, hide all menu items
+  const menuItems = menu.querySelectorAll('.menu-item');
+  menuItems.forEach(menuItem => {
+    menuItem.style.display = 'none';
+  });
+  
+  // Remove any existing content wrapper
+  const existingWrapper = menu.querySelector('.menu-content-wrapper');
+  if (existingWrapper) {
+    existingWrapper.remove();
+  }
+  
+  // Create and show the "How openbook Works" section directly
+  showMenuSection("How openbook Works");
+}
+
+// Set up the "Learn more" text in the form paragraph to be clickable
+document.addEventListener('DOMContentLoaded', function() {
+  // Find the paragraph in the main form and make the "Learn more" text clickable
+  const formParagraph = document.querySelector('#main-form p');
+  
+  if (formParagraph) {
+    // Find the span with "Learn more" text and make it clickable
+    const spans = formParagraph.querySelectorAll('span');
+    spans.forEach(span => {
+      if (span.textContent.includes('Learn more') && span.style.textDecoration.includes('underline')) {
+        span.addEventListener('click', openHowItWorksFromForm);
+        span.style.cursor = 'pointer';
+        // Add a slight hover effect
+        span.addEventListener('mouseenter', function() {
+          this.style.opacity = '0.8';
+        });
+        span.addEventListener('mouseleave', function() {
+          this.style.opacity = '1';
+        });
+      }
+    });
+  }
+});
+
+
+/* Make Search Function work */
+window.insuranceCompanies = insuranceCompanies;
+document.addEventListener('DOMContentLoaded', function() 
+{
+  const insuranceInput = document.getElementById('insuranceName');
+  if (!insuranceInput) return;
+  // Create dropdown container
+  const dropdown = document.createElement('div');
+  dropdown.id = 'insurance-dropdown';
+  dropdown.className = 'insurance-dropdown';
+  // Insert dropdown after the input container
+  const inputContainer = insuranceInput.closest('.input-container');
+  if (inputContainer) {
+    inputContainer.appendChild(dropdown);
+  }
+  let isDropdownVisible = false;
+  let selectedIndex = -1;
+  // Show dropdown with filtered results
+  function showDropdown(searchTerm = '') {
+    if (searchTerm.length < 1) {
+      hideDropdown();
+      return;
+    }
+    const filtered = insuranceCompanies.filter(company => 
+      company.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 2); // Limit to 6 results
+
+    if (filtered.length === 0) {
+      hideDropdown();
+      return;
+    }
+    dropdown.innerHTML = '';
+    filtered.forEach((company, index) => {
+      const item = document.createElement('div');
+      item.className = 'dropdown-item';
+      item.textContent = company;
+      item.addEventListener('click', function() {
+        selectInsurance(company);
+      });
+      dropdown.appendChild(item);
+    });
+
+    dropdown.style.display = 'block';
+    isDropdownVisible = true;
+    selectedIndex = -1;
+  }
+  // Hide dropdown
+  function hideDropdown() {
+    dropdown.style.display = 'none';
+    isDropdownVisible = false;
+    selectedIndex = -1;
+  }
+  // Select insurance company
+  function selectInsurance(company) {
+    insuranceInput.value = company;
+    hideDropdown();
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+
+      setTimeout(() => {
+        insuranceInput.blur();
+        showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
+      }, 200);
+    }
+  }
+  // Handle keyboard navigation
+  function handleKeyNavigation(e) {
+    if (!isDropdownVisible) return;
+
+    const items = dropdown.querySelectorAll('.dropdown-item');
+    
+    switch(e.key) {
+      case 'ArrowDown':
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+      updateSelection(items);
+      break;
+      case 'ArrowUp':
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, -1);
+      updateSelection(items);
+      break;
+      case 'Enter':
+      e.preventDefault();
+      if (selectedIndex >= 0 && items[selectedIndex]) {
+        selectInsurance(items[selectedIndex].textContent);
+      }
+      break;
+      case 'Escape':
+      hideDropdown();
+      break;
+    }
+  }
+  // Update visual selection
+  function updateSelection(items) {
+    items.forEach((item, index) => {
+      if (index === selectedIndex) {
+        item.classList.add('selected');
+      } else {
+        item.classList.remove('selected');
+      }
+    });
+  }
+  // Event listeners
+  insuranceInput.addEventListener('input', function(e) {
+    const value = e.target.value.trim();
+    if (this.value.length > 0) {
+      clearInputError(this);
+      const errorMsg = this.closest('.input-container').querySelector('.input-error-message');
+      if (errorMsg) {
+        errorMsg.classList.add('hide');
+        setTimeout(() => {
+          if (errorMsg.parentNode) {
+            errorMsg.parentNode.removeChild(errorMsg);
+          }
+        }, 300);
+      }
+    }
+    showDropdown(value);
+  });
+
+  insuranceInput.addEventListener('focus', function(e) {
+    const value = e.target.value.trim();
+    if (value.length >= 1) {
+      showDropdown(value);
+    }
+  });
+
+  insuranceInput.addEventListener('blur', function(e) {
+    setTimeout(() => {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile && isDropdownVisible) {
+        const firstItem = dropdown.querySelector('.dropdown-item');
+        if (firstItem) {
+          selectInsurance(firstItem.textContent);
+          showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
+          return;
+        }
+      }
+
+    // Clear field if no valid selection was made
+    if (insuranceInput.value.trim().length > 0) {
+      const enteredValue = insuranceInput.value.trim();
+      const isValidInsurance = insuranceCompanies.some(company => 
+        company.toLowerCase() === enteredValue.toLowerCase()
+        );
+      
+      if (!isValidInsurance) {
+        insuranceInput.value = ''; // Clear the field
+        showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
+      }
+    }
+    
+    hideDropdown();
+  }, 150);
+  });
+  insuranceInput.addEventListener('keydown', handleKeyNavigation);
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!inputContainer.contains(e.target)) {
+      hideDropdown();
+    }
+  });
+});
+
+// Add CSS styles for the dropdown
+const insuranceSearchStyles = document.createElement('style');
+insuranceSearchStyles.id = 'insurance-search-styles';
+insuranceSearchStyles.textContent = `
+.insurance-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #FCFEFD;
+  border: 2px solid #777;
+  border-top: none;
+  border-bottom-left-radius: 12.5px;
+  border-bottom-right-radius: 12.5px;
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+  padding: 12px 15px 12px 55px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+  border-bottom-left-radius: 12.5px;
+  border-bottom-right-radius: 12.5px;
+}
+
+.dropdown-item:hover,
+.dropdown-item.selected {
+  background-color: rgba(41, 128, 185, 0.08);
+  color: rgba(41, 128, 185, 0.9);
+}
+
+.dropdown-item:active {
+  background-color: rgba(41, 128, 185, 0.15);
+}
+
+/* Adjust the input container to accommodate dropdown */
+.input-container:nth-child(4) {
+  position: relative;
+  overflow: visible;
+}
+
+/* Ensure dropdown appears above other elements */
+.input-container:nth-child(4):has(.insurance-dropdown[style*="display: block"]) {
+  z-index: 1001;
+}
+
+/* Adjust border radius when dropdown is open */
+.input-container:nth-child(4):has(.insurance-dropdown[style*="display: block"]) input {
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  border-bottom: none !important;
+  padding-bottom: 2px;
+}
+
+
+/* Custom scrollbar for dropdown */
+.insurance-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.insurance-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.insurance-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.insurance-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+`;
+
+document.head.appendChild(insuranceSearchStyles);
+
+
+
 /* MAKE IT SO WHEN YOU PRESS CONTINUE BUTTON IT RIPPLES */
 const continueButton = document.getElementById("submit");
 continueButton.addEventListener("touchstart", buttonPressed);
@@ -540,18 +1360,7 @@ logo.addEventListener('touchend', () =>
 {
   setTimeout(() =>
   {
-    if (secondScreen)
-    {
-      /*
-      document.body.style.overflow = "hidden";
-      processTransition();
-      */
-      window.location.reload(true);
-    }
-    else
-    {
-      window.location.reload(true);
-    }
+    window.location.reload(true);
   }, 200); // short visual feedback before redirect
 });
 
@@ -583,7 +1392,7 @@ function formValidation()
   }
 
   // Date validation - NOTE: get fullYear when running through API!
-  if (dateInput.value.replace(/\D/g, "").length < 6 || dateInput.value.replace(/\D/g, "").length > 8)
+  if (dateInput.value.replace(/\D/g, "").length < 6 || dateInput.value.replace(/\D/g, "").length > 8 || dateInput.value.replace(/\D/g, "").length == 7)
   {
     // Length check - must have at least 6 digits (MM/DD/YY) and at most 8 (MM/DD/YYYY)
     dateError = true;
@@ -612,7 +1421,7 @@ function formValidation()
       dateObj.getDate() !== day || // Day is invalid
       month < 1 || month > 12 || // Month is invalid
       fullYear < 1900 || fullYear > 2100 // Year range check with converted year
-    )
+      )
     {
       dateError = true;
       hasErrors = true;
@@ -637,10 +1446,36 @@ function formValidation()
     idError = false;
   }
 
-  if (!hasErrors)
-  {
-    processTransition();
-  }
+  //Insurance Name Validation
+  const insuranceInput = document.getElementById('insuranceName');
+  var insuranceError = false;
+
+  if (insuranceInput.value.trim().length == 0) {
+   insuranceError = true;
+   hasErrors = true;
+   showInputError(insuranceInput, "Please enter an insurance company name");
+ } 
+ else {
+ // Check if the entered value matches any insurance company from dropdown
+ const enteredValue = insuranceInput.value.trim();
+ const isValidInsurance = insuranceCompanies.some(company => 
+   company.toLowerCase() === enteredValue.toLowerCase()
+   );
+ 
+ if (!isValidInsurance) {
+   insuranceError = true;
+   hasErrors = true;
+   showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
+ } else {
+   insuranceError = false;
+ }
+}
+
+
+if (!hasErrors)
+{
+  processTransition();
+}
 }
 
 /* FUNCTIONS TO MAKE ERRORS WORK SEAMLESSLY*/
@@ -812,7 +1647,7 @@ nameInput.addEventListener("blur", function()
     return;
   }
   const firstName = trimmedValue.split(" ")[0];
-  showFriendlyMessage(this, `Great name! Nice to meet you, ${firstName}.`, 'friendly-name');
+  showFriendlyMessage(this, `Great name! Nice to meet you.`, 'friendly-name');
   nameError = false;
 });
 
@@ -822,7 +1657,8 @@ dateInput.addEventListener("blur", function()
   if (trimmedValue.length === 0) {
     return;
   }
-  if (trimmedValue.replace(/\D/g, "").length < 6 || trimmedValue.replace(/\D/g, "").length > 8) {
+  if (dateInput.value.replace(/\D/g, "").length < 6 || dateInput.value.replace(/\D/g, "").length > 8 || dateInput.value.replace(/\D/g, "").length == 7)
+  {
     originalShowInputError(this, "Please enter a valid date of birth (MM/DD/YYYY)");
     dateError = true;
     return;
@@ -853,54 +1689,77 @@ idInput.addEventListener("blur", function()
 
 const friendlyStyle = document.createElement('style');
 friendlyStyle.textContent = `
-  .friendly-message 
-  {
-    position: absolute;
-    bottom: -22px;
-    left: 28px;
-    color: #34b233;
-    font-size: 11.5px;
-    font-weight: 500;
-    padding-bottom: 4.5px;
-    opacity: 0;
-    transform: translateY(5px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    z-index: 10;
-    pointer-events: none;
-  }
-  
-  .friendly-message.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  .friendly-message::before {
+.friendly-message 
+{
+  position: absolute;
+  bottom: -1px;
+  left: 70.5px;
+  color: #2ECC71;
+  font-size: 9.25px;
+  font-weight: 550;
+  padding-bottom: 4.5px;
+  opacity: 0;
+  transform: translateY(7.5px);
+  transition: opacity 0.5s ease-out, transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  z-index: 10;
+  pointer-events: none;
+}
+.friendly-message.show 
+{
+  opacity: 1;
+  transform: translateY(0px);
+}
+.friendly-message.hide {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+
+.friendly-message::before 
+{
   content: "✓";
   position: absolute;
-  left: -20px;
-  top: 40%;
+  left: -13.5px;
+  top: 34%;
   transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
+  width: 9px;
+  height: 9px;
   background-color: #2ECC71;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: bold;
 }
-  
+
+
+
+.input-container:has(.friendly-input) i {
+  color: #2ECC71 !important;
+  opacity: 1 !important;
+}
+
 `;
 document.head.appendChild(friendlyStyle);
 
-// Function to show friendly message (only when field is valid)
 function showFriendlyMessage(input, message, emojiClass) {
   const container = input.closest('.input-container');
   
-  // Remove any existing friendly messages
+  // Check if a friendly message already exists
   const existingMsg = container.querySelector('.friendly-message');
+  
+  // If a friendly message already exists with the same class, just update text if needed
+  if (existingMsg && existingMsg.classList.contains(emojiClass)) {
+    if (existingMsg.textContent !== message) {
+      existingMsg.textContent = message;
+    }
+    return; // Exit early - no need to recreate or animate
+  }
+  
+  // Remove any existing friendly messages if it's different
   if (existingMsg) existingMsg.remove();
   
   // Create new friendly message
@@ -911,191 +1770,123 @@ function showFriendlyMessage(input, message, emojiClass) {
   // Add to container
   container.appendChild(messageEl);
   
-  // Make icon friendly colored, but don't change input styling
-  const icon = container.querySelector('i');
-  if (icon) icon.classList.add('friendly');
+  // Style the input field with green highlight
+  input.classList.add('friendly-input');
   
-  // Show with animation
+  // Make icon friendly colored
+  const icon = container.querySelector('i');
+  if (icon) {
+    icon.classList.add('friendly');
+    icon.style.color = '#2ECC71';
+    icon.style.opacity = '1';
+  }
+  
+  // Show with animation - only for new messages
   setTimeout(() => {
     messageEl.classList.add('show');
   }, 10);
   
-  // Auto-hide after 3 seconds
-  setTimeout(() => {
-    if (messageEl.parentNode) {
-      messageEl.classList.remove('show');
-      setTimeout(() => {
-        if (messageEl.parentNode) messageEl.remove();
-      }, 400);
-    }
-  }, 3000);
-}
-
-
-// Preserve original error function if it exists, otherwise create a minimal version
-if (typeof showInputError !== 'function') 
-{
-  function showInputError(input, errorMessage) {
-    const container = input.closest('.input-container');
+  // Remove friendly message when user types in the input
+  // Check if we already have an input listener to avoid duplicates
+  if (!input._hasFriendlyListener) {
+    input._hasFriendlyListener = true;
     
-    // Clear any existing messages
-    const existingMsg = container.querySelector('.friendly-message, .input-error-message');
-    if (existingMsg) existingMsg.remove();
-    
-    // Add error state to input
-    input.classList.add('error-input');
-    
-    // Create error message element
-    const errorElement = document.createElement('div');
-    errorElement.className = 'input-error-message';
-    errorElement.textContent = errorMessage;
-    
-    // Position and style
-    errorElement.style.position = 'absolute';
-    errorElement.style.bottom = '-22px';
-    errorElement.style.left = '25px';
-    errorElement.style.color = '#e74c3c';
-    errorElement.style.fontSize = '11.5px';
-    errorElement.style.fontWeight = '500';
-    errorElement.style.opacity = '0';
-    errorElement.style.transition = 'opacity 0.4s ease';
-    
-    // Add error icon
-    errorElement.insertAdjacentHTML('afterbegin', 
-      '<div style="position:absolute;left:-20px;top:40%;transform:translateY(-50%);width:12px;height:12px;background-color:#e74c3c;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:bold;">!</div>'
-    );
-    
-    // Add to container
-    container.appendChild(errorElement);
-    
-    // Show with animation
-    setTimeout(() => {
-      errorElement.style.opacity = '1';
-    }, 10);
-    
-    // Style the input icon
-    const icon = container.querySelector('i');
-    if (icon) {
-      icon.classList.remove('friendly');
-      icon.style.color = '#e74c3c';
-      icon.style.opacity = '1';
-    }
+    input.addEventListener('input', function removeFriendlyMessage() {
+      // Hide message with animation
+      const msgToRemove = container.querySelector('.friendly-message');
+      if (msgToRemove) {
+        msgToRemove.classList.remove('show');
+        msgToRemove.classList.add('hide');
+        
+        // Remove the message after animation completes
+        setTimeout(() => {
+          if (msgToRemove.parentNode) {
+            msgToRemove.remove();
+          }
+        }, 400);
+      }
+      
+      // Remove friendly styling from input
+      input.classList.remove('friendly-input');
+      
+      // Reset icon styling
+      if (icon) {
+        icon.classList.remove('friendly');
+        icon.style.color = '';
+        icon.style.opacity = '';
+      }
+      
+      // Remove this flag
+      input._hasFriendlyListener = false;
+      
+      // Remove this event listener to prevent multiple calls
+      input.removeEventListener('input', removeFriendlyMessage);
+    });
   }
 }
 
 /* ERROR MESSAGE CSS */
 const errorStyle = document.createElement('style');
 errorStyle.textContent = `
-  /* Input container needs to be relative for absolute positioning */
-  .input-container {
-    position: relative;
-  }
-  /* Error input styling */
-  .error-input 
-  {
-    border-color: #e74c3c;
-    background-color: rgba(231, 76, 60, 0.05);
-    animation: errorShake 0.5s ease-in-out;
-    transition: inherit;
-  }
-  .error-input::placeholder
-  {
-    color: #e74c3c !important;
-    opacity: 0.8 !important;
-  }
+.input-container {
+  position: relative;
+}
+.error-input::placeholder
+{
+  color: #e74c3c !important;
+  opacity: 0.8 !important;
+}
+.input-container:has(.error-input) i {
+  color: #e74c3c !important;
+  opacity: 1 !important;
+}
+.input-error-message {
+  position: absolute;
+  bottom: -1px;
+  left: 70.5px;
+  color: #e74c3c;
+  font-size: 9.25px;
+  font-weight: 550;
+  padding-bottom: 4.5px;
+  background-color: transparent;
+  transform: translateY(7.5px);
+  transition: opacity 0.5s ease-out, transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  border: none;
+  opacity: 0;
+  white-space: nowrap;
+  z-index: 10;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.input-error-message::before {
+  content: "!";
+  position: absolute;
+  left: -13.5px;
+  top: 34%;
+  transform: translateY(-50%);
+  width: 9px;
+  height: 9px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+}
+.input-error-message.show 
+{
+  opacity: 1;
+  transform: translateY(0px);
+}
+.input-error-message.hide {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
 
-  /* Error shake animation */
-  @keyframes errorShake {
-    /*
-    0%, 100% { transform: translateX(0), translateY(3px) translateY(-2px); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) translateY(-2px); }
-    20%, 40%, 60%, 80% { transform: translateX(3px) translateY(-2px); }
-    */
-  }
-
-  /* Error message styling */
-  .input-error-message {
-    position: absolute;
-    bottom: -22px;
-    left: 28px;
-    color: #e74c3c;
-    font-size: 11.5px;
-    font-weight: 500;
-    padding-bottom: 4.5px;
-    background-color: transparent;
-    border: none;
-    opacity: 0;
-    transform: translateX(-50%) scale(0.85);
-    transform-origin: left center;
-    transition: opacity 0.4s ease-out, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-    white-space: nowrap;
-    z-index: 10;
-    will-change: transform, opacity;
-    pointer-events: none;
-  }
-
-  .input-error-message::before {
-    content: "!";
-    position: absolute;
-    left: -20px;
-    top: 40%;
-    transform: translateY(-50%);
-    width: 11px;
-    height: 11px;
-    background-color: #e74c3c;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 10px;
-    font-weight: bold;
-  }
-
-  /* Show animation for error message */
-  .input-error-message.show {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-
-  /* Hide animation for error message */
-  .input-error-message.hide {
-    opacity: 0;
-    transform: translateX(-25%) scale(0.9);
-    transition: opacity 0.3s ease-out, transform 0.35s ease-in-out;
-  }
-
-  .input-container:has(.error-input) i {
-    color: #e74c3c !important;
-    opacity: 1 !important;
-  }
-
-  .error-input 
-  {
-    box-shadow: 0 2px 0px rgba(231, 76, 60, 0.3);
-  }
-  .error-input:focus 
-  {
-    border-color: #e74c3c !important;
-    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.4);
-  }
-
-  /* Prevent the gradient border effect on error inputs */
-  .input-container:has(.error-input)::after {
-    opacity: 0 !important;
-  }
-
-  /* Hover effects for input containers with errors */
-  .input-container:has(.error-input):hover::after {
-    opacity: 0 !important;
-  }
-
-  /* Hover transform effect for error inputs */
-  .input-container:has(.error-input):hover input {
-    transform: translateY(-2px) !important;
-  }
-
-  `;
+`;
 document.head.appendChild(errorStyle);
 
 
@@ -1105,7 +1896,7 @@ function displayError(message = null, highlightInputs = true)
   var duration = 4500;
   if (message != null)
   {
-    duration = 15000; // longer error message for Not Found and Not Active
+    duration = 99999999; // longer error message for Not Found and Not Active
   }
 
   // Find and remove any existing popups
@@ -1252,7 +2043,102 @@ function displayError(message = null, highlightInputs = true)
   });
 }
 
-// Add the enhanced error popup CSS
+
+
+var doneLoading = false;
+var loadingTimer = null;
+var completionTimer = null;
+var tabNumber = 1;
+
+// Modify the processTransition function to disable form clicks
+function processTransition()
+{
+  document.getElementsByClassName("content")[0].style.opacity = "0";
+  document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
+  document.getElementById("submit").style.opacity = "0";
+  document.getElementById("main-form").style.pointerEvents = "none";
+  document.getElementById("submit").style.pointerEvents = "none";
+  document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
+  document.getElementById("tabs-div").style.pointerEvents = "auto";
+  document.getElementById("tabs-div").style.zIndex = "9999";
+  document.getElementsByClassName("content")[0].style.zIndex = "-999";
+  document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
+  document.getElementsByClassName("second-content")[0].style.zIndex = "999";
+  showLoading();
+  
+}
+
+
+function clearExistingErrors()
+{
+  const existingPopup = document.querySelector('.error-popup');
+  if (existingPopup)
+  {
+    // Add hide class for exit animation
+    existingPopup.classList.remove('show');
+    existingPopup.classList.add('hide');
+
+    // Remove from DOM after animation completes
+    setTimeout(() =>
+    {
+      if (document.body.contains(existingPopup))
+      {
+        document.body.removeChild(existingPopup);
+      }
+    }, 300); // Shorter time for quicker removal
+  }
+}
+
+function showInsuranceError(type)
+{
+  if (type == 1)
+  {
+    displayError("<span class='error-header'>We did not find any insurance with your information.</span><br><br>1. Double-check that your member ID is correct.<br>2. Try entering the policyholder's information if you are a dependant.<br>3. Reach out to your HR department for additional help.<br>4. Please also note that we are only compatible with dental insurance at the moment.", true);
+  }
+  if (type == 2)
+  {
+    displayError("<span class='error-header'>This coverage under this plan is no longer active.</span><br><br>This may be due to a recent change in employment or a change in insurance policy. Please double check that you do not have a new plan.<br>If you are not sure why this plan is not active, reach out to your HR department for additional help.", true);
+  }
+
+  // Wait for the error to display before returning to main page
+  setTimeout(() =>
+  {
+    // Reset the second screen flag
+    secondScreen = false;
+
+    // Hide loading elements
+    document.getElementsByClassName("loading-container")[0].style.opacity = "0";
+    document.getElementsByClassName("second-content")[0].style.opacity = 0;
+    document.getElementById("tabs-div").style.opacity = 0;
+
+    // Reset z-index values
+    document.getElementById("tabs-div").style.zIndex = "1";
+    document.getElementById("tabs-div").style.pointerEvents = "none";
+    document.getElementsByClassName("content")[0].style.zIndex = "999";
+    document.getElementsByClassName("second-content")[0].style.zIndex = "-999";
+
+    // Re-enable form interaction
+    document.getElementById("main-form").style.pointerEvents = "auto";
+    document.getElementById("submit").style.pointerEvents = "auto";
+
+    // Show the main content again
+    setTimeout(() =>
+    {
+      document.getElementsByClassName("content")[0].style.opacity = "1";
+      document.getElementsByClassName("content-bottom")[0].style.opacity = "1";
+    }, 0);
+
+    // Clear any existing timers
+    if (loadingTimer) clearTimeout(loadingTimer);
+    if (completionTimer) clearTimeout(completionTimer);
+
+
+
+    // Reset loading status
+    doneLoading = false;
+  }, 0); 
+}
+
 if (!document.getElementById('error-popup-styles'))
 {
   const errorPopupStyle = document.createElement('style');
@@ -1263,13 +2149,14 @@ if (!document.getElementById('error-popup-styles'))
   {
     text-align: center;
     font-weight: 700;
+    font-size: 15px;
   }
   .error-popup 
   {
     position: fixed;
-    bottom: 10px;
+    bottom: 15px;
     left: 50%;
-    width: 85%;
+    width: 90%;
     transform: translateX(-50%) translateY(100px);
     background-color: rgb(234, 90, 76); /* Simulates 92% opaque red on white */
     color: white;
@@ -1280,7 +2167,7 @@ if (!document.getElementById('error-popup-styles'))
     font-weight: 500;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     z-index: 99999;
-    max-width: 85%;
+    max-width: 90%;
     min-width: 250px;
     display: flex;
     align-items: center;
@@ -1305,8 +2192,8 @@ if (!document.getElementById('error-popup-styles'))
   .error-close-btn 
   {
     position: absolute;
-    top: 15px;
-    right: 2.5px;
+    top: 25px;
+    right: 5px;
     transform: translateY(-50%);
     background: none;
     border: none;
@@ -1333,13 +2220,16 @@ if (!document.getElementById('error-popup-styles'))
     font-size: 22px;
     flex-shrink: 0;
     animation: iconPulse 2s infinite;
-    position: relative;
-    bottom: 55px;
+    position: absolute;
+    top: 18px;
+    left: 10px;
   }
   .error-popup .error-message {
     line-height: 1.4;
     text-align: left;
     flex: 1;
+    padding-left: 7.5%;
+    padding-right: 1%;
   }
   .error-popup.show {
     opacity: 1;
@@ -1364,252 +2254,10 @@ if (!document.getElementById('error-popup-styles'))
   document.head.appendChild(errorPopupStyle);
 }
 
-var secondScreen = false;
-var doneLoading = false;
-var loadingTimer = null;
-var completionTimer = null;
-var tabNumber = 1;
 
-// Modify the processTransition function to disable form clicks
-function processTransition()
-{
-  if (secondScreen == false) //if on first screen -- transform to second
-  {
-    document.getElementsByClassName("content")[0].style.opacity = "0";
-    document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
-    document.getElementById("submit").style.opacity = "0";
-    document.getElementById("main-form").style.pointerEvents = "none";
-    document.getElementById("submit").style.pointerEvents = "none";
-    document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
-    document.getElementById("tabs-div").style.pointerEvents = "auto";
-    document.getElementById("tabs-div").style.zIndex = "9999";
-    document.getElementsByClassName("content")[0].style.zIndex = "-999";
-    document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
-    document.getElementsByClassName("second-content")[0].style.zIndex = "999";
-    secondScreen = true;
-    showLoading();
-  }
-  else //if on second screen -- transform to first
-  {
-    document.getElementById("main-form").style.pointerEvents = "auto";
-    document.getElementById("submit").style.pointerEvents = "auto";
-    document.getElementsByClassName("second-content")[0].style.pointerEvents = "none";
-    document.getElementById("tabs-div").style.pointerEvents = "none";
-    document.getElementsByClassName("loading-container")[0].style.opacity = "0";
-
-    // Force opacity to 0 and clear any animations
-    const secondContent = document.getElementsByClassName("second-content")[0];
-    secondContent.style.transition = "none";
-    secondContent.style.animation = "none";
-    secondContent.style.opacity = "1";
-    secondContent.getBoundingClientRect();
-    setTimeout(() =>
-    {
-      secondContent.style.transition = "opacity 0.75s ease-in-out";
-      secondContent.getBoundingClientRect();
-      setTimeout(() =>
-      {
-        secondContent.style.opacity = "0";
-      }, 50);
-    }, 50);
-    document.getElementById("tabs-div").style.pointerEvents = "none";
-    document.getElementsByClassName("loading-container")[0].style.opacity = "0";
-    document.getElementById("tabs-div").style.opacity = "0";
-    document.getElementsByClassName("second-content")[0].style.pointerEvents = "none";
-    document.getElementById("tabs-div").style.pointerEvents = "none";
-    document.getElementsByClassName("loading-container")[0].style.opacity = "0";
-    const tabsDiv = document.getElementById("tabs-div");
-    tabsDiv.style.transition = "opacity 0.75s ease-in-out";
-    tabsDiv.style.opacity = "0";
-    setTimeout(() =>
-    {
-      document.getElementById("tabs-div").style.zIndex = "1";
-      document.getElementsByClassName("content")[0].style.zIndex = "999";
-      document.getElementsByClassName("content-bottom")[0].style.zIndex = "999";
-      document.getElementsByClassName("second-content")[0].style.zIndex = "-999";
-      document.getElementsByClassName("content")[0].style.opacity = "1";
-      document.getElementsByClassName("content-bottom")[0].style.opacity = "1";
-    }, 750); //makes fading look better
-
-    secondScreen = false;
-    if (loadingTimer) clearTimeout(loadingTimer);
-    if (completionTimer) clearTimeout(completionTimer);
-    if (!doneLoading)
-    {
-      const dots = document.querySelectorAll(".loading-dot");
-      dots.forEach(dot =>
-      {
-        dot.style.animation = "none";
-      });
-      doneLoading = false;
-    }
-  }
-}
-
-const insuranceFound = false;
-
-function showLoading()
-{
-  clearExistingErrors();
-  if (!doneLoading)
-  {
-    // Clear any existing timers first
-    if (loadingTimer) clearTimeout(loadingTimer);
-    if (completionTimer) clearTimeout(completionTimer);
-
-    loadingTimer = setTimeout(() =>
-    {
-      document.getElementsByClassName("loading-container")[0].style.opacity = 1;
-      const dots = document.querySelectorAll(".loading-dot");
-
-      dots.forEach(dot =>
-      {
-        dot.style.animation = "none";
-      });
-      dots[0].offsetWidth;
-      dots[1].offsetWidth;
-      dots[2].offsetWidth;
-      dots[0].style.animation = "dot1 1s infinite 0s";
-      dots[1].style.animation = "dot2 1s infinite 0.33s";
-      dots[2].style.animation = "dot3 1s infinite 0.66s";
-
-      completionTimer = setTimeout(() =>
-      {
-        document.getElementsByClassName("loading-container")[0].style.opacity = "0";
-        doneLoading = true;
-        setTimeout(() =>
-        {
-          // Check if insurance is found
-          if (variables[2][1] == "Not Found")
-          {
-            showInsuranceError(1);
-          }
-          else if (variables[3][1] != "Active")
-          {
-            showInsuranceError(2);
-          }
-          else
-          {
-            showNext();
-          }
-        }, 0); // Time between loading fading and secondContent coming in
-      }, 1500); // How long loading runs for
-    }, 500); // Time before loading comes in
-  }
-  else
-  {
-    setTimeout(() =>
-    {
-      // Check if insurance is found
-      if (variables[2][1] == "Not Found")
-      {
-        showInsuranceError(1);
-      }
-      else if (variables[3][1] != "Active")
-      {
-        showInsuranceError(2);
-      }
-      else
-      {
-        showNext();
-      }
-    }, 400); // Delay before second content shows up, with no loading
-  }
-}
-
-function clearExistingErrors()
-{
-  const existingPopup = document.querySelector('.error-popup');
-  if (existingPopup)
-  {
-    // Add hide class for exit animation
-    existingPopup.classList.remove('show');
-    existingPopup.classList.add('hide');
-
-    // Remove from DOM after animation completes
-    setTimeout(() =>
-    {
-      if (document.body.contains(existingPopup))
-      {
-        document.body.removeChild(existingPopup);
-      }
-    }, 300); // Shorter time for quicker removal
-  }
-}
-
-function showInsuranceError(type)
-{
-  if (type == 1)
-  {
-    displayError("<span class='error-header'>We did not find any insurance with your information.</span><br><br>Double-check your details and try the policyholder's information if you are a dependant. Please reach out to your HR department for further details.", true);
-  }
-  if (type == 2)
-  {
-    displayError("<span class='error-header'>This insurance plan is no longer active.</span><br><br>This may be due to a recent change in employment or a new insurance policy. Please contact your HR department for further details.", true);
-  }
-
-  // Wait for the error to display before returning to main page
-  setTimeout(() =>
-  {
-    // Reset the second screen flag
-    secondScreen = false;
-
-    // Hide loading elements
-    document.getElementsByClassName("loading-container")[0].style.opacity = "0";
-    document.getElementsByClassName("second-content")[0].style.opacity = 0;
-    document.getElementById("tabs-div").style.opacity = 0;
-
-    // Reset z-index values
-    document.getElementById("tabs-div").style.zIndex = "1";
-    document.getElementsByClassName("content")[0].style.zIndex = "999";
-    document.getElementsByClassName("second-content")[0].style.zIndex = "-999";
-
-    // Re-enable form interaction
-    document.getElementById("main-form").style.pointerEvents = "auto";
-    document.getElementById("submit").style.pointerEvents = "auto";
-
-    // Show the main content again
-    setTimeout(() =>
-    {
-      document.getElementsByClassName("content")[0].style.opacity = "1";
-      document.getElementsByClassName("content-bottom")[0].style.opacity = "1";
-    }, 0);
-
-    // Clear any existing timers
-    if (loadingTimer) clearTimeout(loadingTimer);
-    if (completionTimer) clearTimeout(completionTimer);
-
-    // Reset loading status
-    doneLoading = false;
-  }, 0); // Wait 3 seconds so user can read the error
-}
 
 /* Transition between "continue" and Next - parse Variables data */
 
-let maximumRemaining = parseInt(variables[6][1].replace("$", "")) - parseInt(variables[7][1].replace("$", "")); //see how much $ is left
-maximumRemaining = `$${maximumRemaining}`;
-let percentOfMaxUsed = (maximumRemaining.replace("$", "") / parseInt(variables[6][1].replace("$", ""))) * 100 + "%";
-if (percentOfMaxUsed == "0%")
-{
-  percentOfMaxUsed = "2%"; //styles a little better
-}
-let deductibleRemaining = parseInt(variables[8][1].replace("$", "")) - parseInt(variables[9][1].replace("$", "")); //see how much $ is left
-deductibleRemaining = `$${deductibleRemaining}`;
-let active = false; //see if insurance is active 
-if (variables[3][1] == "Active")
-{
-  active = true;
-}
-let found = true; //see if insurance exists
-if (variables[2][1] == "Not Found")
-{
-  found = false;
-}
-let calendarYear = false; //see if calendar year
-if (decrementDate(variables[4][1]).split("/")[0] == "12" && decrementDate(variables[4][1]).split("/")[1] == "31")
-{
-  calendarYear = true;
-}
 
 function decrementYear(dateString)
 {
@@ -1718,7 +2366,7 @@ function showNext()
     <div id="summary-card-renewal" class="pop-in">
     <h3 class='summary-title' id='renewal-summary-title'> Renewal </h3>
     <span class='renewal-status-row'><i class="fas fa-clock"></i><h4>${formatDateString(variables[4][1])}</h4></span>
-    With the same plan, your benefits will renew to <b>${variables[6][1]}.</b>
+    Your benefits will renew to <b>${variables[6][1]}.</b>
     </div>
 
     </div>
@@ -1735,161 +2383,161 @@ function showNext()
   else if (tabNumber == 2)
   {
     secondPage.innerHTML = `
-   <div id="coverage-div" class='loading-up'>
-   <div class="coverage-section">
-   <h3 class="coverage-heading"><b>${variables[10][1]}</b> Covered</h3>
-   <div class="coverage-grid">
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-tooth"></i></div>
-   <div class="coverage-name">Cleanings</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-vial"></i></div>
-   <div class="coverage-name">Exams <br>& X-Rays</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-exclamation-triangle"></i></div>
-   <div class="coverage-name">Emerg. Exams</div>
-   </div>
-   </div>
-   </div>
+    <div id="coverage-div" class='loading-up'>
+    <div class="coverage-section">
+    <h3 class="coverage-heading"><b>${variables[10][1]}</b> Covered</h3>
+    <div class="coverage-grid">
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-tooth"></i></div>
+    <div class="coverage-name">Cleanings</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-vial"></i></div>
+    <div class="coverage-name">Exams <br>& X-Rays</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="coverage-name">Emerg. Exams</div>
+    </div>
+    </div>
+    </div>
 
-   <div class="coverage-section">
-   <h3 class="coverage-heading"><b>${variables[11][1]}</b> Covered</h3>
-   <div class="coverage-grid">
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-fill-drip"></i></div>
-   <div class="coverage-name">Fillings</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-hand-holding-medical"></i></div>
-   <div class="coverage-name">Extrac- tions</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-tools"></i></div>
-   <div class="coverage-name">Root Canals</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-shower"></i></div>
-   <div class="coverage-name">Deep Cleanings</div>
-   </div>
-   </div>
-   </div>
+    <div class="coverage-section">
+    <h3 class="coverage-heading"><b>${variables[11][1]}</b> Covered</h3>
+    <div class="coverage-grid">
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-fill-drip"></i></div>
+    <div class="coverage-name">Fillings</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-hand-holding-medical"></i></div>
+    <div class="coverage-name">Extrac- tions</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-tools"></i></div>
+    <div class="coverage-name">Root Canals</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-shower"></i></div>
+    <div class="coverage-name">Deep Cleanings</div>
+    </div>
+    </div>
+    </div>
 
-   <div class="coverage-section">
-   <h3 class="coverage-heading"><b>${variables[12][1]}</b> Covered</h3>
-   <div class="coverage-grid">
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-crown"></i></div>
-   <div class="coverage-name">Crowns</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-bezier-curve"></i></div>
-   <div class="coverage-name">Bridges</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-teeth"></i></div>
-   <div class="coverage-name">Dentures</div>
-   </div>
-   <div class="coverage-item">
-   <div class="coverage-icon"><i class="fas fa-thumbtack"></i></div>
-   <div class="coverage-name">Implants</div>
-   </div>
-   </div>
-   </div>
+    <div class="coverage-section">
+    <h3 class="coverage-heading"><b>${variables[12][1]}</b> Covered</h3>
+    <div class="coverage-grid">
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-crown"></i></div>
+    <div class="coverage-name">Crowns</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-bezier-curve"></i></div>
+    <div class="coverage-name">Bridges</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-teeth"></i></div>
+    <div class="coverage-name">Dentures</div>
+    </div>
+    <div class="coverage-item">
+    <div class="coverage-icon"><i class="fas fa-thumbtack"></i></div>
+    <div class="coverage-name">Implants</div>
+    </div>
+    </div>
+    </div>
 
-   <div class="coverage-section" id='notCovered-section'>
-   <h3 class="coverage-heading">Not Covered:</h3>
-   <div class="coverage-grid">
-   </div>
-   </div>
-   </div>
-   </div>
-   `
+    <div class="coverage-section" id='notCovered-section'>
+    <h3 class="coverage-heading">Not Covered:</h3>
+    <div class="coverage-grid">
+    </div>
+    </div>
+    </div>
+    </div>
+    `
   }
   else
   {
     secondPage.innerHTML = `
-  <div id="info-div">
-  <div class="info-section" id="insurance-info">
-  <div class="section-icon-container">
-  <div class="section-icon">
-  <i class="fas fa-shield-alt"></i>
-  </div>
-  </div>
-  <h3 class="info-heading">A Note on Insurance</h3>
-  <div class="info-content">
-  <p><span class='fun-text'>Every feel like insurance is designed to be confusing?</span><br></p>
-  <p>This is by design — most insurance deliberately limit access to coverage information and have dozens of hidden clauses. The information displayed here represents our best estimate based on the limited data that insurance companies make available.</p>
-  <p>As a result, we <b>strongly recommend</b> asking your dentist to submit a predetermination request for expensive procedures. This is the most accurate way to get an estimated copay from a procedure. </p>
-  </div>
-  </div>
+    <div id="info-div">
+    <div class="info-section" id="insurance-info">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <i class="fas fa-shield-alt"></i>
+    </div>
+    </div>
+    <h3 class="info-heading">A Note on Insurance</h3>
+    <div class="info-content">
+    <p><span class='fun-text'>Ever feel like insurance is designed to be confusing?</span><br></p>
+    <p>This is indeed by design — most insurance deliberately limit access to coverage information and have dozens of hidden clauses. The information displayed here represents our best estimate based on the limited data that insurance companies make available.</p>
+    <p>As a result, we <b>strongly recommend</b> asking your dentist to submit a predetermination request for expensive procedures. This is the most accurate way to get an estimated copay from a procedure. </p>
+    </div>
+    </div>
 
-  <div class="info-section" id="pricing-info">
-  <div class="section-icon-container">
-  <div class="section-icon">
-  <i class="fas fa-tag"></i>
-  </div>
-  </div>
-  <h3 class="info-heading">A Note on Pricing</h3>
-  <div class="info-content">
-  <p><span class='fun-text'>All prices shown are average estimates based on in-network providers, kind of like the <i>"blue book value"</i> for dental work.</span></p>
-  <p>In-network essentially means your dental provider is contractually obligated to offer lower prices. Always confirm that your dentist is in your insurance network, as out-of-network costs can be substantially higher.</p>
-  <span class='spacing'></span>
-  <p><span class='fun-text'>Procedure costs can also vary based on complexity. We simply averaged the costs.</span> </p>
-  <div class="procedure-cost-grid">
-  <div class="procedure-cost-item">
-  <i class="fas fa-tooth"></i>
-  <div class="procedure-cost-text">
-  <b>Fillings:</b><br> Price varies by number of surfaces and material used
-  </div>
-  </div>
-  <div class="procedure-cost-item">
-  <i class="fas fa-hand-holding-medical"></i>
-  <div class="procedure-cost-text">
-  <b>Extractions:</b> Simple extractions cost less than surgical ones
-  </div>
-  </div>
-  <div class="procedure-cost-item">
-  <i class="fas fa-teeth"></i>
-  <div class="procedure-cost-text">
-  <b>Dentures:</b> Partial dentures cost less than full dentures
-  </div>
-  </div>
-  <div class="procedure-cost-item">
-  <i class="fas fa-tools"></i>
-  <div class="procedure-cost-text">
-  <b>Root Canals:</b> Front teeth typically cost less than molars
-  </div>
-  </div>
-  </div>
-  <p> Lastly, please note that if you have gotten work done recently, there may be <b>pending claims</b> that aren't reflected in your current benefits remaining. Think of this like a check that hasn't yet cleared. You can add this work to your Total Estimated Copay to get an accurate copay for all other work.</b>
-  </div>
-  </div>
+    <div class="info-section" id="pricing-info">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <i class="fas fa-tag"></i>
+    </div>
+    </div>
+    <h3 class="info-heading">A Note on Pricing</h3>
+    <div class="info-content">
+    <p><span class='fun-text'>All prices shown are average estimates based on in-network providers, kind of like the <i>"blue book value"</i> for dental work.</span></p>
+    <p>In-network essentially means your dental provider is contractually obligated to offer lower prices. Always confirm that your dentist is in your insurance network, as out-of-network costs can be substantially higher.</p>
+    <span class='spacing'></span>
+    <p>Procedure costs can also vary based on complexity. We simply averaged the costs.</p>
+    <div class="procedure-cost-grid">
+    <div class="procedure-cost-item">
+    <i class="fas fa-tooth"></i>
+    <div class="procedure-cost-text">
+    <b>Fillings:</b><br> Price varies by number of surfaces and material used
+    </div>
+    </div>
+    <div class="procedure-cost-item">
+    <i class="fas fa-hand-holding-medical"></i>
+    <div class="procedure-cost-text">
+    <b>Extractions:</b> Simple extractions cost less than surgical ones
+    </div>
+    </div>
+    <div class="procedure-cost-item">
+    <i class="fas fa-teeth"></i>
+    <div class="procedure-cost-text">
+    <b>Dentures:</b> Partial dentures cost less than full dentures
+    </div>
+    </div>
+    <div class="procedure-cost-item">
+    <i class="fas fa-tools"></i>
+    <div class="procedure-cost-text">
+    <b>Root Canals:</b> Front teeth typically cost less than molars
+    </div>
+    </div>
+    </div>
+    <p> Lastly, please note that if you have gotten work done recently, there may be <b>pending claims</b> that aren't reflected in your current benefits remaining. Think of this like a check that hasn't yet cleared. You can add this work to your Total Estimated Copay to get an accurate copay for all other work.</b>
+    </div>
+    </div>
 
-  <div class="info-section" id="timing-info">
-  <div class="section-icon-container">
-  <div class="section-icon">
-  <i class="fas fa-clock"></i>
-  </div>
-  </div>
-  <h3 class="info-heading">A Note on Timing</h3>
-  <div class="info-content">
-  <p><span class='fun-text'>In the world of insurance, a given "year" starts on your plan renewal date, which in your case would be ${formatDateStringFull(variables[4][1])}.</span></p>
-  <p> Remember this fact especially when we are referencing the frequency of procedures, or how you can split work over two years. On the subject of frequency, note that just because it's not specified, doesn't mean there isn't one. Insurances hide information.</p>  
-  <p>Strategic timing tips:</p>
-  <ul class="info-list">
-  <li><i class="fas fa-calendar-check"></i> If you have multiple procedures to get done that will cause you to run out of benefits, consider waiting for your insurance to renew to save money.</li>
-  <li><i class="fas fa-hourglass-half"></i> For non-urgent procedures, wait until your insurance renews if you are out of benefits.</li>
-  </ul>
-  </div>
-  </div>
+    <div class="info-section" id="timing-info">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <i class="fas fa-clock"></i>
+    </div>
+    </div>
+    <h3 class="info-heading">A Note on Timing</h3>
+    <div class="info-content">
+    <p><span class='fun-text'>In the world of insurance, a given "year" starts on your plan renewal date, <i>which in your case would be <u>${formatDateStringFull(variables[4][1])}.</u></i></span></p>
+    <p> Remember this fact especially when we are referencing the frequency of procedures, or how you can split work over two years. On the subject of frequency, note that just because it's not specified, doesn't mean there isn't one. Insurances hide information.</p>  
+    <p>Strategic timing tips:</p>
+    <ul class="info-list">
+    <li><i class="fas fa-calendar-check"></i> If you have multiple procedures to get done that will cause you to run out of benefits, consider waiting for your insurance to renew to save money.</li>
+    <li><i class="fas fa-hourglass-half"></i> For non-urgent procedures, wait until your insurance renews if you are out of benefits.</li>
+    </ul>
+    </div>
+    </div>
 
 
-  <div class="disclaimer">
-  <p><i class="fas fa-info-circle"></i> This information is provided for educational purposes only and is not a guarantee of insurance coverage or costs. Always verify coverage with your insurance provider before undergoing any dental procedure.</p>
-  </div>
-  `
+    <div class="disclaimer">
+    <p><i class="fas fa-info-circle"></i> This information is provided for educational purposes only and is not a guarantee of insurance coverage or costs. Always verify coverage with your insurance provider before undergoing any dental procedure.</p>
+    </div>
+    `
   }
 }
 
@@ -1902,16 +2550,19 @@ document.getElementById("tab1").addEventListener("click", function()
 });
 document.getElementById("tab2").addEventListener("click", function()
 {
-  document.body.style.overflow = "auto";
   tabNumber = 2;
   scrollTop();
   showNext();
+  setTimeout (() =>
+  {
+    document.body.style.overflow = testTab2Overflow();
+  }, 50);
 });
 document.getElementById("tab3").addEventListener("click", function()
 {
   document.body.style.overflow = "auto";
   tabNumber = 3;
-  scrollTop();
+  scrollTopSmallDistance();
   showNext();
 });
 /* COOL FADE IN ANIMATION */
@@ -1936,6 +2587,35 @@ document.querySelectorAll('.tab').forEach(tab =>
     });
   });
 });
+
+
+function testTab2Overflow() 
+{
+  // Get all coverage sections in Tab 2
+  const sections = document.querySelectorAll('.coverage-section');
+  // Log each section with its display style for debugging
+  sections.forEach((section, index) => {
+    const style = window.getComputedStyle(section);
+
+  });
+  // Count only truly visible sections
+  let visibleSectionCount = 0;
+  sections.forEach(section => {
+    // Check computed style and other visibility factors
+    const style = window.getComputedStyle(section);
+    const hasVisibleItems = section.querySelectorAll('.coverage-item').length > 0;
+    const isActuallyVisible = style.display !== 'none' && 
+    style.visibility !== 'hidden' && 
+    parseInt(style.height) > 0 &&
+    hasVisibleItems;
+    if (isActuallyVisible) {
+      visibleSectionCount++;
+    }
+  });
+  
+  const result = visibleSectionCount < 4 ? 'hidden' : 'auto';
+  return result;
+}
 
 function makeTabActive()
 {
@@ -2192,42 +2872,42 @@ function runLoadingAnimation()
         const animStyle = document.createElement('style');
         animStyle.id = 'status-entrance-animation';
         animStyle.textContent = `
-      @keyframes expand-active {
-        0% {
-          transform: scale(0.3);
-          opacity: 0;
+        @keyframes expand-active {
+          0% {
+            transform: scale(0.3);
+            opacity: 0;
+          }
+          60% {
+            transform: scale(1.1);
+            opacity: 1;
+          }
+          80% {
+            transform: scale(0.95);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
-        60% {
-          transform: scale(1.1);
-          opacity: 1;
-        }
-        80% {
-          transform: scale(0.95);
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
 
-      @keyframes check-rotate-in {
-        0% {
-          transform: rotate(-45deg) scale(0.3);
-          opacity: 0;
+        @keyframes check-rotate-in {
+          0% {
+            transform: rotate(-45deg) scale(0.3);
+            opacity: 0;
+          }
+          60% {
+            transform: rotate(10deg) scale(1.15);
+            opacity: 1;
+          }
+          80% {
+            transform: rotate(-5deg) scale(0.95);
+          }
+          100% {
+            transform: rotate(0deg) scale(1);
+            opacity: 1;
+          }
         }
-        60% {
-          transform: rotate(10deg) scale(1.15);
-          opacity: 1;
-        }
-        80% {
-          transform: rotate(-5deg) scale(0.95);
-        }
-        100% {
-          transform: rotate(0deg) scale(1);
-          opacity: 1;
-        }
-      }
-      `;
+        `;
         document.head.appendChild(animStyle);
       }
 
@@ -2414,6 +3094,7 @@ function initializeTab1()
       width: ${svgSize}px;
       height: ${svgSize}px;
       margin: 20px auto;
+      margin-bottom: 20px;
     }
     .svg-circle {
       transform: rotate(-90deg);
@@ -2554,7 +3235,7 @@ function detectVisibleElements()
       // Element is horizontally in view
       rect.left <= (window.innerWidth || document.documentElement.clientWidth) &&
       rect.right >= 0
-    );
+      );
   }
 
   function checkAllElements()
@@ -2605,7 +3286,6 @@ function detectVisibleElements()
 
 function initializeTab2()
 {
-  document.body.style.overflow = "auto";
   waitForElement(".coverage-item", () =>
   {
     processNotCoveredProcedures();
@@ -2887,12 +3567,12 @@ function updateShowProcedurePopupFunction()
       const sectionIndex = Array.from(document.querySelectorAll('.coverage-section')).indexOf(parentSection);
       if (sectionIndex === 3)
       { // "Not Covered" section is the 4th (index 3)
-        const popup = document.getElementById('procedure-popup');
-        if (popup)
-        {
-          const popupContent = popup.querySelector('.popup-content');
-          if (popupContent)
-          {
+    const popup = document.getElementById('procedure-popup');
+    if (popup)
+    {
+      const popupContent = popup.querySelector('.popup-content');
+      if (popupContent)
+      {
             // Reset all class names and add 'not-covered'
             popupContent.className = 'popup-content not-covered';
 
@@ -3359,7 +4039,7 @@ function createProcedurePopup()
   <div class="copay-label">
   Your Estimated Copay
   <i class="fas fa-info-circle info-tooltip-icon"></i>
-  <div class="info-tooltip">This is a rough estimate that does not factor in your benefits remaining. Press <b>"Add To Estimate"</b> for a more accurate copay.</div>
+  <div class="info-tooltip">This is a rough estimate that does not factor in your benefits remaining.\nPress <span style="font-weight:700">Add To Estimate</span> for a more accurate copay.</div>
   </div>
   <div class="copay-amount">$0</div>
   <div class="insurance-pays">Benefits used: $0</div>
@@ -3441,74 +4121,74 @@ function createProcedurePopup()
 }
 
 const procedureCosts = //the only legitimate numbers here are cost
+{
+  "Cleanings":
   {
-    "Cleanings":
-    {
-      cost: 75,
-      coverage: 100,
-      patient: 0
-    },
-    "Exams & X-Rays":
-    {
-      cost: 60,
-      coverage: 100,
-      patient: 0
-    },
-    "Emergency Exams":
-    {
-      cost: 75,
-      coverage: 100,
-      patient: 0
-    },
-    "Fillings":
-    {
-      cost: 150,
-      coverage: 80,
-      patient: 36
-    },
-    "Extractions":
-    {
-      cost: 150,
-      coverage: 80,
-      patient: 40
-    },
-    "Root Canals":
-    {
-      cost: 750,
-      coverage: 80,
-      patient: 160
-    },
-    "Deep Cleanings":
-    {
-      cost: 600,
-      coverage: 80,
-      patient: 60
-    },
-    "Crowns":
-    {
-      cost: 900,
-      coverage: 50,
-      patient: 600
-    },
-    "Bridges":
-    {
-      cost: 2100,
-      coverage: 50,
-      patient: 1250
-    },
-    "Dentures":
-    {
-      cost: 900,
-      coverage: 50,
-      patient: 900
-    },
-    "Implants":
-    {
-      cost: 2800,
-      coverage: 50,
-      patient: 1500
-    }
-  };
+    cost: 75,
+    coverage: 100,
+    patient: 0
+  },
+  "Exams & X-Rays":
+  {
+    cost: 60,
+    coverage: 100,
+    patient: 0
+  },
+  "Emergency Exams":
+  {
+    cost: 75,
+    coverage: 100,
+    patient: 0
+  },
+  "Fillings":
+  {
+    cost: 150,
+    coverage: 80,
+    patient: 36
+  },
+  "Extractions":
+  {
+    cost: 150,
+    coverage: 80,
+    patient: 40
+  },
+  "Root Canals":
+  {
+    cost: 750,
+    coverage: 80,
+    patient: 160
+  },
+  "Deep Cleanings":
+  {
+    cost: 600,
+    coverage: 80,
+    patient: 60
+  },
+  "Crowns":
+  {
+    cost: 900,
+    coverage: 50,
+    patient: 600
+  },
+  "Bridges":
+  {
+    cost: 2100,
+    coverage: 50,
+    patient: 1250
+  },
+  "Dentures":
+  {
+    cost: 900,
+    coverage: 50,
+    patient: 900
+  },
+  "Implants":
+  {
+    cost: 2800,
+    coverage: 50,
+    patient: 1500
+  }
+};
 
 function updateProcedureCosts()
 {
@@ -3691,7 +4371,7 @@ function showProcedurePopup(item)
   }
 
   const procedureDescription = procedureDescriptions[name] ||
-    "No detailed information available for this procedure.";
+  "No detailed information available for this procedure.";
   if (procedureInfo) procedureInfo.innerHTML = procedureDescription;
 
   // Find frequency info
@@ -3843,10 +4523,16 @@ function showProcedurePopup(item)
   popupContent.style.animation = "popupFadeIn .5s ease forwards";
   popup.style.display = "flex";
 
+  scrollTop();
   setTimeout(() =>
   {
+    scrollTop();
     setupPopupInfoTooltip();
   }, 50);
+  setTimeout(() =>
+  {
+    scrollTop();
+  }, 200);
 }
 
 /*FADE IN AND OUT for popup*/
@@ -3900,7 +4586,7 @@ document.addEventListener('click', function(event)
     const tooltip = document.querySelector('.info-tooltip');
     const secondContent = document.getElementsByClassName("second-content")[0];
     const header = document.getElementsByClassName("header-container")[0];
-    document.body.style.overflow = "auto";
+    document.body.style.overflow = testTab2Overflow();
     document.body.style.touchAction = 'auto';
 
     event.stopPropagation();
@@ -4457,7 +5143,6 @@ function updateCalculatorDisplay()
     let previousPatientCost = 0;
     let previousBenefitsRemaining = parseInt(maximumRemaining.replace('$', ''));
 
-    // Use multiple scroll approaches for maximum compatibility
     scrollTopAndLock();
 
     if (calculatorHeading)
@@ -4628,6 +5313,8 @@ function updateCalculatorDisplay()
     const sections = document.querySelectorAll('.coverage-section');
     sections.forEach((section, index) =>
     {
+
+      section.style.outline = "0px solid transparent";
       // Get the computed style (what's actually showing on screen)
       const computedStyle = window.getComputedStyle(section);
 
@@ -4635,7 +5322,7 @@ function updateCalculatorDisplay()
       section.style.backgroundColor = computedStyle.backgroundColor;
 
       // Now you can transition this property
-      section.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, background-color 0.4s ease";
+      section.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;";
 
       // Force reflow
       void section.offsetHeight;
@@ -4663,9 +5350,9 @@ function updateCalculatorDisplay()
       const notCoveredSection = document.querySelectorAll('.coverage-section')[3];
       notCoveredSection.classList.add('not-covered-section');
       const hasNotCoveredItems = notCoveredSection &&
-        notCoveredSection.style.display !== 'none' &&
-        notCoveredSection.querySelector('.coverage-grid') &&
-        notCoveredSection.querySelector('.coverage-grid').children.length > 0;
+      notCoveredSection.style.display !== 'none' &&
+      notCoveredSection.querySelector('.coverage-grid') &&
+      notCoveredSection.querySelector('.coverage-grid').children.length > 0;
       const emptySections = [];
       for (let i = 0; i < sections.length; i++)
       {
@@ -4678,11 +5365,21 @@ function updateCalculatorDisplay()
       }
       const visibleSectionsCount = 4 - emptySections.length;
 
-      var spacing = 80;
+      var spacing = 77; /* higher is closer */
       if (visibleSectionsCount === 4)
       {
-        spacing = 87.5;
+        spacing = 86;
       }
+
+      //change spacing if between 5-7 items in not covered
+      const notCoveredItemCount = notCoveredSection ? 
+      notCoveredSection.querySelectorAll('.coverage-item').length : 0;
+      if (notCoveredItemCount >= 5 && notCoveredItemCount < 8)
+      {
+        spacing = 86;
+      }
+
+
 
       if (parentSection)
       {
@@ -4776,7 +5473,7 @@ function updateCalculatorDisplay()
     if (calculatorHeading)
     {
       calculatorHeading.classList.add('calculator-exit');
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = testTab2Overflow();
       document.body.style.touchAction = 'auto';
 
       // Remove from DOM after animation completes
@@ -4804,21 +5501,25 @@ function updateCalculatorDisplay()
         if (index === 0)
         {
           section.style.backgroundColor = "#BCE2C5";
+          section.style.outline = "3px solid #317568";
         }
         else if (index === 1)
         {
           section.style.backgroundColor = "#F8DDB2";
+          section.style.outline = "3px solid #AD8656";
         }
         else if (index === 2)
         {
           section.style.backgroundColor = "#E6A099";
+          section.style.outline = "3px solid #9E5743";
         }
         else if (index === 3)
         {
           section.style.backgroundColor = "#E0E0E0";
+          section.style.outline = "3px solid #606060";
         }
 
-        section.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease, background-color 0.8s ease";
+        section.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 4s ease, background-color .75s ease, outline .5s ease";
         section.style.transform = "translateY(0)";
         section.style.opacity = "1";
       });
@@ -4887,7 +5588,7 @@ function setupBenefitsInfoTooltip()
     timeout = setTimeout(() =>
     {
       hideTooltip();
-    }, 7500);
+    }, 15000);
   }
 
   // Click on info icon to toggle
@@ -5372,12 +6073,12 @@ function addCalculatorStyles()
     opacity: 1;
     transform: translateY(-50%) scale(1);
     pointer-events: auto;
-    animation: tooltip-pulse 1.5s ease-in-out infinite;
+    animation: tooltip-pulse 2.5s ease-in-out infinite;
   }
 
   @keyframes tooltip-pulse {
     0% { transform: translateY(-50%) scale(1); }
-    50% { transform: translateY(-50%) scale(1.02); }
+    50% { transform: translateY(-50%) scale(1.015); }
     100% { transform: translateY(-50%) scale(1); }
   }
 
@@ -5453,11 +6154,11 @@ function addCalculatorStyles()
   /* Animation for calculator exit - going up */
   @keyframes calc-exit {
     0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-100px); }
+    100% { opacity: 0; transform: translateY(-200px); }
   }
 
   .calculator-exit {
-    animation: calc-exit 0.75s forwards !important;
+    animation: calc-exit .85s forwards !important;
   }
   `;
 
@@ -5646,7 +6347,67 @@ function scrollTop()
   }, 5);
 }
 
-// Add this function to transitions.js to preload tab1 content
+function scrollTopSmallDistance()
+{
+  const currentPosition = window.scrollY;
+  
+  // If we're not already at the top, use multiple techniques to ensure we get there
+  if (currentPosition > 0) {
+    // Create a "bounce" effect to ensure address bar appears
+    // First scroll up beyond the top (browser will normalize this)
+    window.scrollTo(0, -120);
+    
+    // Create a series of rapid scrolls with varying timing and positions
+    setTimeout(() => {
+      window.scrollTo(0, -80);
+      
+      setTimeout(() => {
+        window.scrollTo(0, -40);
+        
+        setTimeout(() => {
+          // Final position to the exact top
+          window.scrollTo(0, 0);
+        }, 30);
+      }, 30);
+    }, 30);
+  } 
+  // If already at the top (or very close), we need a different approach
+  else if (currentPosition < 3) {
+    // Create small downward scroll first, then back to top
+    // This can help "wake up" the browser UI
+    window.scrollTo(0, 10);
+    
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 40);
+  }
+  
+  // Final attempt with different method after all other attempts
+  setTimeout(() => {
+    // If we're still not at the top, try a scroll with behavior: smooth
+    if (window.scrollY > 0) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Force a focus change which can help show address bar on some browsers
+    const tempButton = document.createElement('button');
+    tempButton.style.position = 'fixed';
+    tempButton.style.top = '0';
+    tempButton.style.left = '0';
+    tempButton.style.opacity = '0';
+    tempButton.style.pointerEvents = 'none';
+    document.body.appendChild(tempButton);
+    
+    tempButton.focus();
+    setTimeout(() => {
+      tempButton.blur();
+      document.body.removeChild(tempButton);
+    }, 100);
+  }, 100);
+}
 
 // Cache for preloaded content
 const tabContentCache = {
@@ -5813,102 +6574,152 @@ document.getElementById("tab1").addEventListener("click", function()
   }
 });
 
-/* Make input not be able to scroll */
-document.addEventListener('DOMContentLoaded', function()
-{
+// Replace the existing mobile scroll lock code with this improved version
+
+document.addEventListener('DOMContentLoaded', function() {
   // Check if we're on a mobile device
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) return; // Only apply on mobile devices
-
+  
   // Get all form inputs
   const inputs = document.querySelectorAll('#main-form input');
-
-  // Store original body height
-  let originalBodyHeight = 0;
-
-  // Track if we're in input mode
-  let inputActive = false;
-
-  // Initial document height for comparison
-  const initialDocHeight = document.documentElement.scrollHeight;
-
-  // Track currently focused input
-  let currentFocusedInput = null;
-
+  
+  // Store original body styles
+  let originalStyles = {
+    height: '',
+    overflow: '',
+    position: ''
+  };
+  
+  // Create a fixed position overlay to block all scrolling
+  const scrollBlocker = document.createElement('div');
+  scrollBlocker.style.position = 'fixed';
+  scrollBlocker.style.top = '0';
+  scrollBlocker.style.left = '0';
+  scrollBlocker.style.width = '100%';
+  scrollBlocker.style.height = '100%';
+  scrollBlocker.style.zIndex = '-1'; // Below content but above body
+  scrollBlocker.style.display = 'none';
+  document.body.appendChild(scrollBlocker);
+  
+  // Function to lock scrolling completely
+  function lockScroll() {
+    // Save current styles
+    originalStyles.height = document.body.style.height;
+    originalStyles.overflow = document.body.style.overflow;
+    originalStyles.position = document.body.style.position;
+    
+    // Lock the body in place
+    document.body.style.height = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    
+    // Show scroll blocker
+    scrollBlocker.style.display = 'block';
+    
+    // Save current scroll position
+    document.body.setAttribute('data-scroll-top', window.pageYOffset.toString());
+  }
+  
+  // Function to unlock scrolling
+  function unlockScroll() {
+    // Restore original styles
+    document.body.style.height = originalStyles.height;
+    document.body.style.overflow = originalStyles.overflow;
+    document.body.style.position = originalStyles.position;
+    document.body.style.width = '';
+    
+    // Hide scroll blocker
+    scrollBlocker.style.display = 'none';
+    
+    // Restore scroll position
+    const scrollTop = parseInt(document.body.getAttribute('data-scroll-top') || '0');
+    window.scrollTo(0, scrollTop);
+  }
+  
+  // Track if any input is focused
+  let inputFocused = false;
+  let lockScrollTimeout = null;
+  
   // Apply to each input
-  inputs.forEach(input =>
-  {
+  inputs.forEach(input => {
     // When input is focused
-    input.addEventListener('focus', function()
-    {
-      // If a different input is already focused, we don't need to reset
-      // just update the current focused input reference
-      if (!inputActive || currentFocusedInput !== input)
-      {
-        // Store original body height if not already in input mode
-        if (!inputActive)
-        {
-          originalBodyHeight = document.body.style.height;
+    input.addEventListener('focus', function() {
+      if (!inputFocused) {
+        inputFocused = true;
+        
+        // Clear any existing timeout
+        if (lockScrollTimeout) {
+          clearTimeout(lockScrollTimeout);
         }
-
-        // Lock body height to prevent overscroll
-        document.body.style.height = initialDocHeight + 'px';
-        document.body.style.maxHeight = initialDocHeight + 'px';
-        document.body.style.overflowY = 'scroll';
-
-        // Mark as active
-        inputActive = true;
-
-        // Update reference to current input
-        currentFocusedInput = input;
+        
+        // Delay the scroll lock slightly to allow cursor to appear
+        lockScrollTimeout = setTimeout(() => {
+          if (inputFocused) { // Double check input is still focused
+            lockScroll();
+          }
+        }, 100); // Small delay to let cursor appear first
       }
     });
-
+    
     // When input loses focus
-    input.addEventListener('blur', function()
-    {
-      // Small delay to ensure keyboard has time to close
-      // AND to check if focus moved to another input
-      setTimeout(() =>
-      {
-        // Only reset if we're not focusing another input
-        if (!document.activeElement || !document.activeElement.matches('#main-form input'))
-        {
-          // Restore original body height
-          document.body.style.height = originalBodyHeight;
-          document.body.style.maxHeight = '';
-          document.body.style.overflowY = '';
-
-          // Mark as inactive
-          inputActive = false;
-          currentFocusedInput = null;
+    input.addEventListener('blur', function() {
+      // Clear the lock timeout if it hasn't fired yet
+      if (lockScrollTimeout) {
+        clearTimeout(lockScrollTimeout);
+        lockScrollTimeout = null;
+      }
+      
+      // Check if focus moved to another input
+      setTimeout(() => {
+        if (!document.activeElement || !document.activeElement.matches('#main-form input')) {
+          unlockScroll();
+          inputFocused = false;
         }
-      }, 100);
+      }, 10);
+    });
+    
+    // Add touchstart event to improve responsiveness
+    input.addEventListener('touchstart', function() {
+      // Pre-focus the input on touch to improve cursor response
+      if (!inputFocused) {
+        // Force focus slightly before the actual focus event
+        setTimeout(() => {
+          if (!this.matches(':focus')) {
+            this.focus();
+          }
+        }, 0);
+      }
     });
   });
-
-  // Direct touch handler for iOS
-  document.addEventListener('touchmove', function(e)
-  {
-    if (!inputActive) return;
-
-    // Get current scroll position
-    const scrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = Math.min(initialDocHeight, document.documentElement.scrollHeight);
-
-    // Check if we're at the bottom
-    if (scrollY + windowHeight >= documentHeight)
-    {
-      // Prevent further scrolling when at the bottom
+  
+  // Block all touch move events when input is focused (but only after lock is applied)
+  document.addEventListener('touchmove', function(e) {
+    if (inputFocused && document.body.style.overflow === 'hidden') {
       e.preventDefault();
     }
-  },
-  {
-    passive: false
+  }, { passive: false });
+  
+  // iOS safeguard - re-check on resize (keyboard appears/disappears)
+  window.addEventListener('resize', function() {
+    // If we have focused inputs but somehow scroll is unlocked
+    if (inputFocused && document.body.style.overflow !== 'hidden') {
+      // Only lock if we're not in the middle of a delayed lock
+      if (!lockScrollTimeout) {
+        lockScroll();
+      }
+    }
+    // If no inputs are focused but we're still locked
+    else if (!inputFocused && document.body.style.overflow === 'hidden') {
+      // Double check no inputs are actually focused
+      const hasFocusedInput = document.activeElement && document.activeElement.matches('#main-form input');
+      if (!hasFocusedInput) {
+        unlockScroll();
+      }
+    }
   });
 });
-
 /* Make header always stay fixed at the top for Tab 3 */
 document.getElementById("tab3").addEventListener("click", function()
 {
@@ -5930,48 +6741,6 @@ document.getElementById("tab3").addEventListener("click", function()
     }
   }, 300);
 });
-
-// Fix for going back to home screen
-const originalProcessTransition = processTransition;
-processTransition = function()
-{
-  // Only modify behavior when coming from second screen
-  if (secondScreen)
-  {
-    // Start the transition but keep header fixed for now
-    const header = document.querySelector('.header');
-    if (header)
-    {
-      // Ensure header stays visible during transition
-      header.style.position = 'fixed';
-      header.style.top = '0';
-    }
-
-    // Call the original function to start content transitions
-    originalProcessTransition();
-
-    // Wait for the fade animation to complete, then reset header and scroll
-    setTimeout(() =>
-    {
-      // Scroll to top when content is faded out
-      window.scrollTo(0, 0);
-
-      // Reset header position after scrolling
-      if (header)
-      {
-        header.style.position = 'sticky';
-        header.style.top = '0';
-      }
-    }, 750); // Match your fade transition time (0.75s in your CSS)
-
-    return; // We already called the original function
-  }
-
-  // Normal case - just call original function
-  originalProcessTransition();
-}
-
-
 
 
 

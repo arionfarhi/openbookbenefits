@@ -26,7 +26,7 @@
   height: 100%;
   margin-top: 5%;
   box-sizing: border-box;
-  overflow-y: visible;
+  overflow-y: hidden;
   font-family: Montserrat, sans-serif;
   padding: 22px 25px;
   display: flex;
@@ -136,6 +136,7 @@
   margin-bottom: 10px;
   font-size: 13px;
   line-height: 1.5;
+  font-weight: 425;
   color: #555;
   clear: both;
   text-align: center;
@@ -174,6 +175,7 @@
 /* Section Content */
 .additional-info
 {
+  font-weight: 450;
   font-size: 14px;
   color: #555;
   line-height: 1.65;
@@ -184,6 +186,7 @@
 }
 .frequency-info
 {
+  font-weight: 450;
   font-size: 13.5px;
   padding: 12px 12px;
   padding-top: 0px;
@@ -304,12 +307,12 @@
 @keyframes pulse-tooltip 
 {
   0% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.02); }
+  50% { transform: translateX(-50%) scale(1.015); }
   100% { transform: translateX(-50%) scale(1); }
 }
 .info-tooltip.show-tooltip 
 {
-  animation: pulse-tooltip 1.5s ease-in-out infinite;
+  animation: pulse-tooltip 2.5s ease-in-out infinite;
 }
 .copay-amount
 {

@@ -33,17 +33,17 @@
 }
 @keyframes dot1 {
 	0%, 100% { background-color: #3498db; transform: scale(1); }
-	33% { background-color: #2980b9; transform: scale(1.2); }
+	33% { background-color: rgba(41, 128, 185, 0.64); transform: scale(1.2); }
 }
 
 @keyframes dot2 {
 	0%, 100% { background-color: #3498db; transform: scale(1); }
-	33% { background-color: #2980b9; transform: scale(1.2); }
+	33% { background-color: rgba(41, 128, 185, 0.64); transform: scale(1.2); }
 }
 
 @keyframes dot3 {
 	0%, 100% { background-color: #3498db; transform: scale(1); }
-	33% { background-color: #2980b9; transform: scale(1.2); }
+	33% { background-color: rgba(41, 128, 185, 0.64); transform: scale(1.2); }
 }
 
 
@@ -73,8 +73,7 @@
 	opacity: 0;
 	transition: opacity 1s ease-in-out;
 	pointer-events: none;
-  background-color: #fcfdfe; /* equivalent to background but 100% opacity */
-  /*box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);*/
+  background-color: #FCFEFE; /* equivalent to background but 100% opacity */
 }
 .tab 
 {
@@ -87,9 +86,9 @@
 	text-align: center;
 	align-items: center;
   font-weight: 600;
-	-webkit-tap-highlight-color: transparent; 
-	user-select: none; 
-	bottom: 6px;
+  -webkit-tap-highlight-color: transparent; 
+  user-select: none; 
+  bottom: 6px;
   overflow: visible;
   transition: all 0.3s ease, opacity .4s ease-in-out;
   opacity: .4;
@@ -164,21 +163,21 @@
 
 #summary-div
 {
-	width: 90%;
-	margin-left: 5%;
+	width: 92%;
+	margin-left: 4%;
 }
 #summary-row-1
 {
 	display: flex;
 	flex-direction: row;
-	gap: 7.5px;
+	gap: 10px;
 	margin-top: 5%;
 	margin-bottom: 5%;
 }
 #summary-row-1 div
 {
 	padding-top: 18px;
-	padding-bottom: 18px;
+	padding-bottom: 30px;
 	border-radius: 20px;
 	width: 50%;
 }
@@ -196,24 +195,26 @@ b
 
 #summary-card-eligibility
 {
-	font-weight: 500;
+	font-weight: 525;
 	text-align: left;
 	padding-left: 5%;
 	padding-right: 3%;
-	line-height: 1.3;
+	line-height: 1.4;
 	font-size: 15.5px;
 	color: #555;
 	background-color: #BCE2C5;
+  outline: 3px solid rgb(49, 117, 104,.925);
+  outline-offset: -3px; 
 }
 .eligibility-status-row
 {
 	display: flex;
 	flex-direction: row;
-	gap: 10px;
+	gap: 5px;
 	position: relative;
 	top: 3.5px;
 	right: 5.5px;
-	margin-bottom: 0px;
+	margin-bottom: -2px;
 	font-weight: 900;
 	color: rgb(49, 117, 104,.925);
 }
@@ -227,7 +228,7 @@ b
 	position: relative;
 	letter-spacing: .01px;
 	bottom: 2px;
-	right: 3px;
+	right: 0px;
 }
 
 #renewal-summary-title
@@ -236,14 +237,16 @@ b
 }
 #summary-card-renewal
 {
-	font-weight: 500;
+	font-weight: 525;
 	text-align: left;
 	padding-left: 5%;
 	padding-right: 3%;
-	line-height: 1.3;
+	line-height: 1.4;
 	font-size: 15.5px;
 	color: #555;
 	background-color: #F8DDB2;
+  outline: 3px solid #A47F52;
+  outline-offset: -3px; 
 }
 .renewal-status-row
 {
@@ -253,7 +256,7 @@ b
 	position: relative;
 	top: 3.5px;
 	right: 5.5px;
-	margin-bottom: 20px;
+	margin-bottom: 21.25px;
 	font-weight: 900;
 	color: #A47F52;
 }
@@ -263,19 +266,19 @@ b
 }
 .renewal-status-row h4
 {
-	font-size: 22px;
+	font-size: 24px;
 	position: relative;
 	letter-spacing: .01px;
 	overflow: hidden;
 	white-space: nowrap;
 	flex-shrink: 0;
-	top: 1px;
-	right: 2px;
+	top: 0px;
+	right: 3px;
 }
 .tiny-year
 {
 	position: relative;
-	font-size: 22px;
+	font-size: 24px;
 }
 
 
@@ -284,32 +287,31 @@ b
 	padding-top: 20px;
 	padding-bottom: 20px;
 	border-radius: 20px;
-	background-color: rgba(73, 143, 196, 0.2);
 	color: #555;
-  font-weight: 500;
+  font-weight: 525;
+  background-color: #D4E8F2;
+  outline: 3px solid #2980B9;
+  outline-offset: -3px; 
 }
 #summary-card-benefits h3
 {
 	margin-left: 5%;
 	font-size: 19px;
-	color: #2980b9;
-  opacity: .9;
+	color: #2980B9;
 }
 .big-bold
 {
 	font-weight: 600;
-	font-size: 37.5px;
+	font-size: 38px;
 	padding: 0;
 	vertical-align: baseline;
 	line-height: 1.4;
 	animation: expand-number 1.5s ease-out;
-	color: #2980b9;
-  opacity: .9;
+  color: #2980B9;
 }
 .remaining-text
 {
-  color: #2980b9;
-  opacity: .9;
+  color: #2980B9;
   font-weight: 625;
   position: relative;
   bottom: 6px;
@@ -328,7 +330,7 @@ b
 	}
 	100% {
 		transform: scale(1);
-		opacity: .9;
+		opacity: 1;
 	}
 }
 .summary-benefits-info
@@ -347,8 +349,8 @@ b
 
 #coverage-div
 {
-	width: 95%;
-	margin-left: 2.5%;
+	width: 93.5%;
+	margin-left: 3.25%;
 	margin-top: 3.5%;
 }
 .coverage-section 
@@ -413,8 +415,8 @@ b
 	border-radius: 12px;
 	box-shadow: none;
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
-	height: 92px;
-	width: 92px;
+	height: 91.5px;
+	width: 91.5px;
 	opacity: .9;
 }
 .coverage-icon 
@@ -443,6 +445,8 @@ b
   padding-bottom: 7.5px;
   margin-bottom: 10px;
   background-color: #BCE2C5;
+  outline: 3px solid #317568;
+  outline-offset: -3px;
 }
 .coverage-section:nth-child(2) 
 {
@@ -452,6 +456,8 @@ b
   padding-bottom: 7.5px;
   margin-bottom: 10px;
   background-color: #F8DDB2;
+  outline: 3px solid #AD8656;
+  outline-offset: -3px;
 }
 .coverage-section:nth-child(3) 
 {
@@ -461,6 +467,8 @@ b
   padding-bottom: 7.5px;
   margin-bottom: 10px;
   background-color: #E6A099;
+  outline: 3px solid #9E5743;
+  outline-offset: -3px;
 }
 
 .coverage-section:nth-child(1) .coverage-heading 
@@ -534,6 +542,8 @@ b
   padding-bottom: 7.5px;
   margin-bottom: 80px;
   background-color: #E0E0E0;
+  outline: 3px solid #606060;
+  outline-offset: -3px;
 }
 
 .coverage-section:nth-child(4) .coverage-heading 
@@ -603,12 +613,14 @@ b
 
 
 
+
 /* TAB 3 */
+
 #info-div 
 {
-  padding: 15px 1.5%;
-  padding-top: 0px;
-  width: 97%;
+  padding: 15px 0%;
+  padding-top: 4px;
+  width: 92%;
   margin: 10px auto;
   margin-top: 10px;
   font-family: Montserrat, sans-serif;
@@ -621,10 +633,8 @@ b
   border-radius: 18px;
   padding: 25px 20px 20px;
   padding-top: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: visible;
-  font-weight: 475;
   color: #555;
 }
 .info-section.shown 
@@ -636,24 +646,27 @@ b
 #insurance-info 
 {
   background-color: #BCE2C5;
-  border: 5px solid #317568;
+  outline: 3px solid #317568;
+  outline-offset: -3px;
 }
 #pricing-info 
 {
   background-color: #F8DDB2;
-  border: 5px solid #AD8656;
+  outline: 3px solid #AD8656;
+  outline-offset: -3px;
 }
 #timing-info 
 {
-  background-color: #2980b933;
-  border: 5px solid #2980b9;
+  background-color: #D4E8F2;
+  outline: 3px solid #2980B9;
+  outline-offset: -3px;
 }
 /* Cool section icon containers similar to tab 1 */
 .section-icon-container 
 {
   position: absolute;
-  top: 10px;
-  left: 7.5px;
+  top: 11px;
+  left: 9.5px;
   width: 45px;
   height: 45px;
   display: flex;
@@ -700,7 +713,7 @@ b
 
 .info-heading {
   font-size: 23px;
-  font-weight: 700;
+  font-weight: 750;
   margin-bottom: 15px;
   margin-top: 0px;
   padding-top: 0px;
@@ -728,38 +741,41 @@ b
 
 #insurance-info .fun-text {
   color: #317568;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 #pricing-info .fun-text{
   color: #AD8656;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 #timing-info .fun-text {
   color: #2980b9;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 
 
-.info-content {
-  font-size: 14.5px;
-  line-height: 1.5;
-  color: #333;
+.info-content 
+{
+  font-weight: 550;
+  font-size: 15.25px;
+  line-height: 1.55;
+  color: #555;
   opacity: 0;
   transform: translateY(10px);
   animation: contentAppear 0.6s ease forwards;
   animation-delay: 0.5s;
 }
 
-.info-content p {
-  margin-bottom: 12px;
+.info-content p 
+{
+  margin-bottom: 18px;
 }
 
 .info-content b {
   font-weight: 600;
-  color: #444;
+  color: #555;
 }
 
 /* Grid layout for procedure costs */

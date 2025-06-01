@@ -2,39 +2,89 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-  <link rel="shortcut icon" href="images/icon.svg"/>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <link rel= "stylesheet" href= "index.css">
   <link rel= "stylesheet" href= "next.css">
   <link rel="stylesheet" href= "popup.css">
   <link rel="stylesheet" href= "query.css">
 
 
-  <title>Get More From Your Insurance</title>
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="icon" href="images/icon.svg" type="image/svg+xml">
+
+
+  <!-- SEO -->
+  <title>Free Insurance Benefits Checker | openbook </title>
+  <link rel="canonical" href="https://www.openbookbenefits.com/"> <!-- says this is the main website for google-->
+  <meta name="title" content="Free Insurance Benefits Checker | openbook">
+  <meta name="description" content="Check your dental insurance benefits instantly. See coverage percentages, remaining benefits, and estimate copays for free. Works with Delta Dental, Metlife, Cigna, and more.">
+  <meta name="keywords" content="dental insurance, benefits checker, insurance verification, dental coverage, copay calculator, Delta Dental, BlueCross BlueShield">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="author" content="openbook">
+  <!-- for when you share via text and such-->
+  <meta property="og:title" content="Free Dental Insurance Benefits Checker | openbook">
+  <meta property="og:description" content="Instantly verify your dental insurance coverage, remaining benefits, and copay estimates for free.">
+ <meta property="og:image" content="https://www.openbookbenefits.com/images/share.jpg"> <!-- make this better soon that shows what we do -->
+  <meta property="og:url" content="https://www.openbookbenefits.com/">
+  <meta property="og:type" content="website">
+  <!-- for when you share on twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free Dental Insurance Benefits Checker | openbook">
+  <meta name="twitter:description" content="Instantly verify your dental insurance coverage and estimate copays.">
+ <meta name="twitter:image" content="https://www.openbookbenefits.com/images/share.jpg"> <!-- make this better soon that shows what we do -->
+   <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "openbook",
+      "url": "https://www.openbookbenefits.com",
+      "description": "Free insurance benefits checker that helps users understand their insurance coverage, remaining benefits, and estimated copays.",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "provider": {
+    "@type": "Organization",
+    "name": "openbook",
+    "url": "https://www.openbookbenefits.com",
+    "sameAs": [
+    "https://openbookbenefits.com",
+    "https://openbookbenefit.com", 
+    "https://www.openbookbenefit.com"
+    ]
+    }
+    }
+  </script>
+
+
 </head>
 
 <body>
-	<header class="header">
+  <header class="header">
     <div class='header-container'>
       <div class="logo-container">
         <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" id='logo'>
           <g transform="translate(35, 150) scale(1.1)">
             <!-- OpenBook text with Montserrat font -->
-            <text font-family="'Montserrat'" font-size="55" font-weight="800" text-anchor="left" fill="#7fb3d5" letter-spacing="-.5" transform="skewX(-2.5)">
-              <tspan x="0" y="0">open<tspan dx="0" font-weight="800">b</tspan><tspan letter-spacing="1" font-weight="700">oo</tspan>k</tspan><tspan font-size="13" dx="5" dy="5" font-weight="1000">™</tspan></tspan>
+            <text font-family="'Montserrat'" font-size="55" font-weight="800" text-anchor="left" fill="rgba(41, 128, 185, .64)" letter-spacing="-.5" transform="skewX(-1.5)">
+              <tspan x="0" y="0">open<tspan dx="0" font-weight="800">b</tspan><tspan letter-spacing="1" font-weight="700">oo</tspan>k</tspan><tspan font-size="40" dx=3></tspan></tspan>
             </text>
             <path d="M215 -15 L225 -15" stroke="#7fb3d5" stroke-width="4" stroke-linecap="round" />
-            <path d="M200 15 Q 220 30 240 15" stroke="#7fb3d5" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(-43,-6) scale(1.2)"/>
+            <path d="M200 15 Q 220 30 240 15" stroke="#7fb3d5" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(-43.5,-7) scale(1.2)"/>
             <circle cx="202" cy="-17" r="2.5" fill="#7fb3d5" />
             <circle cx="239" cy="-17" r="2.5" fill="#7fb3d5" />
           </g>
         </svg>
       </div>
-      <div class="navigation">
-       <button class="menu-button">
+      <button class="menu-button">
         <div class="hamburger">
          <div></div>
          <div></div>
@@ -42,239 +92,63 @@
        </div>
      </button>
    </div>
- </div>
-</header>
-<div id="mobile-menu" class="hidden-menu">
-  <div class="menu-item" onclick="window.location.href='mailto:contact@openbookbenefits.com'">Contact us:<br><br><span style=
-    "color:#aaa; text-decoration:underline; font-size:16px">contact@openbookbenefits.com</div>
+ </header>
+ <div id="mobile-menu" class="hidden-menu">
+  <div class="menu-item">Support Center<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item">How openbook Works<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item">Learn More About Insurance<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item">openbook For Business<i class="fas fa-chevron-right"></i></div>
+</div>
+
+
+<div class='content'>
+
+  <div class='h2-div'><h2><span id='h2-line-1'>Get more <span id='typed-text'>benefit</span><span id='cursor-container'></span></span><br>from your insurance.</h2></div>
+
+  <div id="card-scanner-section">
+    <div class="scanner-option">
+      <i class="fas fa-camera scanner-icon"></i>
+      <div class="scanner-text">
+        <div class="scanner-title">Scan Insurance Card</div>
+      </div>
+      <i class="fas fa-chevron-right" style="color: rgba(41, 128, 185, 0.64); font-size: 20px;"></i>
+    </div>
   </div>
 
+  <!-- Divider -->
+  <div class="divider-container">
+    <div class="divider-line"></div>
+    <div class="divider-text">OR ENTER MANUALLY</div>
+    <div class="divider-line"></div>
+  </div>
 
-  <div class='content'>
-
-    <div class='h2-div'><h2><span id='h2-line-1'>Get more <span id='typed-text'>benefit</span><span id='cursor-container'></span></span><br>from your insurance.</h2></div>
-
-    <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg" id="picture">
-      <!-- Filters Definition -->
-      <defs>
-        <!-- Refined bottom shadow gradient -->
-        <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#000000;stop-opacity:0.04"/>
-          <stop offset="70%" style="stop-color:#000000;stop-opacity:0.02"/>
-          <stop offset="100%" style="stop-color:#000000;stop-opacity:0.0"/>
-        </linearGradient>
-        <!-- Blur filter for softer shadow -->
-        <filter id="blurFilter" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
-        </filter>
-        <!-- Paper texture pattern -->
-        <pattern id="paperTexture" patternUnits="userSpaceOnUse" width="100" height="100" patternTransform="scale(0.5)">
-          <rect width="100" height="100" fill="#f8f8f8"/>
-          <rect width="100" height="100" fill="#efefef" opacity="0.3"/>
-        </pattern>
-        <!-- Glow filter for magical elements -->
-        <filter id="glowFilter" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
-          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-        </filter>
-        <!-- Filter for main inkblot (restored to original) -->
-        <filter id="inkblotFilter" x="-50%" y="-50%" width="200%" height="200%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" seed="3" result="noise"/>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G"/>
-        </filter>
-        <!-- Improved small splatter filter -->
-        <filter id="smallSplatterFilter" x="-50%" y="-50%" width="200%" height="200%">
-          <feTurbulence type="turbulence" baseFrequency="0.15" numOctaves="3" seed="15" result="noise"/>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"/>
-          <feGaussianBlur stdDeviation="0.8"/>
-        </filter>
-        <!-- Texture pattern for inkblot -->
-        <pattern id="inkblotTexture" patternUnits="userSpaceOnUse" width="50" height="50" patternTransform="scale(0.5)">
-          <rect width="50" height="50" fill="#ffffff" opacity="0.05"/>
-          <circle cx="10" cy="10" r="5" fill="#ffffff" opacity="0.05"/>
-          <circle cx="40" cy="40" r="7" fill="#ffffff" opacity="0.05"/>
-          <circle cx="25" cy="20" r="4" fill="#ffffff" opacity="0.05"/>
-        </pattern>
-        <!-- Glass reflection gradient -->
-        <linearGradient id="glassReflection" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:white;stop-opacity:0.4"/>
-          <stop offset="100%" style="stop-color:white;stop-opacity:0"/>
-        </linearGradient>
-        <!-- Blue glass gradient -->
-        <radialGradient id="blueGlassGradient" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
-          <stop offset="0%" style="stop-color:#d4f1f9;stop-opacity:0.7"/>
-          <stop offset="85%" style="stop-color:#a3d5f5;stop-opacity:0.5"/>
-          <stop offset="100%" style="stop-color:#3498db;stop-opacity:0.4"/>
-        </radialGradient>
-        <!-- Enhanced blue inkblot gradient -->
-        <radialGradient id="inkblotGradient" cx="50%" cy="50%" r="70%" fx="40%" fy="40%">
-          <stop offset="0%" style="stop-color:#d4f1f9;stop-opacity:0.9"/>
-          <stop offset="60%" style="stop-color:#a3d5f5;stop-opacity:0.7"/>
-          <stop offset="100%" style="stop-color:#3498db;stop-opacity:0.5"/>
-        </radialGradient>
-      </defs>
-
-      <!-- Background -->
-      <rect x="0" y="0" width="500" height="400" rx="30" fill="transparent"/>
-
-      <!-- Enhanced Light Blue Inkblot Background with better layering and gradients -->
-      <!-- Main inkblot background (restored closer to original) -->
-      <g transform="translate(7.5, 77.5) scale(1.0)">
-        <!-- Main large inkblot -->
-        <path d="M250,200 C350,180 380,100 300,50 C220,0 180,50 150,40 C120,30 50,60 70,140 C90,220 150,220 250,200 Z" fill="#d4f1f9" opacity="0.5" filter="url(#inkblotFilter)"/>
-        <!-- Third inkblot layer -->
-        <path d="M300,250 C380,240 400,180 380,130 C360,80 300,60 230,90 C160,120 150,180 190,230 C230,280 220,260 300,250 Z" fill="#d4f1f9" opacity="0.5" filter="url(#inkblotFilter)"/>
-      </g>
-
-      <!-- Improved small inkblots - using path shapes instead of circles -->
-      <g>
-        <!-- Small inkblot 1 -->
-        <path d="M380,135 C385,130 390,133 392,138 C394,143 391,148 386,150 C381,152 375,148 373,143 C371,138 375,133 380,135 Z" transform="translate(-15,0)"
-        fill="#d4f1f9" opacity=".8" filter="url(#smallSplatterFilter)"/>
-
-        <path d="M380,135 C385,130 390,133 392,138 C394,143 391,148 386,150 C381,152 375,148 373,143 C371,138 375,133 380,135 Z" transform="translate(-322.5,20)"
-        fill="#d4f1f9" opacity=".9" filter="url(#smallSplatterFilter)"/>
-
-
-         <path d="M380,135 C385,130 390,133 392,138 C394,143 391,148 386,150 C381,152 375,148 373,143 C371,138 375,133 380,135 Z" transform="translate(15,40)"
-        fill="#d4f1f9" opacity=".8" filter="url(#smallSplatterFilter)"/>
-
-        <!-- Small inkblot 7 -->
-        <path d="M65,270 C68,268 72,269 74,272 C76,275 75,280 72,282 C69,284 65,283 63,280 C61,277 62,272 65,270 Z" transform="translate(17.5,0)"
-        fill="#d4f1f9" opacity="1" filter="url(#smallSplatterFilter)"/>
-
-        <!-- Small inkblot 8 -->
-        <path d="M320,90 C321,89 323,89 324,90 C325,91 325,93 324,94 C323,95 321,95 320,94 C319,93 319,91 320,90 Z" transform="scale(1.4) translate(-70,-10)"
-        fill="#d4f1f9" opacity=".8" filter="url(#smallSplatterFilter)"/>
-      </g>
-
-      <!-- Main Content Area -->
-      <g transform="translate(50, 70)">
-        <!-- Open Book - 205px height -->
-        <g transform="translate(180, 130) rotate(-10) scale(1)">
-          <!-- Book outer border/frame -->
-          <rect x="-110" y="-70" width="220" height="185" rx="8" fill="transparent" stroke="rgba(41, 128, 185, 0.7)" stroke-width="6.5">
-            <!-- Subtle pulsing animation for the border -->
-            <animate attributeName="stroke-opacity" values="0.7;0.9;0.7" dur="3s" repeatCount="indefinite"/>
-          </rect>
-          <!-- Left Page -->
-          <path d="M-105,-70 C-100,-73, -5,-73, 0,-70 L0,115 L-105,112 Z" fill="url(#paperTexture)" stroke="#dddddd" stroke-width="1.5"/>
-          <!-- Right Page -->
-          <path d="M0,-70 C5,-73, 100,-73, 105,-70 L105,112 L0,115 Z" fill="url(#paperTexture)" stroke="#dddddd" stroke-width="1.5"/>
-          <!-- Book Spine -->
-          <path d="M-3,-70 C-1,-73, 1,-73, 3,-70 L3,115 C1,118, -1,118, -3,115 Z" fill="rgba(41, 128, 185, 0.9)" stroke="rgba(41, 128, 185, 0.85)" stroke-width="1.5"/>
-          <!-- Page Content Lines - Left Page with consistent blue color -->
-          <g transform="translate(-80,-45)">
-            <rect width="60" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
-            <rect y="15" width="40" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
-            <line x1="0" y1="35" x2="65" y2="35" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="50" x2="65" y2="50" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="65" x2="65" y2="65" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="80" x2="65" y2="80" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="95" x2="65" y2="95" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="110" x2="65" y2="110" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="125" x2="65" y2="125" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-          </g>
-          <!-- Page Content Lines - Right Page with consistent blue color -->
-          <g transform="translate(15,-45)">
-            <rect width="60" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
-            <rect y="15" width="40" height="8" rx="2" fill="rgba(41, 128, 185, 0.3)"/>
-            <line x1="0" y1="35" x2="65" y2="35" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="50" x2="65" y2="50" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="65" x2="65" y2="65" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="80" x2="65" y2="80" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="95" x2="45" y2="95" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="110" x2="65" y2="110" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-            <line x1="0" y1="125" x2="55" y2="125" stroke="rgba(41, 128, 185, 0.5)" stroke-width="1.5"/>
-          </g>
-          <!-- Page Shadows for Dimension -->
-          <path d="M-105,-70 L-105,112 L-102,114 L-102,-68 Z" fill="#d0d0d0" opacity="0.6"/>
-          <path d="M105,-70 L105,112 L102,114 L102,-68 Z" fill="#d0d0d0" opacity="0.6"/>
-          <!-- Page fold shadow -->
-          <path d="M-2,-70 C-1,-72 1,-72 2,-70 L2,115 C1,113 -1,113 -2,115 Z" fill="#d0d0d0" opacity="0.2"/>
-          <!-- Bookmark Ribbon (no animation now) -->
-          <path d="M70,-70 L70,-25 L65,-35 L60,-25 L60,-70 Z" fill="#e74c3c" opacity="0.9"/>
-        </g>
-
-        <!-- Magnifying Glass - MOVED MORE DOWN AND RIGHT (No Zoom Effect) -->
-        <g id="magnifyingGlass" transform="translate(-280,-320) scale(1.8)">
-          <!-- Animation that makes the glass gently float -->
-          <animateTransform 
-          attributeName="transform" 
-          type="translate" 
-          values="0,0; 5,2; 0,5; -3,2; 0,0" 
-          dur="12.5s" 
-          repeatCount="indefinite" 
-          additive="sum" 
-          calcMode="spline" 
-          keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1; 0.4 0 0.6 1"/>
-
-          <!-- Handle - Blue metallic with gradient -->
-          <path d="M305,270 L328,293" stroke="#2980b9" opacity="0.8" stroke-width="7" stroke-linecap="round">
-            <animate attributeName="stroke" values="#2980b9;#3498db;#2980b9" dur="8s" repeatCount="indefinite"/>
-          </path>
-
-          <!-- Glass Ring - Matching blue theme -->
-          <circle cx="290" cy="255" r="20" fill="none" stroke="#2980b9" opacity="0.8" stroke-width="4">
-            <animate attributeName="stroke" values="#2980b9;#3498db;#2980b9" dur="8s" repeatCount="indefinite"/>
-          </circle>
-
-          <!-- Glass Lens - Transparent with color -->
-          <circle cx="290" cy="255" r="16" fill="url(#blueGlassGradient)">
-            <animate attributeName="opacity" values="0.8;0.6;0.8" dur="8s" repeatCount="indefinite"/>
-          </circle>
-
-          <!-- Enhanced reflections on glass -->
-          <path d="M280,245 Q285,240 290,245" stroke="white" stroke-width="1.5" fill="none" opacity="0.7"/>
-          <path d="M284,247 Q288,243 292,246" stroke="white" stroke-width="1" fill="none" opacity="0.5"/>
-          <circle cx="285" cy="250" r="3" fill="url(#glassReflection)"/>
-          <circle cx="287" cy="247" r="1.5" fill="white" opacity="0.4"/>
-        </g>
-      </g>
-
-      <!-- Refined bottom shadow -->
-      <ellipse cx="230" cy="385" rx="110" ry="8" fill="url(#shadowGradient)" filter="url(#blurFilter)" transform="rotate(-6)"/>
-    </svg>
-
-
-
-
-
-
-    <form id="main-form" autocomplete='off' autocorrect="off">
-     <div id="form-sans-submit">
+  <!-- Manual Form -->
+  <form id="main-form" autocomplete='off' autocorrect="off">
+    <div id="form-sans-submit">
       <div class="input-container">
-       <input type="text" id="fullName" name="fullName" placeholder="Full Name" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="go">
-       <i class="fas fa-user"></i>
-     </div>
-     <div class="input-container">
-       <input type="tel" id="dob" name="dob" placeholder="Date of Birth" autocomplete="off" spellcheck="false"> 
-       <i class="fas fa-calendar"></i>
-     </div>
-     <div class="input-container">
-       <input type="text" id="memberId" name="memberId" placeholder="Member ID" autocomplete="off" spellcheck="false" enterkeyhint="go">
-       <i class="fas fa-id-card" id="card-icon"></i>
-     </div>
-   </div>
- </form>
-
-
+        <input type="text" id="fullName" name="fullName" autocomplete="name" placeholder="Full Name" autocapitalize="words" spellcheck="false" enterkeyhint="go">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="input-container">
+        <input type="tel" id="dob" name="dob" placeholder="Date of Birth" autocomplete="off" spellcheck="false"> 
+        <i class="fas fa-calendar"></i>
+      </div>
+      <div class="input-container">
+        <input type="text" id="memberId" name="memberId" placeholder="Member ID" autocomplete="off" spellcheck="false" enterkeyhint="go">
+        <i class="fas fa-id-card" id="card-icon"></i>
+      </div>
+      <div class="input-container">
+        <input type="text" id="insuranceName" name="insuranceName" placeholder="Insurance Company Name" autocomplete="off" spellcheck="false" enterkeyhint="go">
+        <i class="fas fa-building"></i>
+      </div>
+    </div>
+    <p> We do not store, sell, or share your data. Your data is also HIPPA + PHI compliant. <span style="text-decoration:underline;font-weight:550;">Learn more </span></p>
+  </form>
 </div>
 
 <div class='content-bottom'>
-
   <button type="submit" id="submit" onclick="formValidation()"><i class='fas fa-arrow-left'></i><span>Continue</span><i class='fas fa-arrow-right'></i></i></button>
-
-  <div id="learn-more-container">
-    <a href="#" id="learn-more-link" onclick="showHowItWorks(event)">How does this work?</a>
-  </div>
-
 </div>
-
-
-</body>
-
-
 
 
 <!-- Orientation Warning: -->
@@ -304,33 +178,550 @@
 </div>
 <div class='second-content'></div>
 
-</body>
 
 
 
 <script src="transitions.js"></script>
+<script src="ocr.js"></script>
 
+</body>
+
+<!-- Side Menu -->
 <script>
+
   /* MENU BUTTON TRANSITION FEEDBACK */
   const menuButton = document.querySelector('.menu-button');
   const menu = document.getElementById('mobile-menu');
+  let originalOverflowStyle = "hidden";
 
   function toggleMenu() 
   {
+    originalOverflowStyle = document.body.style.overflow;
     menu.classList.toggle('show');
-    menuButton.classList.add('menu-tap-feedback');
-    setTimeout(() => {
-      menuButton.classList.remove('menu-tap-feedback');
-    }, 150);
+    // Toggle hamburger active state
+    const hamburger = menuButton.querySelector('.hamburger');
+    hamburger.classList.toggle('active');
+    
+    // Close any open tooltips when menu opens
+    if (menu.classList.contains('show')) 
+    {
+      // Close "How does this work?" tooltip if open
+      const customTooltip = document.getElementById('custom-learn-more-tooltip');
+      if (customTooltip && customTooltip.style.display === 'block') {
+        customTooltip.style.opacity = '0';
+        customTooltip.style.transform = 'translateX(-50%) scale(0.95)';
+        // Reset link styling
+        const learnMoreLink = document.getElementById('learn-more-link');
+        if (learnMoreLink) {
+          learnMoreLink.style.fontWeight = '500';
+        }
+        // Hide after animation completes
+        setTimeout(() => {
+          customTooltip.style.display = 'none';
+        }, 300);
+      }
+      // Close any other tooltips that might exist
+      document.querySelectorAll('.tooltip').forEach(tooltip => {
+        tooltip.style.display = 'none';
+        tooltip.classList.remove('show-tooltip');
+        tooltip.classList.remove('visible');
+      });
+      document.body.style.touchAction = "none";
+    } 
+    else {
+      // Restore original overflow when menu closes
+      if (tabNumber == 3) {
+        document.body.style.touchAction = "auto";
+      }
+      if (tabNumber == 2) {
+        document.body.style.touchAction = testTab2Overflow();
+      }
+    }
   }
+  // Update the event listeners
   menuButton.addEventListener('click', toggleMenu);
-  menuButton.addEventListener('touchend', toggleMenu);
-  document.addEventListener('click', (e) => {
-    if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+  menuButton.addEventListener('touchend', function(e) {
+    e.preventDefault(); // Prevent any default behavior
+    toggleMenu();
+  });
+  // Keep the document click handler to close the menu when clicking elsewhere
+  document.addEventListener('click', (e) => 
+  {
+    if (!menu.contains(e.target) && !menuButton.contains(e.target)) 
+    {
       menu.classList.remove('show');
+      const hamburger = menuButton.querySelector('.hamburger');
+      hamburger.classList.remove('active'); // Also remove active state from hamburger
+    }
+    if (tabNumber == 3)
+    {
+      document.body.style.touchAction = "auto";
+    }
+    if (tabNumber == 2)
+    {
+      document.body.style.touchAction = testTab2Overflow();
     }
   });
 
+
+
+  // Content for each menu section
+  const menuSections = 
+  {
+    "Support Center": `
+    <h3>Support Center</h3>
+    <div class="section-content" id='section1'>
+    <p class='p-header'>Have any questions?</p>
+    <div class="support-item">
+    <i class="fas fa-envelope"></i>
+    <div>
+    <h4>Email Support</h4>
+    <p id='email'><b>contact@openbookbenefits.com</b></p>
+    <p>We typically respond within 24 hours</p>
+    </div>
+    </div>
+    </div>
+    `,
+
+    "openbook For Business": `
+    <h3>openbook For Business</h3>
+    <br>
+    <p>Level up your dental office with software that verifies insurance, calcualtes copays, and generates treatment plans with a click of a button. </p>
+    <br>
+    <br>
+    <a href="business/index.html"><p class='email'><b>openbookbenefits.com/business</b></p></a>
+
+    `,
+
+
+    "How openbook Works": `
+    <h3 class='how-it-works-header'>How openbook Works</h3>
+    <div class="section-content" id='section2'>
+    <div class="how-it-works-step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+    <h4>Enter Your Information</h4>
+    <p>Provide your name, date of birth, and member ID to verify your identity and access your benefits. We do not store, share, or sell any information.</p>
+    </div>
+    </div>
+    <div class="how-it-works-step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+    <h4>Review Your Coverage</h4>
+    <p>Using an API, we'll analyze your insurance policy to identify all available benefits and coverage options, and display it in a way that's easy to understand.</p>
+    </div>
+    </div>
+    <div class="how-it-works-step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+    <h4>Optimize Your Insurance</h4>
+    <p>Openbook finds benefits you might not know about, potentially saving you money and improving your coverage. It also provides personalized reccomednations on how to maximize your insurance benefits.</p>
+    </div>
+    </div>
+    </div>
+    `,
+
+
+    "Learn More About Insurance": `
+    <h3 id='section3-h3'> Learn More About Insurance <span class='small-menu-text'> (Coming Soon) </span></h3>
+    <div class='section-content' id='section3'>
+    <h4>Finding Dental Coverage</h4>
+    <ul>
+    <li><a href="#">How to choose the right dental plan</a></li>
+    <li><a href="#">Dental insurance through employers vs. marketplace</a></li>
+    <li><a href="#">Dental discount plans as alternatives to insurance</a></li>
+    <li><a href="#">Self-employed dental insurance options</a></li>
+    <li><a href="#">Medicare and dental coverage options</a></li>
+    </ul>
+
+    <h4>Understanding Benefits</h4>
+    <ul>
+    <li><a href="#">What's typically covered by dental insurance</a></li>
+    <li><a href="#">Preventive, basic, and major dental services explained</a></li>
+    <li><a href="#">Dental insurance for orthodontics and cosmetic procedures</a></li>
+    <li><a href="#">Annual maximums and how they affect your coverage</a></li>
+    <li><a href="#">In-network vs. out-of-network dental providers</a></li>
+    </ul>
+
+    <h4>Maximizing Your Coverage</h4>
+    <ul class="ul-last">
+    <li><a href="#">How to get the most from your dental benefits</a></li>
+    <li><a href="#">Timing dental procedures for optimal coverage</a></li>
+    <li><a href="#">Understanding dental insurance waiting periods</a></li>
+    <li><a href="#">Supplementing dental insurance for major procedures</a></li>
+    <li class='li-last'><a href="#">Health savings accounts for dental expenses</a></li>
+    </ul>
+    </div>
+    `,
+  };
+
+  // Add CSS for menu section styling
+  const menuStyles = document.createElement('style');
+  menuStyles.textContent = `
+  /* General */
+  .back-button 
+  {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: rgba(41, 128, 185, 0.64);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    padding-top: 25px;
+    margin-bottom: 15px;
+    font-family: "Montserrat";
+  }
+  .back-button i 
+  {
+    margin-right: 8px;
+  }
+  #mobile-menu h3 
+  {
+    font-size: 20px;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 700;
+    padding-right: 10%
+  }
+  .section-content 
+  {
+    padding-top: 0px;
+    font-family: "Montserrat";
+  }
+
+  /* Support Center */
+  .support-item
+  {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  .support-item i 
+  {
+    font-size: 24px;
+    color: #7fb3d5;
+    width: 30px;
+    text-align: center;
+    position: relative;
+    top: 6.25px;
+    margin: 0;
+    margin-right: 10px
+  }
+  #section1 h4
+  {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #666;
+  }
+  .support-item p
+  {
+    font-size: 13px;
+    color: #666;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    padding-right: 20%;
+  }
+
+
+  /* How Opeonbook Works */
+  #section2
+  {
+    padding-top: 25px;
+  }
+  .how-it-works-step 
+  {
+    display: flex;
+    margin-bottom: 25px;
+    align-items: flex-start;
+  }
+  .step-number 
+  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background-color: rgba(41, 128, 185, 0.64);
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    position: relative;
+  }
+  .step-content 
+  {
+    flex-grow: 1;
+    padding-right: 10%
+  }
+  .step-content h4 
+  {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 0px;
+    color: #666;
+    padding-right: 10%;
+  }
+  .step-content p 
+  {
+    margin-top: 0px;
+    padding-top: 0px;
+    font-size: 13px;
+    color: #666;
+    position: relative;
+    top: 3px;
+    padding-right: 5%;
+  }
+
+
+  #section3
+  {
+    padding-top: 0px;
+    padding-bottom: 140px;
+  }
+  .small-menu-text
+  {
+    font-size: 15px;
+    font-style: italic;
+  }
+  #section3 h4
+  {
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+  .section-content ul
+  {
+    padding-left: 10%;
+    padding-right: 10%;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .section-content li
+  {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .section-content a 
+  {
+    color: #2980b9;
+    opacity: .75;
+    text-decoration: none;
+  }
+  .email
+  {
+    font-size: 14.5px;
+  }
+  a:visited
+  {
+    color: inherit;
+  }
+
+
+  /* Animation classes */
+  .menu-fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .menu-fade-in 
+  {
+    opacity: 0;
+    animation: fadeIn 0.4s ease forwards;
+  }
+  /* Menu item animations */
+  .menu-item 
+  {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  /* Slide transitions for menu items and content */
+  .slide-right-out 
+  {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .slide-right-in 
+  {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideRightIn 0.3s forwards;
+  }
+  .slide-left-out 
+  {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .slide-left-in 
+  {
+    opacity: 0;
+    transform: translateX(20px);
+    animation: slideLeftIn 0.3s forwards;
+  }
+  @keyframes slideRightIn 
+  {
+    from { 
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes slideLeftIn 
+  {
+    from { 
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  `;
+  document.head.appendChild(menuStyles);
+
+
+  // Function to initialize the menu transitions
+  function initMenuTransitions() 
+  {
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    // Add click event listeners to all menu items
+    const menuItems = mobileMenu.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const sectionTitle = item.textContent.trim();
+        
+        // Slide out all menu items with a slight stagger effect
+        menuItems.forEach((menuItem, index) => {
+          setTimeout(() => {
+            menuItem.classList.add('slide-left-out');
+          }, index * 50); // Staggered timing for nice effect
+        });
+        
+        // Show the selected section after the slide-out
+        setTimeout(() => {
+          // Hide all menu items
+          menuItems.forEach(menuItem => {
+            menuItem.style.display = 'none';
+            menuItem.classList.remove('slide-left-out');
+          });
+          
+          // Display the content section
+          showMenuSection(sectionTitle);
+        }, 300);
+      });
+    });
+  }
+
+  // Function to show a specific menu section
+  function showMenuSection(sectionTitle) 
+  {
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    // Create a content wrapper if it doesn't exist
+    let contentWrapper = mobileMenu.querySelector('.menu-content-wrapper');
+    if (!contentWrapper) {
+      contentWrapper = document.createElement('div');
+      contentWrapper.className = 'menu-content-wrapper';
+      mobileMenu.appendChild(contentWrapper);
+    }
+    
+    // Create back button and section content
+    const backButton = `<button class="back-button"><i class="fas fa-arrow-left"></i>Back to Menu</button>`;
+    const sectionContent = menuSections[sectionTitle] || `<h3>${sectionTitle}</h3><p>Content coming soon.</p>`;
+    
+    // Set new content
+    contentWrapper.innerHTML = backButton + sectionContent;
+    
+    // Add click event to back button
+    const backBtn = contentWrapper.querySelector('.back-button');
+    backBtn.addEventListener('click', goBackToMainMenu);
+    
+    // Apply slide-in animation
+    contentWrapper.classList.add('slide-right-in');
+    
+    // Remove the animation class after it completes
+    setTimeout(() => {
+      contentWrapper.classList.remove('slide-right-in');
+    }, 400);
+  }
+
+  // Function to go back to the main menu
+  function goBackToMainMenu() 
+  {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const contentWrapper = mobileMenu.querySelector('.menu-content-wrapper');
+    
+    if (!contentWrapper) return;
+    
+    // Apply slide-out animation
+    contentWrapper.classList.add('slide-right-out');
+    
+    // After animation completes, remove content and show menu items
+    setTimeout(() => {
+      // Remove the content wrapper
+      contentWrapper.remove();
+      
+      // Show the original menu items with slide-in animation
+      const menuItems = mobileMenu.querySelectorAll('.menu-item');
+      menuItems.forEach((item, index) => {
+
+        // Stagger the animations slightly
+        setTimeout(() => {
+          item.style.display = 'block';
+          item.classList.add('slide-left-in');
+          
+          // Remove animation class after completion
+          setTimeout(() => {
+            item.classList.remove('slide-left-in');
+          }, 400);
+        }, index * 70); // Staggered timing for natural feel
+      });
+    }, 300);
+  }
+
+// Initialize the menu transitions when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initMenuTransitions);
+
+// If the menu is opened after page load, make sure transitions are initialized
+if (menuButton) 
+{
+  menuButton.addEventListener('click', function() {
+    // Check if menu items need event listeners
+    setTimeout(() => {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const menuItems = mobileMenu.querySelectorAll('.menu-item');
+      
+      // Only initialize if the menu items don't have click listeners
+      if (menuItems.length > 0 && !menuItems[0].getAttribute('data-has-listener')) {
+        initMenuTransitions();
+        
+        // Mark items as having listeners
+        menuItems.forEach(item => {
+          item.setAttribute('data-has-listener', 'true');
+        });
+      }
+    }, 100);
+  });
+}
+
+
+</script>
+
+
+
+
+<!-- Device Orientation -->
+<script>
 
   function checkDeviceAndOrientation() 
   {
@@ -368,6 +759,8 @@ window.addEventListener('resize', checkDeviceAndOrientation);
 window.addEventListener('orientationchange', checkDeviceAndOrientation);
 
 </script>
+
+
 
 
 </html>
