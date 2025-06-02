@@ -277,8 +277,6 @@ b
 }
 .tiny-year
 {
-	position: relative;
-	font-size: 24px;
 }
 
 
@@ -338,6 +336,7 @@ b
 	text-align: center;
 	padding-left: 5%;
 	padding-right: 5%;
+ font-size: calc(var(--font-base) * 0.88) !important;
 }
 
 

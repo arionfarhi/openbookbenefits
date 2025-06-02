@@ -1,1 +1,1120 @@
+/* 
+==============================================
+COMPREHENSIVE RESPONSIVE SCALING SYSTEM
+Base: iPhone 14 Pro Max (430px × 932px)
+Range: Small Android (320px) to iPad Pro (1024px+)
+==============================================
+*/
 
+/* CSS Custom Properties for scaling */
+:root {
+	/* iPhone 14 Pro Max - Base values (430px × 932px) */
+	--scale-factor: 1.0;
+	--header-height: 54px;
+	--input-height: 60px;
+	--button-height: 54px;
+	--logo-height: 75px;
+	--font-base: 16.5px;
+	--font-large: 29px;
+	--font-small: 12px;
+	--font-menu: 15.5px;
+	--spacing-xs: 5px;
+	--spacing-sm: 10px;
+	--spacing-md: 20px;
+	--spacing-lg: 50px;
+	--border-radius: 12.5px;
+	--hamburger-size: 24px;
+	--icon-size: 19.5px;
+	--menu-item-spacing: 50px;
+}
+
+/* Small Android Phones (320-359px) - Very Compact */
+@media (max-width: 359px) {
+	:root {
+		--scale-factor: 0.74;
+		--header-height: 40px;
+		--input-height: 44px;
+		--button-height: 40px;
+		--logo-height: 55px;
+		--font-base: 12px;
+		--font-large: 21px;
+		--font-small: 9px;
+		--font-menu: 11px;
+		--spacing-xs: 3px;
+		--spacing-sm: 6px;
+		--spacing-md: 12px;
+		--spacing-lg: 30px;
+		--border-radius: 8px;
+		--hamburger-size: 18px;
+		--icon-size: 14px;
+		--menu-item-spacing: 35px;
+	}
+}
+
+/* Standard Android Phones (360-389px) */
+@media (min-width: 360px) and (max-width: 389px) {
+	:root {
+		--scale-factor: 0.84;
+		--header-height: 45px;
+		--input-height: 50px;
+		--button-height: 45px;
+		--logo-height: 63px;
+		--font-base: 14px;
+		--font-large: 24px;
+		--font-small: 10px;
+		--font-menu: 13px;
+		--spacing-xs: 4px;
+		--spacing-sm: 7px;
+		--spacing-md: 15px;
+		--spacing-lg: 38px;
+		--border-radius: 9px;
+		--hamburger-size: 20px;
+		--icon-size: 16px;
+		--menu-item-spacing: 40px;
+	}
+}
+
+/* iPhone SE (375px × 667px) */
+@media (min-width: 375px) and (max-width: 375px) and (max-height: 667px) {
+	:root {
+		--scale-factor: 0.87;
+		--header-height: 47px;
+		--input-height: 52px;
+		--button-height: 47px;
+		--logo-height: 65px;
+		--font-base: 14.5px;
+		--font-large: 25px;
+		--font-small: 10.5px;
+		--font-menu: 13.5px;
+		--spacing-xs: 4px;
+		--spacing-sm: 8px;
+		--spacing-md: 16px;
+		--spacing-lg: 40px;
+		--border-radius: 10px;
+		--hamburger-size: 21px;
+		--icon-size: 17px;
+		--menu-item-spacing: 42px;
+	}
+}
+
+/* iPhone mini (375px × 812px) */
+@media (min-width: 375px) and (max-width: 375px) and (min-height: 668px) {
+	:root {
+		--scale-factor: 0.87;
+		--header-height: 47px;
+		--input-height: 52px;
+		--button-height: 47px;
+		--logo-height: 65px;
+		--font-base: 14.5px;
+		--font-large: 25px;
+		--font-small: 10.5px;
+		--font-menu: 13.5px;
+		--spacing-xs: 4px;
+		--spacing-sm: 8px;
+		--spacing-md: 16px;
+		--spacing-lg: 43px;
+		--border-radius: 10px;
+		--hamburger-size: 21px;
+		--icon-size: 17px;
+		--menu-item-spacing: 43px;
+	}
+}
+
+/* iPhone 14 (390px × 844px) */
+@media (min-width: 376px) and (max-width: 390px) {
+	:root {
+		--scale-factor: 0.91;
+		--header-height: 49px;
+		--input-height: 55px;
+		--button-height: 49px;
+		--logo-height: 68px;
+		--font-base: 15px;
+		--font-large: 26px;
+		--font-small: 11px;
+		--font-menu: 14px;
+		--spacing-xs: 4px;
+		--spacing-sm: 9px;
+		--spacing-md: 18px;
+		--spacing-lg: 45px;
+		--border-radius: 11px;
+		--hamburger-size: 22px;
+		--icon-size: 18px;
+		--menu-item-spacing: 45px;
+	}
+}
+
+/* iPhone 14 Plus (428px × 926px) */
+@media (min-width: 391px) and (max-width: 428px) {
+	:root {
+		--scale-factor: 0.99;
+		--header-height: 53px;
+		--input-height: 59px;
+		--button-height: 53px;
+		--logo-height: 74px;
+		--font-base: 16px;
+		--font-large: 28px;
+		--font-small: 12px;
+		--font-menu: 15px;
+		--spacing-xs: 5px;
+		--spacing-sm: 10px;
+		--spacing-md: 19px;
+		--spacing-lg: 49px;
+		--border-radius: 12px;
+		--hamburger-size: 23px;
+		--icon-size: 19px;
+		--menu-item-spacing: 49px;
+	}
+}
+
+/* iPhone 14 Pro Max (429-430px) - Base design, no overrides needed */
+
+/* Large Android Phones (431-479px) */
+@media (min-width: 431px) and (max-width: 479px) {
+	:root {
+		--scale-factor: 1.05;
+		--header-height: 57px;
+		--input-height: 63px;
+		--button-height: 57px;
+		--logo-height: 79px;
+		--font-base: 17px;
+		--font-large: 30px;
+		--font-small: 13px;
+		--font-menu: 16px;
+		--spacing-xs: 5px;
+		--spacing-sm: 11px;
+		--spacing-md: 21px;
+		--spacing-lg: 53px;
+		--border-radius: 13px;
+		--hamburger-size: 25px;
+		--icon-size: 20px;
+		--menu-item-spacing: 53px;
+	}
+}
+
+/* iPad mini (480-767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+	:root {
+		--scale-factor: 1.3;
+		--header-height: 70px;
+		--input-height: 78px;
+		--button-height: 70px;
+		--logo-height: 98px;
+		--font-base: 21px;
+		--font-large: 38px;
+		--font-small: 16px;
+		--font-menu: 20px;
+		--spacing-xs: 7px;
+		--spacing-sm: 13px;
+		--spacing-md: 26px;
+		--spacing-lg: 65px;
+		--border-radius: 16px;
+		--hamburger-size: 28px;
+		--icon-size: 25px;
+		--menu-item-spacing: 65px;
+	}
+}
+
+/* iPad (768-1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+	:root {
+		--scale-factor: 1.5;
+		--header-height: 81px;
+		--input-height: 90px;
+		--button-height: 81px;
+		--logo-height: 113px;
+		--font-base: 25px;
+		--font-large: 44px;
+		--font-small: 18px;
+		--font-menu: 23px;
+		--spacing-xs: 8px;
+		--spacing-sm: 15px;
+		--spacing-md: 30px;
+		--spacing-lg: 75px;
+		--border-radius: 19px;
+		--hamburger-size: 32px;
+		--icon-size: 29px;
+		--menu-item-spacing: 75px;
+	}
+}
+
+/* iPad Pro (1024px+) */
+@media (min-width: 1024px) {
+	:root {
+		--scale-factor: 1.7;
+		--header-height: 92px;
+		--input-height: 102px;
+		--button-height: 92px;
+		--logo-height: 128px;
+		--font-base: 28px;
+		--font-large: 49px;
+		--font-small: 20px;
+		--font-menu: 26px;
+		--spacing-xs: 9px
+		--spacing-sm: 17px;
+		--spacing-md: 34px;
+		--spacing-lg: 85px;
+		--border-radius: 21px;
+		--hamburger-size: 36px;
+		--icon-size: 33px;
+		--menu-item-spacing: 85px;
+	}
+}
+
+/* 
+==============================================
+APPLY SCALING TO ALL COMPONENTS
+==============================================
+*/
+
+/* HEADER SCALING */
+.header {
+	height: var(--header-height) !important;
+	padding: calc(var(--spacing-md) * 0.8) calc(var(--spacing-md) * 1.2) !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	padding-left: calc(var(--spacing-sm) * 0.75) !important;
+}
+
+#logo {
+	height: var(--logo-height) !important;
+	bottom: calc(var(--header-height) * 0.2685) !important;
+}
+
+.menu-button {
+	padding: calc(var(--spacing-sm) * 0.8) !important;
+	padding-right: calc(var(--spacing-sm) * 0.8) !important;
+	padding-bottom: calc(var(--spacing-md) * 0.875) !important;
+}
+
+.hamburger {
+	width: var(--hamburger-size) !important;
+	height: calc(var(--hamburger-size) * 0.83) !important;
+	left: var(--spacing-sm) !important;
+}
+
+.hamburger div {
+	height: calc(var(--hamburger-size) * 0.125) !important;
+	border-radius: calc(var(--hamburger-size) * 0.042) !important;
+}
+
+.hamburger.active div:nth-child(1) {
+	transform: translateY(calc(var(--hamburger-size) * 0.354)) rotate(45deg) !important;
+}
+
+.hamburger.active div:nth-child(3) {
+	transform: translateY(calc(var(--hamburger-size) * -0.354)) rotate(-45deg) !important;
+}
+
+/* MOBILE MENU SCALING */
+#mobile-menu {
+	top: var(--header-height) !important;
+	padding: var(--spacing-sm) 0 !important;
+	padding-top: 0 !important;
+	padding-left: var(--spacing-md) !important;
+	right: -85% !important;
+}
+
+#mobile-menu.show {
+	right: calc(var(--spacing-sm) * -1.0) !important;
+}
+
+body::after {
+	top: var(--header-height) !important;
+}
+
+.menu-item {
+	font-size: var(--font-menu) !important;
+	margin-bottom: var(--menu-item-spacing) !important;
+	padding-top: calc(var(--spacing-sm) * 0.5) !important;
+	padding-bottom: calc(var(--spacing-sm) * 0.5) !important;
+	letter-spacing: calc(var(--font-menu) * 0.006) !important;
+}
+
+.menu-item:first-child {
+	margin-top: calc(var(--menu-item-spacing) * 0.9) !important;
+}
+
+#mobile-menu .menu-item i {
+	right: calc(var(--spacing-md) * 1.5) !important;
+	font-size: calc(var(--font-menu) * 1.06) !important;
+}
+
+/* CONTENT SCALING */
+
+.content h2 {
+	font-size: var(--font-large) !important;
+	top: calc(var(--spacing-md) * 1.125) !important;
+	left: calc(var(--spacing-sm) * 0.5) !important;
+	margin-bottom: var(--spacing-sm) !important;
+}
+
+/* CARD SCANNER SECTION SCALING */
+#card-scanner-section {
+	top: calc(var(--spacing-lg) * 0.85) !important;
+	margin-bottom: calc(var(--spacing-md) * 1.5) !important;
+}
+
+.scanner-option {
+	border-radius: var(--border-radius) !important;
+	padding: var(--spacing-md) !important;
+	margin-bottom: calc(var(--spacing-md) * 1.25) !important;
+}
+
+.scanner-icon {
+	font-size: calc(var(--font-base) * 1.7) !important;
+	margin-right: calc(var(--spacing-md) * 0.75) !important;
+}
+
+.scanner-title {
+	font-size: calc(var(--font-base) * 1.09) !important;
+}
+
+.scanner-subtitle {
+	font-size: calc(var(--font-base) * 0.85) !important;
+}
+
+/* DIVIDER SCALING */
+.divider-container {
+	margin: calc(var(--spacing-md) * 1.75) 0 !important;
+	margin-top: calc(var(--spacing-lg) * 1.3) !important;
+}
+
+.divider-text {
+	padding: 0 var(--spacing-md) !important;
+	font-size: var(--font-small) !important;
+	letter-spacing: calc(var(--font-small) * 0.042) !important;
+}
+
+/* FORM SCALING */
+#main-form {
+	bottom: var(--spacing-sm) !important;
+}
+
+#main-form p {
+	font-size: var(--font-small) !important;
+}
+
+.input-container {
+	border-radius: calc(var(--border-radius) * 1.12) !important;
+}
+
+input {
+	height: var(--input-height) !important;
+	padding: 0 calc(var(--spacing-md) * 0.75) 0 calc(var(--spacing-lg) * 1.1) !important;
+	font-size: var(--font-base) !important;
+	border-radius: 0 !important;
+}
+
+.input-container:nth-child(1) input {
+	border-top: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-left: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-right: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-top-left-radius: var(--border-radius) !important;
+	border-top-right-radius: var(--border-radius) !important;
+}
+
+.input-container:nth-child(2) input, 
+.input-container:nth-child(3) input {
+	border-top: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-left: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-right: calc(var(--scale-factor) * 2px) solid #aaa !important;
+}
+
+.input-container:nth-child(4) input {
+	border: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-bottom-left-radius: var(--border-radius) !important;
+	border-bottom-right-radius: var(--border-radius) !important;
+}
+
+input::placeholder {
+	font-size: calc(var(--font-base) * 0.94) !important;
+}
+
+input:focus::placeholder {
+	font-size: calc(var(--font-base) * 0.73) !important;
+	transform: translateY(calc(var(--spacing-md) * -0.925)) !important;
+}
+
+.input-container i {
+	left: var(--spacing-md) !important;
+	font-size: var(--icon-size) !important;
+}
+
+/* SUBMIT BUTTON SCALING */
+#submit {
+	bottom: var(--spacing-md) !important;
+	height: var(--button-height) !important;
+	border-radius: calc(var(--spacing-sm) * 1.0) !important;
+	font-size: calc(var(--font-base) * 1.09) !important;
+}
+
+#submit .ripple-container {
+	border-radius: calc(var(--spacing-md) * 1.5) !important;
+}
+
+#submit i {
+	font-size: calc(var(--font-base) * 1.15) !important;
+}
+
+#submit .fa-arrow-right {
+	right: calc(var(--spacing-md) * 0.75) !important;
+}
+
+#submit .fa-arrow-left {
+	left: calc(var(--spacing-md) * 0.75) !important;
+}
+
+/* NEXT.CSS SCALING */
+
+/* Loading container */
+.loading-container {
+	padding: calc(var(--spacing-md) * 1.5) !important;
+	border-radius: calc(var(--spacing-sm) * 1.0) !important;
+}
+
+.loading-dot {
+	width: calc(var(--spacing-sm) * 0.8) !important;
+	height: calc(var(--spacing-sm) * 0.8) !important;
+}
+
+/* Second content */
+.second-content {
+	top: calc(var(--header-height) * 1.25) !important;
+}
+
+/* Tabs */
+#tabs-div {
+	padding-top: calc(var(--spacing-md) * 1.125) !important;
+	bottom: 0 !important;
+}
+
+.tab {
+	bottom: calc(var(--spacing-sm) * 0.6) !important;
+}
+
+.tab i {
+	font-size: calc(var(--font-base) * 1.36) !important;
+	margin-bottom: calc(var(--spacing-sm) * 0.95) !important;
+}
+
+.tab span {
+	font-size: var(--font-small) !important;
+	margin-top: calc(var(--spacing-sm) * -0.55) !important;
+	margin-bottom: calc(var(--spacing-sm) * 0.6) !important;
+}
+
+#tabs-line {
+	bottom: calc(var(--header-height) * 1.3) !important;
+	height: calc(var(--scale-factor) * 1.5px) !important;
+	border-radius: calc(var(--scale-factor) * 1px) !important;
+}
+
+/* TAB 1 SCALING */
+#summary-div {
+	width: 92%;
+	margin-left: 4%;
+}
+
+#summary-row-1 {
+	gap: var(--spacing-sm) !important;
+	margin-top: 5%;
+	margin-bottom: 5%;
+}
+
+#summary-row-1 div {
+	padding-top: calc(var(--spacing-md) * 0.9) !important;
+	padding-bottom: calc(var(--spacing-md) * 1.5) !important;
+	border-radius: var(--spacing-md) !important;
+}
+
+.summary-title {
+	font-size: calc(var(--font-base) * 1.09) !important;
+	margin-bottom: calc(var(--spacing-md) * 0.75) !important;
+}
+
+#summary-card-eligibility,
+#summary-card-renewal {
+	font-size: calc(var(--font-base) * 0.94) !important;
+	padding-left: 5% !important;
+	padding-right: 3% !important;
+}
+
+.eligibility-status-row,
+.renewal-status-row {
+	gap: calc(var(--spacing-sm) * 0.5) !important;
+	top: calc(var(--spacing-xs) * 0.7) !important;
+	right: calc(var(--spacing-sm) * 0.55) !important;
+}
+
+.eligibility-status-row
+{
+	margin-bottom: calc(var(--spacing-sm) * -0.2) !important;
+}
+
+.renewal-status-row
+{
+	gap: calc(var(--spacing-sm)) !important;
+	margin-bottom: calc(var(--spacing-sm) * 2.125);
+}
+
+.eligibility-status-row i,
+.renewal-status-row i {
+	font-size: calc(var(--font-large) * 1.03) !important;
+}
+
+.eligibility-status-row h4 {
+	font-size: calc(var(--font-large) * 0.9) !important;
+	bottom: calc(var(--spacing-xs) * 0.4) !important;
+}
+
+.renewal-status-row h4 {
+	font-size: calc(var(--font-large) * 0.83) !important;
+}
+
+#summary-card-benefits {
+	padding-top: var(--spacing-md) !important;
+	padding-bottom: var(--spacing-md) !important;
+	border-radius: var(--spacing-md) !important;
+}
+
+#summary-card-benefits h3 {
+	margin-left: 5%;
+	font-size: calc(var(--font-base) * 1.15) !important;
+}
+
+.big-bold {
+	font-size: calc(var(--font-large) * 1.31) !important;
+}
+
+.remaining-text {
+	bottom: calc(var(--spacing-sm) * 0.6) !important;
+}
+
+.summary-benefits-info {
+	padding-left: 5%;
+	padding-right: 5%;
+}
+
+/* TAB 2 SCALING */
+#coverage-div {
+	width: 93.5%;
+	margin-left: 3.25%;
+	margin-top: 3.5%;
+}
+
+.coverage-section {
+	padding-top: calc(var(--spacing-md) * 0.75) !important;
+	padding-bottom: 0 !important;
+}
+
+.coverage-heading {
+	font-size: calc(var(--font-base) * 1.38) !important;
+	padding-bottom: var(--spacing-sm) !important;
+	margin-bottom: calc(var(--spacing-sm) * 1.25) !important;
+}
+
+.coverage-heading::after {
+	width: calc(var(--spacing-lg) * 0.8) !important;
+	height: calc(var(--scale-factor) * 3px) !important;
+	border-radius: calc(var(--scale-factor) * 3px) !important;
+}
+
+.coverage-grid {
+	gap: calc(var(--spacing-xs) * 0.8) !important;
+	padding-bottom: var(--spacing-sm) !important;
+}
+
+.coverage-item {
+	padding: calc(var(--spacing-md) * 0.75) var(--spacing-sm) !important;
+	border-radius: var(--border-radius) !important;
+	height: calc(var(--spacing-lg) * 1.83) !important;
+	width: calc(var(--spacing-lg) * 1.83) !important;
+}
+
+.coverage-icon {
+	font-size: calc(var(--font-base) * 1.45) !important;
+	margin-bottom: var(--spacing-sm) !important;
+	height: calc(var(--spacing-md) * 1.6) !important;
+}
+
+.coverage-name {
+	font-size: calc(var(--font-base) * 0.88) !important;
+}
+
+@media (max-width: 380px) 
+{
+	.coverage-name
+	{
+		font-size: calc(var(--font-small) * 1) !important;
+	}
+}
+
+.coverage-section:nth-child(1),
+.coverage-section:nth-child(2),
+.coverage-section:nth-child(3),
+.coverage-section:nth-child(4) {
+	border-radius: var(--spacing-md) !important;
+	padding: calc(var(--spacing-md) * 0.75) !important;
+	padding-bottom: calc(var(--spacing-sm) * 0.75) !important;
+	/*margin-bottom: var(--spacing-sm) !important;*/
+}
+
+
+@media (max-width: 380px) 
+{
+	.coverage-section:nth-child(1),
+	.coverage-section:nth-child(2),
+	.coverage-section:nth-child(3),
+	.coverage-section:nth-child(4) {
+		margin-bottom: calc(var(--spacing-md)) !important;
+	}
+}
+
+
+/* TAB 3 SCALING */
+#info-div {
+	width: 92%;
+	margin: var(--spacing-sm) auto !important;
+	margin-top: var(--spacing-sm) !important;
+}
+
+.info-section {
+	margin-bottom: calc(var(--spacing-md) * 1.25) !important;
+	border-radius: calc(var(--spacing-md) * 0.9) !important;
+	padding: calc(var(--spacing-md) * 1.25) var(--spacing-md) var(--spacing-md) !important;
+	padding-top: var(--spacing-md) !important;
+}
+
+.section-icon-container {
+	top: calc(var(--spacing-sm) * 1.1) !important;
+	left: calc(var(--spacing-sm) * 0.95) !important;
+	width: calc(var(--spacing-lg) * 0.9) !important;
+	height: calc(var(--spacing-lg) * 0.9) !important;
+}
+
+.section-icon {
+	width: calc(var(--spacing-lg) * 0.9) !important;
+	height: calc(var(--spacing-lg) * 0.9) !important;
+}
+
+.section-icon i {
+	font-size: calc(var(--spacing-md) * 1.25) !important;
+	top: calc(var(--scale-factor) * 1.5px) !important;
+}
+
+.info-heading {
+	font-size: calc(var(--font-base) * 1.39) !important;
+	margin-bottom: calc(var(--spacing-md) * 0.75) !important;
+	padding-bottom: var(--border-radius) !important;
+	text-indent: 12.5%;
+}
+
+.info-content {
+	font-size: calc(var(--font-base) * 0.92) !important;
+}
+
+.info-content p {
+	margin-bottom: calc(var(--spacing-md) * 0.9) !important;
+}
+
+.procedure-cost-grid {
+	gap: calc(var(--spacing-md) * 0.75) !important;
+	margin: var(--spacing-sm) 0 !important;
+	margin-bottom: calc(var(--spacing-md) * 1.5) !important;
+}
+
+.procedure-cost-item {
+	border-radius: var(--border-radius) !important;
+	padding: calc(var(--spacing-sm) * 0.8) !important;
+	gap: var(--spacing-sm) !important;
+}
+
+.procedure-cost-item i {
+	font-size: calc(var(--font-base) * 1.45) !important;
+	margin-top: calc(var(--spacing-xs) * 0.4) !important;
+	padding: var(--spacing-sm) !important;
+	margin-right: calc(var(--spacing-xs) * 0.6) !important;
+}
+
+.procedure-cost-text {
+	font-size: calc(var(--font-base) * 0.79) !important;
+}
+
+.info-list li {
+	margin-bottom: calc(var(--spacing-md) * 0.8) !important;
+	padding: calc(var(--spacing-md) * 0.7) calc(var(--spacing-md) * 0.9) calc(var(--spacing-md) * 0.7) calc(var(--spacing-lg) * 0.84) !important;
+	border-radius: var(--border-radius) !important;
+	margin-bottom: calc(var(--spacing-md) * 0.7) !important;
+}
+
+.info-list li i {
+	font-size: var(--spacing-md) !important;
+	top: calc(var(--spacing-md) * 0.7) !important;
+	left: var(--border-radius) !important;
+}
+
+.highlight-note {
+	padding: calc(var(--spacing-md) * 0.75) !important;
+	border-radius: var(--spacing-sm) !important;
+	margin: var(--spacing-md) 0 var(--spacing-sm) !important;
+	font-size: calc(var(--font-base) * 0.85) !important;
+}
+
+.highlight-note i {
+	margin-right: calc(var(--spacing-sm) * 0.8) !important;
+	font-size: var(--font-base) !important;
+}
+
+.disclaimer {
+	margin-top: calc(var(--spacing-md) * 1.25) !important;
+	margin-bottom: var(--spacing-lg) !important;
+	font-size: calc(var(--font-base) * 0.79) !important;
+	padding: calc(var(--spacing-md) * 0.75) !important;
+}
+
+/* POPUP.CSS SCALING */
+
+/* Main Popup Container */
+#procedure-popup {
+	background-color: rgba(0, 0, 0, calc(0.35 * var(--scale-factor))) !important;
+}
+
+.popup-content {
+	border-radius: var(--border-radius) !important;
+	width: 99.8%;
+	height: 100%;
+	margin-top: 5%;
+	padding: calc(var(--spacing-md) * 1.1) calc(var(--spacing-md) * 1.25) !important;
+	max-height: 95vh;
+}
+
+/* Close Button */
+#popup-close {
+	top: calc(var(--spacing-sm) * 0.75) !important;
+	left: calc(var(--spacing-sm) * 0.75) !important;
+	font-size: calc(var(--font-large) * 1.21) !important;
+	height: calc(var(--spacing-lg) * 0.86) !important;
+	width: calc(var(--spacing-lg) * 0.86) !important;
+	line-height: calc(var(--spacing-lg) * 0.86) !important;
+}
+
+/* Header Elements */
+.popup-icon {
+	margin-bottom: var(--border-radius) !important;
+	font-size: calc(var(--spacing-lg) * 0.86) !important;
+	height: calc(var(--spacing-lg) * 0.9) !important;
+}
+
+#popup-title {
+	margin-bottom: calc(var(--spacing-sm) * 0.8) !important;
+	font-size: calc(var(--font-base) * 1.33) !important;
+}
+
+/* Coverage Label */
+.coverage-label {
+	padding: calc(var(--spacing-sm) * 0.5) var(--border-radius) !important;
+	border-radius: calc(var(--spacing-md) * 1.5) !important;
+	font-size: calc(var(--font-base) * 0.85) !important;
+	margin-bottom: var(--spacing-sm) !important;
+}
+
+/* Procedure Info */
+.procedure-info {
+	margin-bottom: var(--spacing-sm) !important;
+	font-size: calc(var(--font-base) * 0.79) !important;
+}
+
+/* Information Sections */
+.popup-section {
+	padding-top: var(--spacing-md) !important;
+	padding-bottom: calc(var(--spacing-sm) * 0.6) !important;
+	margin-top: calc(var(--spacing-sm) * 0.6) !important;
+}
+
+.section-title {
+	font-size: calc(var(--font-base) * 1.09) !important;
+	margin-bottom: var(--spacing-sm) !important;
+	gap: calc(var(--spacing-sm) * 0.6) !important;
+}
+
+.section-title i {
+	font-size: var(--font-base) !important;
+}
+
+/* Section Content */
+.additional-info {
+	font-size: calc(var(--font-base) * 0.85) !important;
+	margin-bottom: var(--border-radius) !important;
+	padding: var(--border-radius) var(--border-radius) !important;
+	padding-left: calc(var(--spacing-md) * 0.75) !important;
+}
+
+.frequency-info {
+	font-size: calc(var(--font-base) * 0.82) !important;
+	padding: var(--border-radius) var(--border-radius) !important;
+	padding-top: 0px !important;
+	margin-top: calc(var(--spacing-md) * -1) !important;
+	padding-left: calc(var(--font-base) * 1.15) !important;
+	margin: 0 0 calc(var(--spacing-md) * 0.75) 0 !important;
+	bottom: calc(var(--spacing-xs) * 0.8) !important;
+}
+
+/* Copay Section */
+.copay-section {
+	padding: var(--border-radius) !important;
+	padding-top: calc(var(--font-base) * 1.09) !important;
+	border-radius: calc(var(--spacing-md) * 0.75) !important;
+	margin-bottom: var(--border-radius) !important;
+}
+
+.copay-label {
+	font-size: calc(var(--font-base) * 1.06) !important;
+	padding-bottom: calc(var(--spacing-sm) * 0.6) !important;
+	padding-left: calc(var(--spacing-xs) * 0.7) !important;
+}
+
+.info-tooltip-icon {
+	margin-left: calc(var(--spacing-xs) * 0.8) !important;
+	padding-left: calc(var(--spacing-xs) * 0.4) !important;
+	padding-right: calc(var(--spacing-xs) * 0.4) !important;
+	margin-top: calc(var(--spacing-xs) * 0.1) !important;
+	font-size: calc(var(--font-base) * 0.94) !important;
+	line-height: calc(var(--spacing-md) * 1.5) !important;
+}
+
+.info-tooltip {
+	top: calc(var(--border-radius) * -9.6) !important;
+	width: calc(var(--spacing-lg) * 4.4) !important;
+	padding: var(--border-radius) var(--font-base) !important;
+	border-radius: calc(var(--spacing-sm) * 0.8) !important;
+	font-size: var(--border-radius) !important;
+}
+
+.info-tooltip::after {
+	bottom: calc(var(--spacing-sm) * -0.8) !important;
+	border-width: calc(var(--spacing-sm) * 0.8) calc(var(--spacing-sm) * 0.8) 0 !important;
+}
+
+.copay-amount {
+	font-size: calc(var(--spacing-md) * 1.7) !important;
+	margin-bottom: var(--spacing-sm) !important;
+	bottom: calc(var(--spacing-xs) * 0.6) !important;
+}
+
+.insurance-pays {
+	font-size: calc(var(--font-base) * 0.79) !important;
+}
+
+/* Bottom Controls */
+.popup-bottom {
+	padding-top: var(--spacing-sm) !important;
+}
+
+.popup-bottom-controls {
+	margin-top: var(--spacing-sm) !important;
+}
+
+/* Quantity Controls */
+.quantity-btn {
+	width: calc(var(--spacing-lg) * 0.8) !important;
+	height: calc(var(--spacing-lg) * 0.8) !important;
+	font-size: calc(var(--font-base) * 1.09) !important;
+}
+
+.quantity-value {
+	font-size: var(--spacing-md) !important;
+	margin: 0 calc(var(--spacing-md) * 0.75) !important;
+	min-width: calc(var(--spacing-md) * 1.25) !important;
+}
+
+/* Action Button */
+.add-to-estimate-btn {
+	padding: calc(var(--font-base) * 0.85) var(--spacing-md) !important;
+	border-radius: var(--spacing-sm) !important;
+	font-size: calc(var(--font-base) * 0.85) !important;
+	margin-left: calc(var(--font-base) * 1.09) !important;
+}
+
+/* INSURANCE DROPDOWN SCALING */
+.insurance-dropdown {
+	border-radius: var(--border-radius) !important;
+	max-height: calc(var(--spacing-lg) * 4.8) !important;
+}
+
+.dropdown-item {
+	padding: var(--border-radius) calc(var(--spacing-md) * 0.75) var(--border-radius) calc(var(--spacing-lg) * 1.1) !important;
+	font-size: var(--font-base) !important;
+}
+
+.dropdown-item:last-child {
+	border-bottom-left-radius: var(--border-radius) !important;
+	border-bottom-right-radius: var(--border-radius) !important;
+}
+
+.input-container:nth-child(4):has(.insurance-dropdown[style*="display: block"]) input {
+	border-bottom-left-radius: 0px !important;
+	border-bottom-right-radius: 0px !important;
+	border-bottom: none !important;
+	padding-bottom: calc(var(--spacing-xs) * 0.4) !important;
+}
+
+.insurance-dropdown::-webkit-scrollbar {
+	width: calc(var(--spacing-sm) * 0.6) !important;
+}
+
+.insurance-dropdown::-webkit-scrollbar-track {
+	border-radius: calc(var(--spacing-xs) * 0.6) !important;
+}
+
+.insurance-dropdown::-webkit-scrollbar-thumb {
+	border-radius: calc(var(--spacing-xs) * 0.6) !important;
+}
+
+/* ERROR AND FRIENDLY MESSAGE SCALING */
+.friendly-message {
+	bottom: calc(var(--scale-factor) * -1px) !important;
+	left: calc(var(--spacing-lg) * 1.41) !important;
+	font-size: calc(var(--font-small) * 0.77) !important;
+	padding-bottom: calc(var(--spacing-xs) * 0.9) !important;
+	transform: translateY(calc(var(--spacing-sm) * 0.75)) !important;
+}
+
+.friendly-message.show {
+	transform: translateY(0px) !important;
+}
+
+.friendly-message.hide {
+	transform: translateY(var(--spacing-sm)) !important;
+}
+
+.friendly-message::before {
+	left: calc(var(--spacing-md) * -0.675) !important;
+	width: calc(var(--font-small) * 0.75) !important;
+	height: calc(var(--font-small) * 0.75) !important;
+	font-size: calc(var(--spacing-sm) * 0.8) !important;
+}
+
+.input-error-message {
+	bottom: calc(var(--scale-factor) * -1px) !important;
+	left: calc(var(--spacing-lg) * 1.41) !important;
+	font-size: calc(var(--font-small) * 0.77) !important;
+	padding-bottom: calc(var(--spacing-xs) * 0.9) !important;
+	transform: translateY(calc(var(--spacing-sm) * 0.75)) !important;
+}
+
+.input-error-message.show {
+	transform: translateY(0px) !important;
+}
+
+.input-error-message.hide {
+	transform: translateY(var(--spacing-sm)) !important;
+}
+
+.input-error-message::before {
+	left: calc(var(--spacing-md) * -0.675) !important;
+	width: calc(var(--font-small) * 0.75) !important;
+	height: calc(var(--font-small) * 0.75) !important;
+	font-size: calc(var(--spacing-sm) * 0.8) !important;
+}
+
+/* ERROR POPUP SCALING */
+.error-popup {
+	bottom: calc(var(--spacing-md) * 0.75) !important;
+	width: 90%;
+	transform: translateX(-50%) translateY(calc(var(--spacing-lg) * 2)) !important;
+	padding: var(--font-base) var(--spacing-md) !important;
+	padding-right: calc(var(--spacing-md) * 1.75) !important;
+	border-radius: var(--border-radius) !important;
+	font-size: calc(var(--font-base) * 0.85) !important;
+	gap: var(--border-radius) !important;
+	min-width: calc(var(--spacing-lg) * 5) !important;
+}
+
+.error-close-btn {
+	top: calc(var(--spacing-md) * 1.25) !important;
+	right: calc(var(--spacing-sm) * 0.5) !important;
+	font-size: calc(var(--spacing-md) * 1.6) !important;
+	width: calc(var(--spacing-md) * 1.75) !important;
+	height: calc(var(--spacing-md) * 1.75) !important;
+}
+
+.error-popup i {
+	font-size: calc(var(--spacing-md) * 1.1) !important;
+	top: calc(var(--font-base) * 1.125) !important;
+	left: var(--spacing-sm) !important;
+}
+
+.error-popup .error-message {
+	padding-left: calc(var(--spacing-sm) * 0.75) !important;
+	padding-right: calc(var(--scale-factor) * 1%) !important;
+}
+
+.error-popup.show {
+	transform: translateX(-50%) translateY(0) !important;
+}
+
+.error-popup.hide {
+	transform: translateX(-50%) translateY(calc(var(--spacing-lg) * 2)) !important;
+}
+
+/* CALCULATOR SCALING */
+#calculator-heading {
+	top: calc(var(--spacing-md) * 0.875) !important;
+	width: 85%;
+	left: 7.5%;
+	border-radius: var(--spacing-md) !important;
+	font-size: calc(var(--font-base) * 0.94) !important;
+	border: calc(var(--spacing-sm) * 0.5) solid #D6D6D6 !important;
+}
+
+#calculator-heading h1 {
+	font-size: calc(var(--font-base) * 1.03) !important;
+	margin-bottom: calc(var(--spacing-sm) * 0.8) !important;
+}
+
+#calculator-heading #estimated-copay {
+	margin-top: calc(var(--spacing-sm) * 0.8) !important;
+	font-size: calc(var(--spacing-lg) * 0.8) !important;
+	letter-spacing: calc(var(--spacing-xs) * 0.3) !important;
+	margin-bottom: var(--font-base) !important;
+}
+
+#calculator-heading .dollar-sign {
+	font-size: calc(var(--spacing-md) * 1.8) !important;
+	margin-right: calc(var(--spacing-xs) * 0.8) !important;
+}
+
+#calculator-heading h2 {
+	font-size: calc(var(--font-base) * 0.79) !important;
+	margin-top: var(--font-base) !important;
+	gap: calc(var(--spacing-sm) * 0.5) !important;
+}
+
+.info-icon {
+	font-size: calc(var(--font-base) * 0.85) !important;
+	margin-left: calc(var(--spacing-xs) * 0.4) !important;
+	padding: calc(var(--spacing-xs) * 0.6) calc(var(--spacing-xs) * 0.6) calc(var(--spacing-xs) * 0.6) calc(var(--spacing-xs) * 0.6) !important;
+}
+
+.benefits-info-tooltip {
+	left: calc(var(--spacing-lg) * 4.3) !important;
+	width: calc(var(--spacing-lg) * 2.8) !important;
+	padding: calc(var(--spacing-sm) * 0.8) var(--border-radius) !important;
+	border-radius: calc(var(--spacing-sm) * 0.6) !important;
+	font-size: calc(var(--font-base) * 0.67) !important;
+}
+
+.benefits-info-tooltip::after {
+	left: calc(var(--spacing-sm) * -0.6) !important;
+	border-width: calc(var(--spacing-sm) * 0.6) calc(var(--spacing-sm) * 0.6) calc(var(--spacing-sm) * 0.6) 0 !important;
+}
+
+/* QUANTITY BADGE SCALING */
+.quantity-badge {
+	top: calc(var(--spacing-sm) * -1) !important;
+	right: calc(var(--spacing-sm) * -1) !important;
+	width: calc(var(--spacing-md) * 1.2) !important;
+	height: calc(var(--spacing-md) * 1.2) !important;
+	font-size: var(--border-radius) !important;
+	box-shadow: 0 calc(var(--scale-factor) * 1px) calc(var(--scale-factor) * 1px) rgba(0,0,0,0.2), 0 0 0 calc(var(--spacing-xs) * 0.5) white !important;
+}
