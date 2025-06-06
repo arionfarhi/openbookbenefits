@@ -6715,7 +6715,7 @@ document.addEventListener('click', function(event)
   }
 });
 
-function scrollTopAndLock()
+function scrollTopAndLock() //for calcualtor state
 {
   // Scroll up more dramatically to ensure address bar appears
   window.scrollTo(0, -100); // Negative value forces a more dramatic scroll up
@@ -6726,7 +6726,7 @@ function scrollTopAndLock()
     window.scrollTo(0, 0);
 
     // Lock scrolling
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = testTab2Overflow();
   }, 5);
 }
 
