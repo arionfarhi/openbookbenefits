@@ -4917,6 +4917,7 @@ function showProcedurePopup(item)
   popupContent.style.animation = "popupFadeIn .5s ease forwards";
   popup.style.display = "flex";
 
+  /*
   scrollTop();
   setTimeout(() =>
   {
@@ -4927,6 +4928,7 @@ function showProcedurePopup(item)
   {
     scrollTop();
   }, 200);
+  */
 }
 
 /*FADE IN AND OUT for popup*/
