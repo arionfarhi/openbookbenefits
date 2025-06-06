@@ -5204,7 +5204,9 @@ function enhancePopupWithCalculator()
 
     newAddButton.addEventListener('click', function()
     {
-      scrollTopAndLock();
+      if (Object.keys(calculatorItems).length === 0) { //if calculator not set up yet
+        scrollTopAndLock();
+      }
       // Get current procedure details
       const titleElement = document.getElementById('popup-title');
       if (!titleElement) return;
@@ -5535,43 +5537,21 @@ function checkCalculatorItemCollisions() {
     
     // Check if item overlaps with tabs area (no buffer, exact collision)
     if (itemRect.bottom > tabsRect.top && 
-        itemRect.top < tabsRect.bottom &&
-        itemRect.right > tabsRect.left && 
-        itemRect.left < tabsRect.right) {
+      itemRect.top < tabsRect.bottom &&
+      itemRect.right > tabsRect.left && 
+      itemRect.left < tabsRect.right) {
       hasCollision = true;
-    }
-  });
+  }
+});
 
   if (hasCollision) {
-    // Enable scrolling when collision detected
+    // Enable scrolling when collision detected - don't auto-scroll
     document.body.style.overflow = 'auto';
     document.body.style.touchAction = 'auto';
-    
-    // Calculate the maximum scroll needed to clear all items from tabs
-    const lowestItemBottom = Math.max(...Array.from(items).map(item => {
-      const rect = item.getBoundingClientRect();
-      return rect.bottom + window.scrollY; // Convert to document coordinates
-    }));
-    
-    const tabsTop = tabsRect.top + window.scrollY; // Convert to document coordinates
-    const maxScrollNeeded = Math.max(0, lowestItemBottom - tabsTop);
-    
-    // Set the document height to limit scrolling to just what's needed
-    const currentDocHeight = Math.max(document.documentElement.scrollHeight, window.innerHeight);
-    const newDocHeight = window.innerHeight + maxScrollNeeded;
-    
-    // Only increase height if we need more scroll space
-    if (newDocHeight > currentDocHeight) {
-      document.body.style.minHeight = `${newDocHeight}px`;
-    }
-    
   } else {
     // Re-disable scrolling if no collision
     document.body.style.overflow = 'hidden';
     document.body.style.touchAction = 'none';
-    
-    // Reset document height to prevent unnecessary scrolling
-    document.body.style.minHeight = '';
   }
 }
 
