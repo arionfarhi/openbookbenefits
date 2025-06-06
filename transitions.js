@@ -5518,7 +5518,7 @@ function setupCoverageItemsClickHandler()
 
 
 /* See if user should scroll for calculator section - dyanmic solution! */
-function checkCalculatorItemCollisions() {
+ffunction checkCalculatorItemCollisions() {
   if (tabNumber !== 2 || Object.keys(calculatorItems).length === 0) {
     return;
   }
@@ -5543,13 +5543,35 @@ function checkCalculatorItemCollisions() {
   });
 
   if (hasCollision) {
-    // Enable scrolling when collision detected - don't auto-scroll
+    // Enable scrolling when collision detected
     document.body.style.overflow = 'auto';
     document.body.style.touchAction = 'auto';
+    
+    // Calculate the maximum scroll needed to clear all items from tabs
+    const lowestItemBottom = Math.max(...Array.from(items).map(item => {
+      const rect = item.getBoundingClientRect();
+      return rect.bottom + window.scrollY; // Convert to document coordinates
+    }));
+    
+    const tabsTop = tabsRect.top + window.scrollY; // Convert to document coordinates
+    const maxScrollNeeded = Math.max(0, lowestItemBottom - tabsTop);
+    
+    // Set the document height to limit scrolling to just what's needed
+    const currentDocHeight = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+    const newDocHeight = window.innerHeight + maxScrollNeeded;
+    
+    // Only increase height if we need more scroll space
+    if (newDocHeight > currentDocHeight) {
+      document.body.style.minHeight = `${newDocHeight}px`;
+    }
+    
   } else {
     // Re-disable scrolling if no collision
     document.body.style.overflow = 'hidden';
     document.body.style.touchAction = 'none';
+    
+    // Reset document height to prevent unnecessary scrolling
+    document.body.style.minHeight = '';
   }
 }
 
