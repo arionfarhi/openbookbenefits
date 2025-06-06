@@ -3908,17 +3908,17 @@ function processNotCoveredProcedures()
 }
 
   const majorSection = coverageSections[2]; // Major section (index 2)
-  const notCoveredSection = coverageSections[3]; // Not Covered section (index 3)
+  const notCoveredSection2 = coverageSections[3]; // Not Covered section (index 3)
   
   if (majorSection) {
     const majorGrid = majorSection.querySelector(".coverage-grid");
     const majorItemCount = majorGrid ? majorGrid.querySelectorAll(".coverage-item").length : 0;
     
     // Check if Not Covered section is hidden or has no items
-    const notCoveredVisible = notCoveredSection && 
-                             notCoveredSection.style.display !== 'none' && 
-                             notCoveredSection.querySelector(".coverage-grid") &&
-                             notCoveredSection.querySelector(".coverage-grid").children.length > 0;
+    const notCoveredVisible = notCoveredSection2 && 
+                             notCoveredSection2.style.display !== 'none' && 
+                             notCoveredSection2.querySelector(".coverage-grid") &&
+                             notCoveredSection2.querySelector(".coverage-grid").children.length > 0;
     
     // Add margin bottom if major has more than 4 items and no Not Covered section
     if (majorItemCount > 4 && !notCoveredVisible) {
