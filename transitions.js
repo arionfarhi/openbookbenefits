@@ -38,7 +38,7 @@ const variables = [
   /*FOR TESTING!*/
   document.addEventListener('DOMContentLoaded', function()
   {
-    
+    /*
   document.getElementsByClassName("content")[0].style.opacity = "0";
   document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
   document.getElementById("submit").style.opacity = "0";
@@ -52,7 +52,7 @@ const variables = [
   document.getElementsByClassName("second-content")[0].style.zIndex = "999";
   showNext();
   maximumRemaining = "$300";
-  
+  */
 });
 
   const insuranceCompanies = [
@@ -5799,7 +5799,7 @@ function updateCalculatorDisplay()
       const visibleSectionsCount = 4 - emptySections.length;
 
       var spacing = 77; /* higher is closer */
-      if (visibleSectionsCount === 4)
+      if (visibleSectionsCount === 4 || rootCanalMajor || extMajor)
       {
         spacing = 86;
       }
