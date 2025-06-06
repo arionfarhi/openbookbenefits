@@ -5125,6 +5125,8 @@ function enhancePopupWithCalculator()
   // Make sure the popup exists
   if (!document.getElementById('procedure-popup')) return;
 
+  scrollTopAndLock();
+
   const popup = document.getElementById('procedure-popup');
   const popupContent = popup.querySelector('.popup-content');
 
@@ -5523,7 +5525,6 @@ function setupCoverageItemsClickHandler()
 // Update the calculator display with current items and animate changes
 function updateCalculatorDisplay()
 {
-  scrollTopAndLock();
   // Get second content container
   const secondContent = document.querySelector('.second-content');
   if (!secondContent) return;
