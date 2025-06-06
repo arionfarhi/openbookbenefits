@@ -5523,6 +5523,7 @@ function setupCoverageItemsClickHandler()
 // Update the calculator display with current items and animate changes
 function updateCalculatorDisplay()
 {
+  scrollTopAndLock();
   // Get second content container
   const secondContent = document.querySelector('.second-content');
   if (!secondContent) return;
@@ -6725,7 +6726,7 @@ function scrollTopAndLock() //for calcualtor state
     window.scrollTo(0, 0);
 
     // Lock scrolling
-    document.body.style.overflow = testTab2Overflow();
+    document.body.style.overflow = "hidden";
   }, 5);
 }
 
