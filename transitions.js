@@ -5518,44 +5518,34 @@ function setupCoverageItemsClickHandler()
 
 
 /* See if user should scroll for calculator section - dyanmic solution! */
-function checkCalculatorItemCollisions() 
-{
+function checkCalculatorItemCollisions() {
   if (tabNumber !== 2 || Object.keys(calculatorItems).length === 0) {
     return;
   }
+
   const tabsDiv = document.getElementById('tabs-div');
   if (!tabsDiv) return;
+
   const tabsRect = tabsDiv.getBoundingClientRect();
   const items = document.querySelectorAll('.coverage-item');
   let hasCollision = false;
+
   items.forEach(item => {
     const itemRect = item.getBoundingClientRect();
     
-    // Check if item overlaps with tabs area
+    // Check if item overlaps with tabs area (no buffer, exact collision)
     if (itemRect.bottom > tabsRect.top && 
-      itemRect.top < tabsRect.bottom &&
-      itemRect.right > tabsRect.left && 
-      itemRect.left < tabsRect.right) {
+        itemRect.top < tabsRect.bottom &&
+        itemRect.right > tabsRect.left && 
+        itemRect.left < tabsRect.right) {
       hasCollision = true;
-  }
-});
+    }
+  });
+
   if (hasCollision) {
-    // Enable scrolling when collision detected
+    // Enable scrolling when collision detected - don't auto-scroll
     document.body.style.overflow = 'auto';
     document.body.style.touchAction = 'auto';
-    // Calculate how much to scroll to clear the collision plus 10px buffer
-    const lowestItemBottom = Math.max(...Array.from(items).map(item => {
-      const rect = item.getBoundingClientRect();
-      return rect.bottom;
-    }));
-    const tabsTop = tabsRect.top;
-    const scrollNeeded = Math.max(0, lowestItemBottom - tabsTop + 10);
-    if (scrollNeeded > 0) {
-      window.scrollBy({
-        top: scrollNeeded,
-        behavior: 'smooth'
-      });
-    }
   } else {
     // Re-disable scrolling if no collision
     document.body.style.overflow = 'hidden';
