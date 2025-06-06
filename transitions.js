@@ -5207,6 +5207,8 @@ function enhancePopupWithCalculator()
       if (Object.keys(calculatorItems).length === 0) { //if calculator not set up yet
         scrollTopAndLock();
       }
+      document.body.overflow = testTab2Overflow();
+
       // Get current procedure details
       const titleElement = document.getElementById('popup-title');
       if (!titleElement) return;
@@ -6763,9 +6765,6 @@ function scrollTopAndLock() //for calcualtor state
   setTimeout(() =>
   {
     window.scrollTo(0, 0);
-
-    // Lock scrolling
-    document.body.style.overflow = "hidden";
   }, 5);
 }
 
