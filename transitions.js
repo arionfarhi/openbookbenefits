@@ -4941,7 +4941,7 @@ window.showProcedurePopup = function(item)
   const header = document.getElementsByClassName("header-container")[0];
 
   // Prevent scrolling when popup is open
-  document.body.style.overflow = "hidden";
+ // document.body.style.overflow = "hidden";
 
   // Full screen overlay - apply to the popup container itself
   if (popup)
