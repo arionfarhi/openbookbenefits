@@ -6764,8 +6764,9 @@ function scrollTopAndLock() //for calcualtor state
   // Make sure we also get to the top
   setTimeout(() =>
   {
+    document.body.style.overflow = "hidden";
     window.scrollTo(0, 0);
-  }, 5);
+  }, 20);
 }
 
 function scrollTop()
