@@ -5518,7 +5518,7 @@ function setupCoverageItemsClickHandler()
 
 
 /* See if user should scroll for calculator section - dyanmic solution! */
-ffunction checkCalculatorItemCollisions() {
+function checkCalculatorItemCollisions() {
   if (tabNumber !== 2 || Object.keys(calculatorItems).length === 0) {
     return;
   }
