@@ -109,8 +109,8 @@ function runBackend()
 
 
 
-  return fetch('http://localhost:3000/check-eligibility',  //for testing with backend.js!
-  //return fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', //for production with API gateway and lambda!
+  //return fetch('http://localhost:3000/check-eligibility',  //for testing with backend.js!
+  return fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', //for production with API gateway and lambda!
   {
     method: 'POST',
     headers:
@@ -473,6 +473,52 @@ function runBackend()
                }
              }
           });
+          //add all basic or major to not covered if 0% covered
+          if (basicPercentage === 0) 
+          {
+             const basicProcedures = ["Fillings", "Extractions", "Root Canals", "Deep Cleanings"];
+             
+             basicProcedures.forEach(procedureName => {
+               // Find the "Not Covered" array in variables
+               for (let i = 0; i < variables.length; i++) {
+                 if (variables[i][0] === "Not Covered:") {
+                   // Check if not already in the list
+                   const alreadyExists = variables[i].slice(1).some(item => {
+                     const itemName = Array.isArray(item) ? item[0] : item;
+                     return itemName === procedureName;
+                   });
+                   
+                   if (!alreadyExists) {
+                     variables[i].push([procedureName]);
+                   }
+                   break;
+                 }
+               }
+             });
+            }
+
+            // If Major section is 0% covered, add all major procedures to not covered
+            if (majorPercentage === 0) {
+             const majorProcedures = ["Crowns", "Bridges", "Dentures", "Implants"];
+             
+             majorProcedures.forEach(procedureName => {
+               // Find the "Not Covered" array in variables
+               for (let i = 0; i < variables.length; i++) {
+                 if (variables[i][0] === "Not Covered:") {
+                   // Check if not already in the list
+                   const alreadyExists = variables[i].slice(1).some(item => {
+                     const itemName = Array.isArray(item) ? item[0] : item;
+                     return itemName === procedureName;
+                   });
+                   
+                   if (!alreadyExists) {
+                     variables[i].push([procedureName]);
+                   }
+                   break;
+                 }
+               }
+             });
+            }
 
 
 
@@ -545,7 +591,7 @@ function runBackend()
 
 
 
-          // Look for not covered procedures - records all things that are shown as not covered
+          //this prints out all not covered
           /*
           const notCoveredProcedures = [];
           coInsuranceData.forEach(benefit =>
