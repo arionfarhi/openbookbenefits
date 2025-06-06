@@ -24,14 +24,14 @@ const variables = [
   var extMajor = false; //records if extraction is basic or major
   let procedureCoverages = //records if these procedures are not covered
   {
-  rootCanal: null,
-  extraction: null,
-  bridges: null,
-  dentures: null,
-  crowns: null,
-  implants: null,
-  deepCleaning: null
-};
+    rootCanal: null,
+    extraction: null,
+    bridges: null,
+    dentures: null,
+    crowns: null,
+    implants: null,
+    deepCleaning: null
+  };
 
 
 
@@ -451,9 +451,9 @@ function runBackend()
           Object.keys(procedureCoverages).forEach(procedureKey => // Check each procedure for 0% coverage
           {
             const coverage = procedureCoverages[procedureKey];
-          
+
             const procedureName = procedureNames[procedureKey];
-             
+
              // If coverage is exactly 0%, add to not covered list
              if (coverage === 0) {
                // Find the "Not Covered" array in variables
@@ -472,13 +472,13 @@ function runBackend()
                  }
                }
              }
-          });
+           });
           //add all basic or major to not covered if 0% covered
           if (basicPercentage === 0) 
           {
-             const basicProcedures = ["Fillings", "Extractions", "Root Canals", "Deep Cleanings"];
-             
-             basicProcedures.forEach(procedureName => {
+           const basicProcedures = ["Fillings", "Extractions", "Root Canals", "Deep Cleanings"];
+
+           basicProcedures.forEach(procedureName => {
                // Find the "Not Covered" array in variables
                for (let i = 0; i < variables.length; i++) {
                  if (variables[i][0] === "Not Covered:") {
@@ -495,7 +495,7 @@ function runBackend()
                  }
                }
              });
-            }
+         }
 
             // If Major section is 0% covered, add all major procedures to not covered
             if (majorPercentage === 0) {
@@ -518,7 +518,7 @@ function runBackend()
                  }
                }
              });
-            }
+           }
 
 
 
@@ -3916,9 +3916,9 @@ function processNotCoveredProcedures()
     
     // Check if Not Covered section is hidden or has no items
     const notCoveredVisible = notCoveredSection2 && 
-                             notCoveredSection2.style.display !== 'none' && 
-                             notCoveredSection2.querySelector(".coverage-grid") &&
-                             notCoveredSection2.querySelector(".coverage-grid").children.length > 0;
+    notCoveredSection2.style.display !== 'none' && 
+    notCoveredSection2.querySelector(".coverage-grid") &&
+    notCoveredSection2.querySelector(".coverage-grid").children.length > 0;
     
     // Add margin bottom if major has more than 4 items and no Not Covered section
     if (majorItemCount > 4 && !notCoveredVisible) {
@@ -5304,6 +5304,9 @@ function enhancePopupWithCalculator()
 
   // Add styles for calculator
   addCalculatorStyles();
+  setTimeout(() => {
+    checkCalculatorItemCollisions();
+  }, 1200); // Wait for animation to complete
 }
 
 function resetNotCoveredItemStyle(item)
@@ -5512,6 +5515,55 @@ function setupCoverageItemsClickHandler()
 
   document.addEventListener('click', window.procedureClickHandler);
 }
+
+
+/* See if user should scroll for calculator section - dyanmic solution! */
+function checkCalculatorItemCollisions() 
+{
+  if (tabNumber !== 2 || Object.keys(calculatorItems).length === 0) {
+    return;
+  }
+  const tabsDiv = document.getElementById('tabs-div');
+  if (!tabsDiv) return;
+  const tabsRect = tabsDiv.getBoundingClientRect();
+  const items = document.querySelectorAll('.coverage-item');
+  let hasCollision = false;
+  items.forEach(item => {
+    const itemRect = item.getBoundingClientRect();
+    
+    // Check if item overlaps with tabs area
+    if (itemRect.bottom > tabsRect.top && 
+      itemRect.top < tabsRect.bottom &&
+      itemRect.right > tabsRect.left && 
+      itemRect.left < tabsRect.right) {
+      hasCollision = true;
+  }
+});
+  if (hasCollision) {
+    // Enable scrolling when collision detected
+    document.body.style.overflow = 'auto';
+    document.body.style.touchAction = 'auto';
+    // Calculate how much to scroll to clear the collision plus 10px buffer
+    const lowestItemBottom = Math.max(...Array.from(items).map(item => {
+      const rect = item.getBoundingClientRect();
+      return rect.bottom;
+    }));
+    const tabsTop = tabsRect.top;
+    const scrollNeeded = Math.max(0, lowestItemBottom - tabsTop + 10);
+    if (scrollNeeded > 0) {
+      window.scrollBy({
+        top: scrollNeeded,
+        behavior: 'smooth'
+      });
+    }
+  } else {
+    // Re-disable scrolling if no collision
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+  }
+}
+
+
 
 // Update the calculator display with current items and animate changes
 function updateCalculatorDisplay()
@@ -5941,6 +5993,9 @@ function updateCalculatorDisplay()
       });
     }
   }
+  setTimeout(() => {
+    checkCalculatorItemCollisions();
+}, 1100); // Wait for transform animations to complete
 }
 
 function setupBenefitsInfoTooltip()
