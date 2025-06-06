@@ -1,6 +1,5 @@
 
-
-:root /* iPhone 14 Pro Max - Base values (430px × 932px) */
+:root /* iPhone 14 Pro Max (430px) and bigger! */
 {
 	--scale-factor: 1.0;
 	--header-height: 54px;
@@ -21,8 +20,82 @@
 	--menu-item-spacing: 50px;
 }
 
+/* iPhone 14 Plus (391-429px) */
+@media (min-width: 391px) and (max-width: 429px) 
+{
+	:root {
+		--scale-factor: 0.99;
+		--header-height: 53px;
+		--input-height: 59px;
+		--button-height: 53px;
+		--logo-height: 74px;
+		--font-base: 16px;
+		--font-large: 28px;
+		--font-small: 12px;
+		--font-menu: 15px;
+		--spacing-xs: 5px;
+		--spacing-sm: 10px;
+		--spacing-md: 19px;
+		--spacing-lg: 49px;
+		--border-radius: 12px;
+		--hamburger-size: 23px;
+		--icon-size: 19px;
+		--menu-item-spacing: 49px;
+	}
+}
+
+/* iPhone 14 (390px) -- very common! */
+@media (min-width: 376px) and (max-width: 390px) 
+{
+	:root {
+		--scale-factor: 0.91;
+		--header-height: 49px;
+		--input-height: 55px;
+		--button-height: 49px;
+		--logo-height: 68px;
+		--font-base: 15px;
+		--font-large: 26px;
+		--font-small: 11px;
+		--font-menu: 14px;
+		--spacing-xs: 4px;
+		--spacing-sm: 9px;
+		--spacing-md: 18px;
+		--spacing-lg: 45px;
+		--border-radius: 11px;
+		--hamburger-size: 22px;
+		--icon-size: 18px;
+		--menu-item-spacing: 45px;
+	}
+}
+
+/* iPhone SE (360px) + Many Android Phones (360px-375px) */
+@media (min-width: 360px) and (max-width: 375px) 
+{
+	:root {
+		--scale-factor: 0.87;
+		--header-height: 47px;
+		--input-height: 52px;
+		--button-height: 47px;
+		--logo-height: 65px;
+		--font-base: 14.5px;
+		--font-large: 25px;
+		--font-small: 10.5px;
+		--font-menu: 13.5px;
+		--spacing-xs: 4px;
+		--spacing-sm: 8px;
+		--spacing-md: 16px;
+		--spacing-lg: 40px;
+		--border-radius: 10px;
+		--hamburger-size: 21px;
+		--icon-size: 17px;
+		--menu-item-spacing: 42px;
+	}
+}
+
+
 /* Small Android Phones (320-359px) - Very Compact */
-@media (max-width: 359px) {
+@media (max-width: 359px) 
+{
 	:root {
 		--scale-factor: 0.74;
 		--header-height: 40px;
@@ -46,98 +119,6 @@
 
 
 
-/* iPhone SE + Android Phones (360px-375px) */
-@media (min-width: 360px) and (max-width: 375px) {
-	:root {
-		--scale-factor: 0.87;
-		--header-height: 47px;
-		--input-height: 52px;
-		--button-height: 47px;
-		--logo-height: 65px;
-		--font-base: 14.5px;
-		--font-large: 25px;
-		--font-small: 10.5px;
-		--font-menu: 13.5px;
-		--spacing-xs: 4px;
-		--spacing-sm: 8px;
-		--spacing-md: 16px;
-		--spacing-lg: 40px;
-		--border-radius: 10px;
-		--hamburger-size: 21px;
-		--icon-size: 17px;
-		--menu-item-spacing: 42px;
-	}
-}
-
-/* iPhone 14 (390px × 844px) -- most common! */
-@media (min-width: 376px) and (max-width: 390px) {
-	:root {
-		--scale-factor: 0.91;
-		--header-height: 49px;
-		--input-height: 55px;
-		--button-height: 49px;
-		--logo-height: 68px;
-		--font-base: 15px;
-		--font-large: 26px;
-		--font-small: 11px;
-		--font-menu: 14px;
-		--spacing-xs: 4px;
-		--spacing-sm: 9px;
-		--spacing-md: 18px;
-		--spacing-lg: 45px;
-		--border-radius: 11px;
-		--hamburger-size: 22px;
-		--icon-size: 18px;
-		--menu-item-spacing: 45px;
-	}
-}
-
-/* iPhone 14 Plus (428px × 926px) */
-@media (min-width: 391px) and (max-width: 428px) {
-	:root {
-		--scale-factor: 0.99;
-		--header-height: 53px;
-		--input-height: 59px;
-		--button-height: 53px;
-		--logo-height: 74px;
-		--font-base: 16px;
-		--font-large: 28px;
-		--font-small: 12px;
-		--font-menu: 15px;
-		--spacing-xs: 5px;
-		--spacing-sm: 10px;
-		--spacing-md: 19px;
-		--spacing-lg: 49px;
-		--border-radius: 12px;
-		--hamburger-size: 23px;
-		--icon-size: 19px;
-		--menu-item-spacing: 49px;
-	}
-}
-
-/* Large Android Phones (431-479px) */
-@media (min-width: 431px) and (max-width: 479px) 
-{
-  :root {
-    --scale-factor: 1.05;
-    --header-height: 57px;
-    --input-height: 63px;
-    --button-height: 57px;
-    --logo-height: 79px;
-    --font-base: 17px;
-    --font-large: 30px;
-    --font-small: 13px;
-    --font-menu: 16px;
-    --spacing-xs: 5px;
-    --spacing-sm: 11px;
-    --spacing-md: 21px;
-    --spacing-lg: 53px;
-    --border-radius: 13px;
-    --hamburger-size: 25px;
-    --icon-size: 20px;
-    --menu-item-spacing: 53px;
-  }
-}
 
 
 /* 
@@ -219,6 +200,14 @@ body::after {
 	font-size: calc(var(--font-menu) * 1.06) !important;
 }
 
+.menu-content-wrapper 
+{
+	transform: scale(var(--scale-factor)) !important;
+	transform-origin: top left !important;
+	height: calc(100% / var(--scale-factor)) !important; /* Compensate for scale to fill available space */
+	width: calc(100% / var(--scale-factor)) !important; /* Compensate for scale to maintain full width */
+}
+
 /* CONTENT SCALING */
 
 .content h2 {
@@ -286,22 +275,19 @@ input {
 }
 
 .input-container:nth-child(1) input {
-	border-top: calc(var(--scale-factor) * 2px) solid #aaa !important;
-	border-left: calc(var(--scale-factor) * 2px) solid #aaa !important;
-	border-right: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-width: calc(var(--scale-factor) * 2px) calc(var(--scale-factor) * 2px) 0 calc(var(--scale-factor) * 2px);
+	border-style: solid;
 	border-top-left-radius: var(--border-radius) !important;
 	border-top-right-radius: var(--border-radius) !important;
 }
-
 .input-container:nth-child(2) input, 
 .input-container:nth-child(3) input {
-	border-top: calc(var(--scale-factor) * 2px) solid #aaa !important;
-	border-left: calc(var(--scale-factor) * 2px) solid #aaa !important;
-	border-right: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-width: calc(var(--scale-factor) * 2px) calc(var(--scale-factor) * 2px) 0 calc(var(--scale-factor) * 2px);
+	border-style: solid;
 }
-
 .input-container:nth-child(4) input {
-	border: calc(var(--scale-factor) * 2px) solid #aaa !important;
+	border-width: calc(var(--scale-factor) * 2px);
+	border-style: solid;
 	border-bottom-left-radius: var(--border-radius) !important;
 	border-bottom-right-radius: var(--border-radius) !important;
 }
@@ -499,10 +485,7 @@ input:focus::placeholder {
 	border-radius: calc(var(--scale-factor) * 3px) !important;
 }
 
-.coverage-grid {
-	gap: calc(var(--spacing-xs) * 0.8) !important;
-	padding-bottom: var(--spacing-sm) !important;
-}
+
 
 .coverage-item {
 	padding: calc(var(--spacing-md) * 0.75) var(--spacing-sm) !important;
@@ -521,14 +504,6 @@ input:focus::placeholder {
 	font-size: calc(var(--font-base) * 0.88) !important;
 }
 
-@media (max-width: 380px) 
-{
-	.coverage-name
-	{
-		font-size: calc(var(--font-small) * 1) !important;
-	}
-}
-
 .coverage-section:nth-child(1),
 .coverage-section:nth-child(2),
 .coverage-section:nth-child(3),
@@ -539,16 +514,26 @@ input:focus::placeholder {
 	/*margin-bottom: var(--spacing-sm) !important;*/
 }
 
-
 @media (max-width: 380px) 
 {
+	.coverage-name
+	{
+		font-size: calc(var(--font-small) * 1) !important;
+	}
 	.coverage-section:nth-child(1),
 	.coverage-section:nth-child(2),
 	.coverage-section:nth-child(3),
 	.coverage-section:nth-child(4) {
 		margin-bottom: calc(var(--spacing-md)) !important;
 	}
+
+	.coverage-grid 
+	{
+		grid-template-columns: repeat(auto-fit, minmax(calc(var(--spacing-lg) * 1.83), calc(var(--spacing-lg) * 1.83))) !important;
+
+	}
 }
+
 
 
 /* TAB 3 SCALING */
@@ -817,8 +802,8 @@ input:focus::placeholder {
 
 /* INSURANCE DROPDOWN SCALING */
 .insurance-dropdown {
-	border-radius: var(--border-radius) !important;
 	max-height: calc(var(--spacing-lg) * 4.8) !important;
+	border-width: calc(var(--scale-factor) * 2px) !important;
 }
 
 .dropdown-item {
@@ -920,12 +905,10 @@ input:focus::placeholder {
 
 .error-popup i {
 	font-size: calc(var(--spacing-md) * 1.1) !important;
-	top: calc(var(--font-base) * 1.125) !important;
 	left: var(--spacing-sm) !important;
 }
 
 .error-popup .error-message {
-	padding-left: calc(var(--spacing-sm) * 0.75) !important;
 	padding-right: calc(var(--scale-factor) * 1%) !important;
 }
 

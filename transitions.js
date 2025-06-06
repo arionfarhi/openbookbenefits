@@ -1,10 +1,9 @@
-const variables = 
-[
-["First Name", "John"], //ignored for now
-["Last Name", "Smith"], //ignored for now
+const variables = [
+  ["First Name", "John"], //ignored for now
+  ["Last Name", "Smith"], //ignored for now
   ["Insurance Name", "Delta Dental"], //I find this based on their selection, then shortened
   ["Is Active", ""],
-  ["Renewal Date", "01/01/2026"], 
+  ["Renewal Date", "01/01/2026"],
   ["Termination Date", ""],
   ["Maximum", "$1500"],
   ["Maximum Used", "$1300"],
@@ -16,51 +15,71 @@ const variables =
   ["Not Covered:", ], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
   ["Frequencies:", //the cleaning and exams & xrays will always be there. Also note formatting in popup (can say "once per five years" as well).
   ["Cleaning: twice per year"],
-  ["Exams & X-Rray: twice per year"]/*,["Crown: once per 5 years"]*/
-  ], 
-  ["Active Waiting Periods:", /*["Basic: 06/01/2025"]*/] //Inputs: Prev, Basic, Major -- will have to parse myself to see if active
+  ["Exams & X-Rray: twice per year"] /*,["Crown: once per 5 years"]*/
+  ],
+  ["Active Waiting Periods:", /*["Basic: 06/01/2025"]*/ ] //Inputs: Prev, Basic, Major -- will have to parse myself to see if active
   ];
+  /* global variables needed */
+  var rootCanalMajor = false; //records if root canal is basic or major
+  var extMajor = false; //records if extraction is basic or major
+  let procedureCoverages = //records if these procedures are not covered
+  {
+  rootCanal: null,
+  extraction: null,
+  bridges: null,
+  dentures: null,
+  crowns: null,
+  implants: null,
+  deepCleaning: null
+};
+
+
+
   /*FOR TESTING!*/
   document.addEventListener('DOMContentLoaded', function()
   {
-    /*
-    document.getElementsByClassName("content")[0].style.opacity = "0";
-    document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
-    document.getElementById("submit").style.opacity = "0";
-    document.getElementById("main-form").style.pointerEvents = "none";
-    document.getElementById("submit").style.pointerEvents = "none";
-    document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
-    document.getElementById("tabs-div").style.pointerEvents = "auto";
-    document.getElementById("tabs-div").style.zIndex = "9999";
-    document.getElementsByClassName("content")[0].style.zIndex = "-999";
-    document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
-    document.getElementsByClassName("second-content")[0].style.zIndex = "999";
-    showNext();
-    maximumRemaining = "$300";
-    */
-  });
+  /*
+  document.getElementsByClassName("content")[0].style.opacity = "0";
+  document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
+  document.getElementById("submit").style.opacity = "0";
+  document.getElementById("main-form").style.pointerEvents = "none";
+  document.getElementById("submit").style.pointerEvents = "none";
+  document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
+  document.getElementById("tabs-div").style.pointerEvents = "auto";
+  document.getElementById("tabs-div").style.zIndex = "9999";
+  document.getElementsByClassName("content")[0].style.zIndex = "-999";
+  document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
+  document.getElementsByClassName("second-content")[0].style.zIndex = "999";
+  showNext();
+  maximumRemaining = "$300";
+  */
+});
 
   const insuranceCompanies = [
-  "Delta Dental of Michigan", "Delta Dental of Alabama", "Delta Dental of Florida", "Delta Dental of Georgia", "Delta Dental of Louisiana", "Delta Dental of Mississippi", "Delta Dental of Montana", "Delta Dental of Nevada", "Delta Dental of Texas", "Delta Dental of Utah", "Delta Dental of Minnesota", "Delta Dental of New Jersey", "Delta Dental of Connecticut", "Delta Dental of Illinois", "Delta Dental of Maryland", "Delta Dental of Pennsylvania", "Delta Dental of Oregon", "Delta Dental of Alaska", "Delta Dental of New York", "Delta Dental of Colorado", "Delta Dental of Arkansas", "Delta Dental of North Carolina", "Delta Dental of Northeast", "Delta Dental of Iowa - Dental Wellness Plan", "Delta Dental of District of Colombia", "Delta Dental of California", "Delta Dental of Washington", "Delta Dental of Massachusetts", "Delta Dental of Missouri", "Delta Dental of Virginia", "Delta Dental of Ohio", "Delta Dental of Kansas", "Delta Dental of Wisconsin", "Delta Dental of Tennessee", "Delta Dental of Kentucky", "Delta Dental of Idaho", "Delta Dental of Arizona", "Delta Dental of Indiana", "Delta Dental of Rhode Island", "Delta Dental of Iowa", "Delta Dental of New Mexico", "Delta Dental of Oklahoma", "Delta Dental of Nebraska", "Delta Dental of Delaware", "Delta Dental of Wyoming", "Delta Dental of South Carolina", "Delta Dental of West Virginia", "Delta Dental of Puerto Rico", "Delta Dental of South Dakota", "Metlife Dental Family", "Aetna", "Cigna", "UnitedHealthCare", "DentaQuest", "Guardian", "Humana", "Ameritas", "United Concordia - Dental Plus", "United Concordia - Tricare Dental", "United Concordia Fee-for-Service ", "Blue Cross of Idaho", "Blue Cross Blue Shield of Texas", "Anthem Blue Cross Blue Shield of California", "Blue Cross Blue Shield of Illinois", "Horizon Blue Cross Blue Shield of New Jersey", "Blue Cross Blue Shield Massachusetts", "Anthem Blue Cross Blue Shield of New York", "Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "Anthem Blue Cross Blue Shield of Indiana", "Blue Cross Blue Shield of North Carolina", "Blue Cross Blue Shield of Michigan", "Independence Blue Cross Pennsylvania", "Premera Blue Cross of Washington", "Anthem Blue Cross Blue Shield of Virginia", "Blue Cross Blue Shield Of Alabama", "Anthem Blue Cross Blue Shield of Colorado", "Anthem Blue Cross Blue Shield of Georgia", "Anthem Blue Cross Blue Shield Ohio", "Blue Cross Blue Shield of South Carolina", "Blue Cross Blue Shield of Florida", "Anthem Blue Cross Blue Shield of Connecticut", "Anthem Blue Cross Blue Shield Dental", "Premera Blue Cross Alaska", "Anthem Blue Cross Blue Shield Missouri", "Capital Blue Cross of Pennsylvania", "CareFirst Blue Cross Blue Shield Maryland", "Blue Cross Blue Shield of Kansas City", "Anthem Blue Cross Blue Shield Nevada", "Blue Cross Blue Shield of Arkansas", "Blue Cross Blue Shield of Michigan/Medicare Advantage", "Anthem Blue Cross Blue Shield New Hampshire", "Anthem Blue Cross Blue Shield of Wisconsin", "Anthem Blue Cross Blue Shield of Maine", "Blue Cross Blue Shield of Wyoming", "Blue Cross Blue Shield of Nebraska", "Blue Cross Blue Shield of Vermont", "Blue Cross Blue Shield Rhode Island", "Blue Cross Blue Shield of Kansas", "Blue Cross Blue Shield of New Mexico", "Highmark Blue Cross Blue Shield of West Virginia", "Blue Cross Blue Shield of North Dakota", "Blue Cross Blue Shield of Montana", "Blue Cross Illinois Medicare Advantage", "Excellus Blue Cross Blue Shield New York Rochester Area", "Blue Cross Community Options", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield New Jersey", "Arizona Blue (Blue Cross Blue Shield Arizona)", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Excellus Blue Cross Blue Shield New York Central", "CareFirst BlueCross BlueShield District of Columbia (NCA)", "Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "Blue Cross Blue Shield Oklahoma", "Blue Cross Blue Shield of Tennessee", "Regence BlueCross BlueShield of Oregon", "Anthem BlueCross BlueShield Kentucky", "Blue Cross Blue Shield Louisiana Blue Advantage", "Highmark Blue Cross Blue Shield of Delaware", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Blue Cross Blue Shield Louisiana", "Blue Cross Blue Shield Mississippi", "Anthem Blue Cross of New York Dental", "Excellus Blue Cross Blue Shield New York Utica Watertown", "Blue Cross Blue Shield of Hawaii", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Blue Cross Blue Shield Anthem Vivity", "Blue Cross New York Northeastern", "Empire Blue Cross Blue Shield New York", "Blue Cross Blue Shield of Kentucky (FEP)", "Blue Cross Blue Shield of Ohio (FEP)", "Blue Cross Blue Shield Minnesota", "Blue Cross Blue Shield of Minnesota (FEP)", "Blue Cross Blue Shield of Washington DC", "CareFirst BlueCross BlueShield Community Health Plan Maryland", "BCBS Michigan and Blue Care Network", "Blue Cross Community Centennial", "Blue Cross Blue Shield Pennsylvania Northeast", "BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "HealthNow BlueCross BlueShield New York Northeastern", "Highmark Blue Cross Blue Shield Pennsylvania Institutional", "Blue Cross Blue Shield FEP BlueDental", "Excellus BlueCross BlueShield of New York", "Blue Cross Blue Shield Delaware", "BlueCross BlueShield of South Carolina Federal Employee Program", "Blue Cross Blue Shield of Connecticut- Family Plan", "Regence BlueCross BlueShield of Utah", "Blue Cross Blue Shield Pennsylvania Northwest", "Blue Cross Blue Shield South Carolina State Health Plan", "Blue Cross Blue Shield South Carolina Medicare Blue", "Mountain State Blue Cross Blue Shield West Virginia"
+  "Delta Dental of Michigan", "Delta Dental of Alabama", "Delta Dental of Florida", "Delta Dental of Georgia", "Delta Dental of Louisiana", "Delta Dental of Mississippi", "Delta Dental of Montana", "Delta Dental of Nevada", "Delta Dental of Texas", "Delta Dental of Utah", "Delta Dental of Minnesota", "Delta Dental of New Jersey", "Delta Dental of Connecticut", "Delta Dental of Illinois", "Delta Dental of Maryland", "Delta Dental of Pennsylvania", "Delta Dental of Oregon", "Delta Dental of Alaska", "Delta Dental of New York", "Delta Dental of Colorado", "Delta Dental of Arkansas", "Delta Dental of North Carolina", "Delta Dental of Northeast", "Delta Dental of Iowa - Dental Wellness Plan", "Delta Dental of District of Colombia", "Delta Dental of California", "Delta Dental of Washington", "Delta Dental of Massachusetts", "Delta Dental of Missouri", "Delta Dental of Virginia", "Delta Dental of Ohio", "Delta Dental of Kansas", "Delta Dental of Wisconsin", "Delta Dental of Tennessee", "Delta Dental of Kentucky", "Delta Dental of Idaho", "Delta Dental of Arizona", "Delta Dental of Indiana", "Delta Dental of Rhode Island", "Delta Dental of Iowa", "Delta Dental of New Mexico", "Delta Dental of Oklahoma", "Delta Dental of Nebraska", "Delta Dental of Delaware", "Delta Dental of Wyoming", "Delta Dental of South Carolina", "Delta Dental of West Virginia", "Delta Dental of Puerto Rico", "Delta Dental of South Dakota", "Metlife", "Aetna", "Cigna", "UnitedHealthCare", "DentaQuest", "Guardian", "Humana", "Ameritas", "United Concordia - Dental Plus", "United Concordia - Tricare Dental", "United Concordia Fee-for-Service ", "Blue Cross of Idaho", "Blue Cross Blue Shield of Texas", "Anthem Blue Cross Blue Shield of California", "Blue Cross Blue Shield of Illinois", "Horizon Blue Cross Blue Shield of New Jersey", "Blue Cross Blue Shield Massachusetts", "Anthem Blue Cross Blue Shield of New York", "Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "Anthem Blue Cross Blue Shield of Indiana", "Blue Cross Blue Shield of North Carolina", "Blue Cross Blue Shield of Michigan", "Independence Blue Cross Pennsylvania", "Premera Blue Cross of Washington", "Anthem Blue Cross Blue Shield of Virginia", "Blue Cross Blue Shield Of Alabama", "Anthem Blue Cross Blue Shield of Colorado", "Anthem Blue Cross Blue Shield of Georgia", "Anthem Blue Cross Blue Shield Ohio", "Blue Cross Blue Shield of South Carolina", "Blue Cross Blue Shield of Florida", "Anthem Blue Cross Blue Shield of Connecticut", "Anthem Blue Cross Blue Shield Dental", "Premera Blue Cross Alaska", "Anthem Blue Cross Blue Shield Missouri", "Capital Blue Cross of Pennsylvania", "CareFirst Blue Cross Blue Shield Maryland", "Blue Cross Blue Shield of Kansas City", "Anthem Blue Cross Blue Shield Nevada", "Blue Cross Blue Shield of Arkansas", "Blue Cross Blue Shield of Michigan/Medicare Advantage", "Anthem Blue Cross Blue Shield New Hampshire", "Anthem Blue Cross Blue Shield of Wisconsin", "Anthem Blue Cross Blue Shield of Maine", "Blue Cross Blue Shield of Wyoming", "Blue Cross Blue Shield of Nebraska", "Blue Cross Blue Shield of Vermont", "Blue Cross Blue Shield Rhode Island", "Blue Cross Blue Shield of Kansas", "Blue Cross Blue Shield of New Mexico", "Highmark Blue Cross Blue Shield of West Virginia", "Blue Cross Blue Shield of North Dakota", "Blue Cross Blue Shield of Montana", "Blue Cross Illinois Medicare Advantage", "Excellus Blue Cross Blue Shield New York Rochester Area", "Blue Cross Community Options", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield New Jersey", "Arizona Blue (Blue Cross Blue Shield Arizona)", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Excellus Blue Cross Blue Shield New York Central", "CareFirst BlueCross BlueShield District of Columbia (NCA)", "Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "Blue Cross Blue Shield Oklahoma", "Blue Cross Blue Shield of Tennessee", "Regence BlueCross BlueShield of Oregon", "Anthem BlueCross BlueShield Kentucky", "Blue Cross Blue Shield Louisiana Blue Advantage", "Highmark Blue Cross Blue Shield of Delaware", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Blue Cross Blue Shield Louisiana", "Blue Cross Blue Shield Mississippi", "Anthem Blue Cross of New York Dental", "Excellus Blue Cross Blue Shield New York Utica Watertown", "Blue Cross Blue Shield of Hawaii", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Blue Cross Blue Shield Anthem Vivity", "Blue Cross New York Northeastern", "Empire Blue Cross Blue Shield New York", "Blue Cross Blue Shield of Kentucky (FEP)", "Blue Cross Blue Shield of Ohio (FEP)", "Blue Cross Blue Shield Minnesota", "Blue Cross Blue Shield of Minnesota (FEP)", "Blue Cross Blue Shield of Washington DC", "CareFirst BlueCross BlueShield Community Health Plan Maryland", "BCBS Michigan and Blue Care Network", "Blue Cross Community Centennial", "Blue Cross Blue Shield Pennsylvania Northeast", "BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "HealthNow BlueCross BlueShield New York Northeastern", "Highmark Blue Cross Blue Shield Pennsylvania Institutional", "Blue Cross Blue Shield FEP BlueDental", "Excellus BlueCross BlueShield of New York", "Blue Cross Blue Shield Delaware", "BlueCross BlueShield of South Carolina Federal Employee Program", "Blue Cross Blue Shield of Connecticut- Family Plan", "Regence BlueCross BlueShield of Utah", "Blue Cross Blue Shield Pennsylvania Northwest", "Blue Cross Blue Shield South Carolina State Health Plan", "Blue Cross Blue Shield South Carolina Medicare Blue", "Mountain State Blue Cross Blue Shield West Virginia", "Delta Dental of North Dakota", "Delta Dental of Maine", "Delta Dental of New Hampshire", "Delta Dental of Vermont", "Principal Financial Group", "Sunlife", "Assurant Health", "Kaiser Permanente Northern California", "Kaiser Permanente Health Plan Hawaii", "Kaiser Permanente Georgia", "Ambetter", "HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "Maine Medicaid", "Humana - Healthy Horizons (Ohio Medicaid)", "Medicaid Washington", "Medicaid Massachusetts", "Indiana Medicaid", "Medicaid Oregon", "Medicaid Texas - CHIP", "North Carolina Medicaid", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Medicaid Illinois", "Medicaid Rhode Island", "Medicaid Idaho", "United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Centene Ohio Medicaid Managed Care Entity", "AmeriHealth Caritas Ohio Medicaid MCE", "Medicaid Louisiana", "Aetna OhioRise Medicaid Managed Care Entity", "Medicaid California Medi-Cal", "Medicaid New York", "Medicaid Texas - Acute", "West Virginia Medicaid", "CareSource Medicaid Ohio", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Medicaid Kentucky", "Medicaid South Carolina", "Medicaid New Hampshire", "Medicaid Alabama", "Molina Ohio Medicaid Managed Care Entity", "Medicaid Vermont", "Medicaid South Dakota", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Medicaid Missouri", "Medicaid Michigan", "Medicaid Ohio", "Medicaid Connecticut", "Medicaid Alaska", "Amerigroup-Medicaid", "Medicaid Arizona", "Medicaid Georgia", "Medicaid Maryland", "Medicaid Nevada", "Medicaid Pennsylvania", "Medicaid Oklahoma", "Medicaid Virginia", "Texas Children's Health Plan (Medicaid) CHIP", "Medicaid Montana", "Medicaid Tennessee", "Medicaid Florida", "Medicaid Iowa", "Medicaid of Virginia", "Medicaid Wisconsin", "Medicaid New Jersey", "Medicaid Tennessee BlueCare TennCare Select", "Aetna Medicaid Illinois", "McLaren Medicaid", "Medicaid Maryland Department of Health and Mental Hygiene", "Medicaid New Mexico", "CareSource Ohio Medicaid Managed Care Entity", "FirstCare Star Medicaid", "Medicaid North Dakota", "Medicaid Hawaii", "Medicaid Kansas", "Medicaid Arkansas", "Medicaid District of Columbia", "CareSource of Michigan Medicaid", "Medicaid Delaware", "Medicaid of Kentucky (Region 3 - Doral Dental)", "Christus Health Plan Medicaid", "Medicaid Wyoming", "Medicaid Louisiana Durable Medical Equipment Claims", "Medicaid Mississippi", "Blue Cross Blue Shield of Texas"
   ];
 
   const insuranceCompaniesWCodes = [
-  ["Delta Dental of Michigan", "DELTA"], ["Delta Dental of Alabama", "94276"], ["Delta Dental of Florida", "94276"], ["Delta Dental of Georgia", "94276"], ["Delta Dental of Louisiana", "94276"], ["Delta Dental of Mississippi", "94276"], ["Delta Dental of Montana", "94276"], ["Delta Dental of Nevada", "94276"], ["Delta Dental of Texas", "94276"], ["Delta Dental of Utah", "94276"], ["Delta Dental of Minnesota", "07000"], ["Delta Dental of New Jersey", "22189"], ["Delta Dental of Connecticut", "22189"], ["Delta Dental of Illinois", "05030"], ["Delta Dental of Maryland", "23166"], ["Delta Dental of Pennsylvania", "23166"], ["Delta Dental of Oregon", "CDOR1"], ["Delta Dental of Alaska", "CDOR1"], ["Delta Dental of New York", "11198"], ["Delta Dental of Colorado", "DDPCO"], ["Delta Dental of Arkansas", "CDAR1"], ["Delta Dental of North Carolina", "56101"], ["Delta Dental of Northeast", "02027"], ["Delta Dental of Iowa - Dental Wellness Plan", "CDIAM"], ["Delta Dental of District of Colombia", "52147"], ["Delta Dental of California", "77777"], ["Delta Dental of Washington", "91062"], ["Delta Dental of Massachusetts", "04614"], ["Delta Dental of Missouri", "43090"], ["Delta Dental of Virginia", "CDVA1"], ["Delta Dental of Ohio", "DELTO"], ["Delta Dental of Kansas", "CDKS1"], ["Delta Dental of Wisconsin", "39069"], ["Delta Dental of Tennessee", "DELTN"], ["Delta Dental of Kentucky", "CDKY1"], ["Delta Dental of Idaho", "82029"], ["Delta Dental of Arizona", "86027"], ["Delta Dental of Indiana", "DELTI"], ["Delta Dental of Rhode Island", "05029"], ["Delta Dental of Iowa", "CDIA1"], ["Delta Dental of New Mexico", "DELTM"], ["Delta Dental of Oklahoma", "DELTOK"], ["Delta Dental of Nebraska", "072027"], ["Delta Dental of Delaware", "51022"], ["Delta Dental of Wyoming", "CDWY1"], ["Delta Dental of South Carolina", "43091"], ["Delta Dental of West Virginia", "31096"], ["Delta Dental of Puerto Rico", "66043"], ["Delta Dental of South Dakota", "54097"], ["Metlife Dental Family", "10134"], ["Aetna", "60054"], ["Cigna", "62308"], ["UnitedHealthCare", "87726"], ["DentaQuest", "CX014"], ["Guardian", "64246"], ["Humana", "61101"], ["Ameritas", "AMTAS00425"], ["United Concordia - Dental Plus", "CX013"], ["United Concordia - Tricare Dental", "CX002"], ["United Concordia Fee-for-Service ", "CX007"], ["Blue Cross of Idaho", "BLUEC"], ["Blue Cross Blue Shield of Texas", "G84980"], ["Anthem Blue Cross Blue Shield of California", "040"], ["Blue Cross Blue Shield of Illinois", "G00621"], ["Horizon Blue Cross Blue Shield of New Jersey", "22099"], ["Blue Cross Blue Shield Massachusetts", "SB700"], ["Anthem Blue Cross Blue Shield of New York", "803"], ["Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "88848"], ["Anthem Blue Cross Blue Shield of Indiana", "130"], ["Blue Cross Blue Shield of North Carolina", "BCSNC"], ["Blue Cross Blue Shield of Michigan", "00710"], ["Independence Blue Cross Pennsylvania", "100337"], ["Premera Blue Cross of Washington", "00430"], ["Anthem Blue Cross Blue Shield of Virginia", "423"], ["Blue Cross Blue Shield Of Alabama", "00510BC"], ["Anthem Blue Cross Blue Shield of Colorado", "050"], ["Anthem Blue Cross Blue Shield of Georgia", "00601"], ["Anthem Blue Cross Blue Shield Ohio", "00834"], ["Blue Cross Blue Shield of South Carolina", "00401"], ["Blue Cross Blue Shield of Florida", "BCBSF"], ["Anthem Blue Cross Blue Shield of Connecticut", "00060"], ["Anthem Blue Cross Blue Shield Dental", "84105"], ["Premera Blue Cross Alaska", "00934"], ["Anthem Blue Cross Blue Shield Missouri", "241"], ["Capital Blue Cross of Pennsylvania", "100952"], ["CareFirst Blue Cross Blue Shield Maryland", "00580"], ["Blue Cross Blue Shield of Kansas City", "47171"], ["Anthem Blue Cross Blue Shield Nevada", "00265"], ["Blue Cross Blue Shield of Arkansas", "00520"], ["Blue Cross Blue Shield of Michigan/Medicare Advantage", "BBMDQ"], ["Anthem Blue Cross Blue Shield New Hampshire", "00770"], ["Anthem Blue Cross Blue Shield of Wisconsin", "450"], ["Anthem Blue Cross Blue Shield of Maine", "180"], ["Blue Cross Blue Shield of Wyoming", "53767"], ["Blue Cross Blue Shield of Nebraska", "77780"], ["Blue Cross Blue Shield of Vermont", "BCBSVT"], ["Blue Cross Blue Shield Rhode Island", "SB870"], ["Blue Cross Blue Shield of Kansas", "47163"], ["Blue Cross Blue Shield of New Mexico", "00790"], ["Highmark Blue Cross Blue Shield of West Virginia", "54828"], ["Blue Cross Blue Shield of North Dakota", "55891"], ["Blue Cross Blue Shield of Montana", "G00751"], ["Blue Cross Illinois Medicare Advantage", "66006"], ["Excellus Blue Cross Blue Shield New York Rochester Area", "SB804"], ["Blue Cross Community Options", "MCDIL"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"], ["Blue Cross Blue Shield New Jersey", "100046"], ["Arizona Blue (Blue Cross Blue Shield Arizona)", "53589"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "BCBSCAIDWNY"], ["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"], ["Excellus Blue Cross Blue Shield New York Central", "SB805"], ["CareFirst BlueCross BlueShield District of Columbia (NCA)", "SB580"], ["Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "00720"], ["Blue Cross Blue Shield Oklahoma", "00840"], ["Blue Cross Blue Shield of Tennessee", "SB890"], ["Regence BlueCross BlueShield of Oregon", "00851"], ["Anthem BlueCross BlueShield Kentucky", "00660"], ["Blue Cross Blue Shield Louisiana Blue Advantage", "72107"], ["Highmark Blue Cross Blue Shield of Delaware", "00570"], ["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"], ["Blue Cross Blue Shield Louisiana", "53120"], ["Blue Cross Blue Shield Mississippi", "00230"], ["Anthem Blue Cross of New York Dental", "CBNY1"], ["Excellus Blue Cross Blue Shield New York Utica Watertown", "SB806"], ["Blue Cross Blue Shield of Hawaii", "100937"], ["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"], ["Blue Cross Blue Shield Anthem Vivity", "10993"], ["Blue Cross New York Northeastern", "100954"], ["Empire Blue Cross Blue Shield New York", "00803R"], ["Blue Cross Blue Shield of Kentucky (FEP)", "TLU90"], ["Blue Cross Blue Shield of Ohio (FEP)", "TLU91"], ["Blue Cross Blue Shield Minnesota", "220"], ["Blue Cross Blue Shield of Minnesota (FEP)", "TLU22"], ["Blue Cross Blue Shield of Washington DC", "TLY47"], ["CareFirst BlueCross BlueShield Community Health Plan Maryland", "45281"], ["BCBS Michigan and Blue Care Network", "00210"], ["Blue Cross Community Centennial", "GNMMD1"], ["Blue Cross Blue Shield Pennsylvania Northeast", "100900"], ["BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BCPRC"], ["BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "SB891"], ["HealthNow BlueCross BlueShield New York Northeastern", "SB800"], ["Highmark Blue Cross Blue Shield Pennsylvania Institutional", "54771I"], ["Blue Cross Blue Shield FEP BlueDental", "BCAFD"], ["Excellus BlueCross BlueShield of New York", "10323"], ["Blue Cross Blue Shield Delaware", "100026"], ["BlueCross BlueShield of South Carolina Federal Employee Program", "00402"], ["Blue Cross Blue Shield of Connecticut- Family Plan", "00700"], ["Regence BlueCross BlueShield of Utah", "00910"], ["Blue Cross Blue Shield Pennsylvania Northwest", "100338"], ["Blue Cross Blue Shield South Carolina State Health Plan", "400"], ["Blue Cross Blue Shield South Carolina Medicare Blue", "00C63"], ["Mountain State Blue Cross Blue Shield West Virginia", "MTNST"]
+  ["Delta Dental of Michigan", "DELTA"], ["Delta Dental of Alabama", "94276"], ["Delta Dental of Florida", "94276"], ["Delta Dental of Georgia", "94276"], ["Delta Dental of Louisiana", "94276"], ["Delta Dental of Mississippi", "94276"], ["Delta Dental of Montana", "94276"], ["Delta Dental of Nevada", "94276"], ["Delta Dental of Texas", "94276"], ["Delta Dental of Utah", "94276"], ["Delta Dental of Minnesota", "07000"], ["Delta Dental of New Jersey", "22189"], ["Delta Dental of Connecticut", "22189"], ["Delta Dental of Illinois", "05030"], ["Delta Dental of Maryland", "23166"], ["Delta Dental of Pennsylvania", "23166"], ["Delta Dental of Oregon", "CDOR1"], ["Delta Dental of Alaska", "CDOR1"], ["Delta Dental of New York", "11198"], ["Delta Dental of Colorado", "DDPCO"], ["Delta Dental of Arkansas", "CDAR1"], ["Delta Dental of North Carolina", "56101"], ["Delta Dental of Northeast", "02027"], ["Delta Dental of Iowa - Dental Wellness Plan", "CDIAM"], ["Delta Dental of District of Colombia", "52147"], ["Delta Dental of California", "77777"], ["Delta Dental of Washington", "91062"], ["Delta Dental of Massachusetts", "04614"], ["Delta Dental of Missouri", "43090"], ["Delta Dental of Virginia", "CDVA1"], ["Delta Dental of Ohio", "DELTO"], ["Delta Dental of Kansas", "CDKS1"], ["Delta Dental of Wisconsin", "39069"], ["Delta Dental of Tennessee", "DELTN"], ["Delta Dental of Kentucky", "CDKY1"], ["Delta Dental of Idaho", "82029"], ["Delta Dental of Arizona", "86027"], ["Delta Dental of Indiana", "DELTI"], ["Delta Dental of Rhode Island", "05029"], ["Delta Dental of Iowa", "CDIA1"], ["Delta Dental of New Mexico", "DELTM"], ["Delta Dental of Oklahoma", "DELTOK"], ["Delta Dental of Nebraska", "072027"], ["Delta Dental of Delaware", "51022"], ["Delta Dental of Wyoming", "CDWY1"], ["Delta Dental of South Carolina", "43091"], ["Delta Dental of West Virginia", "31096"], ["Delta Dental of Puerto Rico", "66043"], ["Delta Dental of South Dakota", "54097"], ["Metlife", "10134"], ["Aetna", "60054"], ["Cigna", "62308"], ["UnitedHealthCare", "87726"], ["DentaQuest", "CX014"], ["Guardian", "64246"], ["Humana", "61101"], ["Ameritas", "AMTAS00425"], ["United Concordia - Dental Plus", "CX013"], ["United Concordia - Tricare Dental", "CX002"], ["United Concordia Fee-for-Service ", "CX007"], ["Blue Cross of Idaho", "BLUEC"], ["Blue Cross Blue Shield of Texas", "G84980"], ["Anthem Blue Cross Blue Shield of California", "040"], ["Blue Cross Blue Shield of Illinois", "G00621"], ["Horizon Blue Cross Blue Shield of New Jersey", "22099"], ["Blue Cross Blue Shield Massachusetts", "SB700"], ["Anthem Blue Cross Blue Shield of New York", "803"], ["Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "88848"], ["Anthem Blue Cross Blue Shield of Indiana", "130"], ["Blue Cross Blue Shield of North Carolina", "BCSNC"], ["Blue Cross Blue Shield of Michigan", "00710"], ["Independence Blue Cross Pennsylvania", "100337"], ["Premera Blue Cross of Washington", "00430"], ["Anthem Blue Cross Blue Shield of Virginia", "423"], ["Blue Cross Blue Shield Of Alabama", "00510BC"], ["Anthem Blue Cross Blue Shield of Colorado", "050"], ["Anthem Blue Cross Blue Shield of Georgia", "00601"], ["Anthem Blue Cross Blue Shield Ohio", "00834"], ["Blue Cross Blue Shield of South Carolina", "00401"], ["Blue Cross Blue Shield of Florida", "BCBSF"], ["Anthem Blue Cross Blue Shield of Connecticut", "00060"], ["Anthem Blue Cross Blue Shield Dental", "84105"], ["Premera Blue Cross Alaska", "00934"], ["Anthem Blue Cross Blue Shield Missouri", "241"], ["Capital Blue Cross of Pennsylvania", "100952"], ["CareFirst Blue Cross Blue Shield Maryland", "00580"], ["Blue Cross Blue Shield of Kansas City", "47171"], ["Anthem Blue Cross Blue Shield Nevada", "00265"], ["Blue Cross Blue Shield of Arkansas", "00520"], ["Blue Cross Blue Shield of Michigan/Medicare Advantage", "BBMDQ"], ["Anthem Blue Cross Blue Shield New Hampshire", "00770"], ["Anthem Blue Cross Blue Shield of Wisconsin", "450"], ["Anthem Blue Cross Blue Shield of Maine", "180"], ["Blue Cross Blue Shield of Wyoming", "53767"], ["Blue Cross Blue Shield of Nebraska", "77780"], ["Blue Cross Blue Shield of Vermont", "BCBSVT"], ["Blue Cross Blue Shield Rhode Island", "SB870"], ["Blue Cross Blue Shield of Kansas", "47163"], ["Blue Cross Blue Shield of New Mexico", "00790"], ["Highmark Blue Cross Blue Shield of West Virginia", "54828"], ["Blue Cross Blue Shield of North Dakota", "55891"], ["Blue Cross Blue Shield of Montana", "G00751"], ["Blue Cross Illinois Medicare Advantage", "66006"], ["Excellus Blue Cross Blue Shield New York Rochester Area", "SB804"], ["Blue Cross Community Options", "MCDIL"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"], ["Blue Cross Blue Shield New Jersey", "100046"], ["Arizona Blue (Blue Cross Blue Shield Arizona)", "53589"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "BCBSCAIDWNY"], ["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"], ["Excellus Blue Cross Blue Shield New York Central", "SB805"], ["CareFirst BlueCross BlueShield District of Columbia (NCA)", "SB580"], ["Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "00720"], ["Blue Cross Blue Shield Oklahoma", "00840"], ["Blue Cross Blue Shield of Tennessee", "SB890"], ["Regence BlueCross BlueShield of Oregon", "00851"], ["Anthem BlueCross BlueShield Kentucky", "00660"], ["Blue Cross Blue Shield Louisiana Blue Advantage", "72107"], ["Highmark Blue Cross Blue Shield of Delaware", "00570"], ["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"], ["Blue Cross Blue Shield Louisiana", "53120"], ["Blue Cross Blue Shield Mississippi", "00230"], ["Anthem Blue Cross of New York Dental", "CBNY1"], ["Excellus Blue Cross Blue Shield New York Utica Watertown", "SB806"], ["Blue Cross Blue Shield of Hawaii", "100937"], ["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"], ["Blue Cross Blue Shield Anthem Vivity", "10993"], ["Blue Cross New York Northeastern", "100954"], ["Empire Blue Cross Blue Shield New York", "00803R"], ["Blue Cross Blue Shield of Kentucky (FEP)", "TLU90"], ["Blue Cross Blue Shield of Ohio (FEP)", "TLU91"], ["Blue Cross Blue Shield Minnesota", "220"], ["Blue Cross Blue Shield of Minnesota (FEP)", "TLU22"], ["Blue Cross Blue Shield of Washington DC", "TLY47"], ["CareFirst BlueCross BlueShield Community Health Plan Maryland", "45281"], ["BCBS Michigan and Blue Care Network", "00210"], ["Blue Cross Community Centennial", "GNMMD1"], ["Blue Cross Blue Shield Pennsylvania Northeast", "100900"], ["BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BCPRC"], ["BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "SB891"], ["HealthNow BlueCross BlueShield New York Northeastern", "SB800"], ["Highmark Blue Cross Blue Shield Pennsylvania Institutional", "54771I"], ["Blue Cross Blue Shield FEP BlueDental", "BCAFD"], ["Excellus BlueCross BlueShield of New York", "10323"], ["Blue Cross Blue Shield Delaware", "100026"], ["BlueCross BlueShield of South Carolina Federal Employee Program", "00402"], ["Blue Cross Blue Shield of Connecticut- Family Plan", "00700"], ["Regence BlueCross BlueShield of Utah", "00910"], ["Blue Cross Blue Shield Pennsylvania Northwest", "100338"], ["Blue Cross Blue Shield South Carolina State Health Plan", "400"], ["Blue Cross Blue Shield South Carolina Medicare Blue", "00C63"], ["Mountain State Blue Cross Blue Shield West Virginia", "MTNST"], ["Delta Dental of North Dakota", "07000"], ["Delta Dental of New Hampshire", "02027"], ["Delta Dental of Vermont", "02027"], ["Principal Financial Group", "00143MC"], ["Sunlife", "70408"], ["Assurant Health", "70408"], ["Kaiser Permanente Northern California", "KSRCN"], ["Kaiser Permanente Health Plan Hawaii", "94123"], ["Kaiser Permanente Georgia", "21313"], ["Ambetter", "68069"], ["HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "MIMCRCS1"], ["Maine Medicaid", "SKME0"], ["Humana - Healthy Horizons (Ohio Medicaid)", "61103"], ["Medicaid Washington", "A1DWA"], ["Medicaid Massachusetts", "100199"], ["Indiana Medicaid", "IHCP"], ["Medicaid Oregon", "AIDOR"], ["Medicaid Texas - CHIP", "10186"], ["North Carolina Medicaid", "NCMCD"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"], ["Medicaid Illinois", "IL621"], ["Medicaid Rhode Island", "SKRI0"], ["Medicaid Idaho", "ID"], ["United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "88337"], ["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"], ["Centene Ohio Medicaid Managed Care Entity", "0004202"], ["AmeriHealth Caritas Ohio Medicaid MCE", "35374"], ["Medicaid Louisiana", "100193"], ["Aetna OhioRise Medicaid Managed Care Entity", "45221"], ["Medicaid California Medi-Cal", "100065"], ["Medicaid New York", "100231"], ["Medicaid Texas - Acute", "86916"], ["West Virginia Medicaid", "100305"], ["CareSource Medicaid Ohio", "31114"], ["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"], ["Medicaid Kentucky", "KYMEDICAID"], ["Medicaid South Carolina", "SCMED"], ["Medicaid New Hampshire", "100228"], ["Medicaid Alabama", "SKAL0"], ["Molina Ohio Medicaid Managed Care Entity", "0007316"], ["Medicaid Vermont", "100302"], ["Medicaid South Dakota", "SD"], ["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"], ["Medicaid Missouri", "100211"], ["Medicaid Michigan", "D00111"], ["Medicaid Ohio", "MMISODFS"], ["Medicaid Connecticut", "CTMCD"], ["Medicaid Alaska", "SKAK0"], ["Amerigroup-Medicaid", "AGPMEDICAID"], ["Medicaid Arizona", "AZ"], ["Medicaid Georgia", "GAMEDICAID"], ["Medicaid Maryland", "100198"], ["Medicaid Nevada", "NV"], ["Medicaid Pennsylvania", "236003113"], ["Medicaid Oklahoma", "SKOK0"], ["Medicaid Virginia", "10198"], ["Texas Children's Health Plan (Medicaid) CHIP", "76048"], ["Medicaid Montana", "MT"], ["Medicaid Tennessee", "TN"], ["Medicaid Florida", "77027"], ["Medicaid Iowa", "100171"], ["Medicaid of Virginia", "CKVA1"], ["Medicaid Wisconsin", "100306"], ["Medicaid New Jersey", "100229"], ["Medicaid Tennessee BlueCare TennCare Select", "MC390"], ["Aetna Medicaid Illinois", "26337"], ["McLaren Medicaid", "3833C"], ["Medicaid Maryland Department of Health and Mental Hygiene", "526002033"], ["Medicaid New Mexico", "77048"], ["CareSource Ohio Medicaid Managed Care Entity", "0003150"], ["FirstCare Star Medicaid", "94998"], ["Medicaid North Dakota", "NDDHS"], ["Medicaid Hawaii", "SKHI0"], ["Medicaid Kansas", "00005"], ["Medicaid Arkansas", "ARMCD"], ["Medicaid District of Columbia", "100121"], ["CareSource of Michigan Medicaid", "MIMCDCS1"], ["Medicaid Delaware", "SKDE0"], ["Medicaid of Kentucky (Region 3 - Doral Dental)", "CKKY3"], ["Christus Health Plan Medicaid", "45210"], ["Medicaid Wyoming", "77046"], ["Medicaid Louisiana Durable Medical Equipment Claims", "SKLA1"], ["Medicaid Mississippi", "100209"], ["Blue Cross Blue Shield of Texas", "G84980"]
   ];
 
 function shortenNames(name) //keep adding on
 {
-  if (name.includes("Delta"))
+  if (name.toLowerCase().includes("delta"))
   {
     return "Delta Dental";
   }
-  else if (name.includes("Blue Cross"))
+  else if (name.toLowerCase().includes("blue cross"))
   {
-    return "BCBS";
+    return "Blue Cross";
   }
-  else if (name.includes("Metlife"))
+  else if (name.toLowerCase().includes("metlife"))
   {
     return "Metlife";
+  }
+  else if (name.toLowerCase().includes("medicaid"))
+  {
+    return "Medicaid";
   }
   else
   {
@@ -70,7 +89,7 @@ function shortenNames(name) //keep adding on
 
 
 
-function runBackend() 
+function runBackend()
 {
   const name = nameInput.value;
   const [firstName, lastName] = name.split(" ");
@@ -88,9 +107,10 @@ function runBackend()
     }
   }
 
-  // Return the fetch promise so we can wait for it
-  /*return fetch('http://localhost:3000/check-eligibility', */ //for testing with backend.js!
-  return fetch ('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', //for production with API gateway and lambda!
+
+
+  return fetch('http://localhost:3000/check-eligibility',  //for testing with backend.js!
+  //return fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', //for production with API gateway and lambda!
   {
     method: 'POST',
     headers:
@@ -140,21 +160,30 @@ function runBackend()
 
     const stringData = JSON.stringify(data, null, 2);
 
-    if (stringData.includes("Patient Birth Date Does Not Match That for the Patient on the Database") || stringData.includes("the length of the value must be `>=") || stringData.includes("The payer or clearinghouse rejected the request with validation errors."))
+    if (stringData.includes("Patient Birth Date Does Not Match That for the Patient on the Database") || stringData.includes("the length of the value must be `>=") || stringData.includes("The payer or clearinghouse rejected the request with validation errors.") || stringData.includes("Please Correct and Resubmit"))
     {
       if (memberID.toLowerCase() !== "bypass")
       {
         variables[2][1] = "Not Found";
+        variables[3][1] = "Active";
       }
+    }
+    else if (stringData.includes("Rate limit exceeded: Maximum"))
+    {
+      variables[3][1] = "Timeout";
+    }
+    else if (stringData.includes("Daily cost limit exceeded"))
+    {
+      variables[3][1] = "TimeoutAll";
     }
     else
     {
         //assign dental insurance name
         variables[2][1] = shortName;
 
-        if (data.planStatus && data.planStatus.length > 0) 
+        if (data.planStatus && data.planStatus.length > 0)
         {
-          const status = data.planStatus[0].status;  // This gets "Active Coverage"
+          const status = data.planStatus[0].status; // This gets "Active Coverage"
           variables[3][1] = status === "Active Coverage" ? "Active" : "Inactive";
 
           if (variables[3][1] == "Inactive")
@@ -164,41 +193,41 @@ function runBackend()
         }
 
         //find renewal date
-        if (data.planDateInformation) {
+        if (data.planDateInformation)
+        {
           let endDate;
 
-        // Handle new format with separate planEnd field
-        if (data.planDateInformation.planEnd) {
-          endDate = data.planDateInformation.planEnd;
-        }
-        // Handle old format with combined plan field
-        else if (data.planDateInformation.plan) {
-          endDate = data.planDateInformation.plan.split('-')[1];
-        }
-        
-        if (endDate) 
-        {
-          const formatDate = (dateStr) => `${dateStr.slice(4,6)}/${dateStr.slice(6,8)}/${dateStr.slice(0,4)}`;
-          const formatDatePlusOneDay = (dateStr) => {
-            const year = parseInt(dateStr.slice(0,4));
-            const month = parseInt(dateStr.slice(4,6)) - 1; // months are 0-indexed
-            const day = parseInt(dateStr.slice(6,8));
-            const date = new Date(year, month, day);
-            date.setDate(date.getDate() + 1);
-            return `${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getDate().toString().padStart(2,'0')}/${date.getFullYear()}`;
-          };
+          // Handle new format with separate planEnd field
+          if (data.planDateInformation.planEnd)
+          {
+            endDate = data.planDateInformation.planEnd;
+          }
+          // Handle old format with combined plan field
+          else if (data.planDateInformation.plan)
+          {
+            endDate = data.planDateInformation.plan.split('-')[1];
+          }
 
-          const endYear = parseInt(endDate.substring(0, 4));
-          const renewalDate = formatDatePlusOneDay(endDate);
-          endDate = formatDate(endDate);
-          variables[4][1] = renewalDate;
-          variables[5][1] = endDate;
-        }
-      }
-      else
-      {
+          if (endDate)
+          {
+            const formatDate = (dateStr) => `${dateStr.slice(4,6)}/${dateStr.slice(6,8)}/${dateStr.slice(0,4)}`;
+            const formatDatePlusOneDay = (dateStr) =>
+            {
+              const year = parseInt(dateStr.slice(0, 4));
+              const month = parseInt(dateStr.slice(4, 6)) - 1; // months are 0-indexed
+              const day = parseInt(dateStr.slice(6, 8));
+              const date = new Date(year, month, day);
+              date.setDate(date.getDate() + 1);
+              return `${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getDate().toString().padStart(2,'0')}/${date.getFullYear()}`;
+            };
 
-      }
+            const endYear = parseInt(endDate.substring(0, 4));
+            const renewalDate = formatDatePlusOneDay(endDate);
+            endDate = formatDate(endDate);
+            variables[4][1] = renewalDate;
+            variables[5][1] = endDate;
+          }
+        }
 
         // Process benefits information
         if (data.benefitsInformation)
@@ -207,30 +236,30 @@ function runBackend()
 
           // Find maximum benefit (individual dental care)
           const maxBenefit = benefits.find(b =>
-           b.code === "F" &&
-           b.name === "Limitations" &&
-           b.coverageLevelCode === "IND" &&
-           b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) //general dental codes
-           &&
-           (b.timeQualifierCode === "23" || b.timeQualifierCode === "22" ||  b.timeQualifierCode === "25") //contract or calendar year (some have just one)
-           ) || benefits.find(b =>
-           b.code === "F" &&
-           b.name === "Limitations" && 
-           b.timeQualifierCode === "22" &&
-           b.compositeMedicalProcedureIdentifier?.procedureCode === "D0150"
-           );
+            b.code === "F" &&
+            b.name === "Limitations" &&
+            b.coverageLevelCode === "IND" &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) //general dental codes
+            &&
+            (b.timeQualifierCode === "23" || b.timeQualifierCode === "22" || b.timeQualifierCode === "25") //contract or calendar year (some have just one)
+            ) || benefits.find(b =>
+            b.code === "F" &&
+            b.name === "Limitations" &&
+            b.timeQualifierCode === "22" &&
+            b.compositeMedicalProcedureIdentifier?.procedureCode === "D0150"
+            );
 
-           if (maxBenefit)
-           {
-             variables[6][1] = `$${parseInt(maxBenefit.benefitAmount)}`;
-           }
+            if (maxBenefit)
+            {
+              variables[6][1] = `$${parseInt(maxBenefit.benefitAmount)}`;
+            }
 
           // Find maximum used (remaining amount)
           const remainingBenefit = benefits.find(b =>
             b.code === "F" &&
             b.name === "Limitations" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) &&
             b.timeQualifierCode === "29" //remaining benefit
             );
 
@@ -241,7 +270,7 @@ function runBackend()
             const used = total - remaining;
             variables[7][1] = `$${used}`;
           }
-          else //if cannot find anything
+          else //if cannot find anything, assume $0 used
           {
             variables[7][1] = `$0`;
           }
@@ -251,9 +280,9 @@ function runBackend()
             b.code === "C" &&
             b.name === "Deductible" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) &&
-           (b.timeQualifierCode === "23" || b.timeQualifierCode === "22") //contract or calendar year (some have just one)
-           );
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) &&
+            (b.timeQualifierCode === "23" || b.timeQualifierCode === "22") //contract or calendar year (some have just one)
+            );
 
           if (deductible)
           {
@@ -265,7 +294,7 @@ function runBackend()
             b.code === "C" &&
             b.name === "Deductible" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24")  || b.serviceTypeCodes.includes("26")  || b.serviceTypeCodes.includes("38")) &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) &&
             b.timeQualifierCode === "29"
             );
 
@@ -277,38 +306,44 @@ function runBackend()
             variables[9][1] = `$${used}`;
           }
 
-          // Extract coverage percentages from co-insurance data
+
+
+          // Extract coverage percentages from co-insurance data - only in network
           const coInsuranceData = benefits.filter(b => b.code === "A" && b.name === "Co-Insurance" && b.inPlanNetworkIndicatorCode === "Y");
           let preventiveSet = false;
           let basicSet = false;
           let basicHighest = 0;
-                      var basicBackup = 0; //if nothing found
-                      let majorSet = false;
+          var basicBackup = 0; //if nothing found
+          let majorSet = false;
+          let rootCanalCoverage = null;
+          let extractionCoverage = null;
 
-                      for (const benefit of coInsuranceData) 
-                      {
+
+          for (const benefit of coInsuranceData)
+          {
             // Break early if all sections are already set
-            if (preventiveSet && basicSet && majorSet) {
+            if (preventiveSet && basicSet && majorSet)
+            {
               break;
             }
-            
+
             const patientPercent = parseFloat(benefit.benefitPercent || 0);
             const insurancePercent = Math.round((1 - patientPercent) * 100);
-            
+
             if (benefit.serviceTypes || benefit.compositeMedicalProcedureIdentifier)
             {
               const serviceTypes = benefit.serviceTypes ? benefit.serviceTypes.join(", ").toLowerCase() : "";
               const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode || "";
-              
+
               // Check procedure codes for better categorization
               const preventiveCodes = ['D0120', 'D0140', 'D0150', 'D0210', 'D0270', 'D0272', 'D0274', 'D0330', 'D1110', 'D1120', 'D1206', 'D1208', 'D1351'];
               const basicCodes = ["D2140", "D2150", "D2160", "D2161", "D2330", "D2331", "D2332", "D2335", "D2391", "D2392", "D2393", "D2394", "D2910", "D2915", "D2920", "D2929", "D2930", "D2931", "D2932", "D2933", "D2934", "D2940", "D2950", "D2951", "D2952", "D2953", "D2955", "D2957", "D2960", "D2961", "D2962", "D2980", "D2981", "D2982", "D2983", "D2990"];
               const majorCodes = ['D2720', 'D2721', 'D2722', 'D2740', 'D2750', 'D2751', 'D2752', 'D2753', 'D2790', 'D2791', 'D2792', 'D2794'];
-              
-              if (!preventiveSet && (preventiveCodes.includes(procedureCode) || 
+
+              if (!preventiveSet && (preventiveCodes.includes(procedureCode) ||
                 serviceTypes.includes("preventive") ||
                 serviceTypes.includes("diagnostic") ||
-                serviceTypes.includes("routine"))) 
+                serviceTypes.includes("routine")))
               {
                 variables[10][1] = `${insurancePercent}%`;
                 preventiveSet = true;
@@ -325,82 +360,193 @@ function runBackend()
                 serviceTypes.includes("prosthodontics") ||
                 serviceTypes.includes("crowns") ||
                 serviceTypes.includes("bridges") ||
-                serviceTypes.includes("dentures"))) {
+                serviceTypes.includes("dentures")))
+              {
                 variables[12][1] = `${insurancePercent}%`;
-              majorSet = true;
-            }
-            if (basicCodes.includes(procedureCode))
-            {
-              basicBackup = `${insurancePercent}%`
+                majorSet = true;
+              }
+              if (basicCodes.includes(procedureCode))
+              {
+                basicBackup = `${insurancePercent}%`
+              }
+
+              // Capture specific coverages for analysis - always find the highest number in case just one of the coes isn't covered!
+              if (serviceTypes.includes("endodontics") || procedureCode === "D3310" || procedureCode === "D3320" || procedureCode === "D3330") 
+              {
+                if (rootCanalCoverage === null || insurancePercent > rootCanalCoverage) {
+                  rootCanalCoverage = insurancePercent;
+                }
+              }
+              if (serviceTypes.includes("oral surgery") || procedureCode === "D7140") 
+              {
+                if (extractionCoverage === null || insurancePercent > extractionCoverage) {
+                  extractionCoverage = insurancePercent;
+                }
+              }
+              // Check for bridges
+              if (serviceTypes.includes("prosthodontics") || serviceTypes.includes("bridges") || procedureCode.startsWith("D6") || procedureCode === "D6210" || procedureCode === "D6240" || procedureCode === "D6250") 
+              {
+                if (procedureCoverages.bridges === null || insurancePercent > procedureCoverages.bridges) {
+                  procedureCoverages.bridges = insurancePercent;
+                }
+              }
+              // Check for dentures
+              if (serviceTypes.includes("dentures") || serviceTypes.includes("removable prosthodontics") || procedureCode.startsWith("D51") || procedureCode.startsWith("D52") || procedureCode.startsWith("D53") || procedureCode.startsWith("D54")) 
+              {
+                if (procedureCoverages.dentures === null || insurancePercent > procedureCoverages.dentures) {
+                  procedureCoverages.dentures = insurancePercent;
+                }
+              }
+              // Check for crowns
+              if (serviceTypes.includes("crowns") || serviceTypes.includes("prosthodontics") || procedureCode === "D2740") {
+                if (procedureCoverages.crowns === null || insurancePercent > procedureCoverages.crowns) {
+                  procedureCoverages.crowns = insurancePercent;
+                }
+              }
+              // Check for implants
+              if (serviceTypes.includes("implant") || procedureCode.startsWith("D60") || procedureCode.startsWith("D61")) {
+                if (procedureCoverages.implants === null || insurancePercent > procedureCoverages.implants) {
+                  procedureCoverages.implants = insurancePercent;
+                }
+              }
+              // Check for deep cleanings
+              if (serviceTypes.includes("periodontics") || serviceTypes.includes("scaling") || serviceTypes.includes("deep cleaning") || procedureCode === "D4341" || procedureCode === "D4342" || procedureCode === "D4910") {
+                if (procedureCoverages.deepCleaning === null || insurancePercent > procedureCoverages.deepCleaning) {
+                  procedureCoverages.deepCleaning = insurancePercent;
+                }
+              }
             }
           }
-        }
 
-        if (variables[11][1] === "")
-        {
-          variables[11][1] = basicBackup;
-        }
-
-
-          //get frequencies 
-          const extractFrequenciesAndLimitations = (benefits) => 
+          //if no basic percentage found, use backup by using procedureCode
+          if (variables[11][1] === "") 
           {
-            const frequencies = new Set([
-              "Cleaning: twice per year",
-              "Exams & X-rays: twice per year"
-              ]);
+            variables[11][1] = basicBackup;
+          }
 
-            const waitingPeriods = new Set();
-
-            benefits.forEach(benefit => {
-            // Extract actual frequency data from benefitsServiceDelivery
-            if (benefit.benefitsServiceDelivery) {
-              benefit.benefitsServiceDelivery.forEach(delivery => {
-                const quantity = delivery.quantity;
-                const period = delivery.timePeriodQualifier;
-                const numPeriods = delivery.numOfPeriods;
-                const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode;
-                
-                if (quantity && period && procedureCode) {
-                  const descriptions = {
-                    "D0210": "X-rays",
-                    "D0272": "Bitewing X-rays",
-                    "D4910": "Periodontal maintenance"
-                  };
-                  
-                  const description = descriptions[procedureCode] || `Procedure ${procedureCode}`;
-                  let frequencyText;
-                  
-                  if (quantity == 1 && numPeriods > 1) {
-                    frequencyText = `${description}: once per ${numPeriods} ${period.toLowerCase()}`;
-                  } else {
-                    frequencyText = `${description}: ${quantity} times per ${period.toLowerCase()}`;
-                  }
-                  
-                  frequencies.add(frequencyText);
-                }
-              });
+          //see if root canal are major or basic
+          const majorPercentage = parseInt(variables[12][1].replace('%', '')) || 0;
+          const basicPercentage = parseInt(variables[11][1].replace('%', '')) || 0;
+          if (majorPercentage !== basicPercentage)            // Only set boolean flags if major and basic percentages are different
+          {
+            if (rootCanalCoverage !== null && rootCanalCoverage === majorPercentage) 
+            {
+              rootCanalMajor = true;
             }
-            
-            // Extract waiting periods
-            if (benefit.additionalInformation) {
-              benefit.additionalInformation.forEach(info => {
-                if (info.description?.toLowerCase().includes("waiting")) {
-                  waitingPeriods.add(info.description);
-                }
-              });
+            if (extractionCoverage !== null && extractionCoverage === majorPercentage) 
+            {
+              extMajor = true;
             }
+          }
+          //see if other procedures are not covered
+          const procedureNames = {
+            rootCanal: "Root Canals",
+            extraction: "Extractions", 
+            bridges: "Bridges",
+            dentures: "Dentures",
+            crowns: "Crowns",
+            implants: "Implants",
+            deepCleaning: "Deep Cleanings"
+          };
+          Object.keys(procedureCoverages).forEach(procedureKey => // Check each procedure for 0% coverage
+          {
+            const coverage = procedureCoverages[procedureKey];
+          
+            const procedureName = procedureNames[procedureKey];
+             
+             // If coverage is exactly 0%, add to not covered list
+             if (coverage === 0) {
+               // Find the "Not Covered" array in variables
+               for (let i = 0; i < variables.length; i++) {
+                 if (variables[i][0] === "Not Covered:") {
+                   // Check if not already in the list
+                   const alreadyExists = variables[i].slice(1).some(item => {
+                     const itemName = Array.isArray(item) ? item[0] : item;
+                     return itemName === procedureName;
+                   });
+                   
+                   if (!alreadyExists) {
+                     variables[i].push([procedureName]);
+                   }
+                   break;
+                 }
+               }
+             }
           });
 
-            return {
-              frequencies: Array.from(frequencies),
-              waitingPeriods: Array.from(waitingPeriods)
-            };
+
+
+
+        //get frequencies 
+        const extractFrequenciesAndLimitations = (benefits) =>
+        {
+          const frequencies = new Set([
+            "Cleaning: twice per year",
+            "Exams & X-rays: twice per year"
+            ]);
+
+          const waitingPeriods = new Set();
+
+          benefits.forEach(benefit =>
+          {
+              // Extract actual frequency data from benefitsServiceDelivery
+              if (benefit.benefitsServiceDelivery)
+              {
+                benefit.benefitsServiceDelivery.forEach(delivery =>
+                {
+                  const quantity = delivery.quantity;
+                  const period = delivery.timePeriodQualifier;
+                  const numPeriods = delivery.numOfPeriods;
+                  const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode;
+
+                  if (quantity && period && procedureCode)
+                  {
+                    const descriptions = {
+                      "D0210": "X-rays",
+                      "D0272": "Bitewing X-rays",
+                      "D4910": "Periodontal maintenance"
+                    };
+
+                    const description = descriptions[procedureCode] || `Procedure ${procedureCode}`;
+                    let frequencyText;
+
+                    if (quantity == 1 && numPeriods > 1)
+                    {
+                      frequencyText = `${description}: once per ${numPeriods} ${period.toLowerCase()}`;
+                    }
+                    else
+                    {
+                      frequencyText = `${description}: ${quantity} times per ${period.toLowerCase()}`;
+                    }
+
+                    frequencies.add(frequencyText);
+                  }
+                });
+              }
+
+              // Extract waiting periods
+              if (benefit.additionalInformation)
+              {
+                benefit.additionalInformation.forEach(info =>
+                {
+                  if (info.description?.toLowerCase().includes("waiting"))
+                  {
+                    waitingPeriods.add(info.description);
+                  }
+                });
+              }
+            });
+
+          return {
+            frequencies: Array.from(frequencies),
+            waitingPeriods: Array.from(waitingPeriods)
           };
+        };
 
 
 
-          // Look for not covered procedures (100% patient responsibility)
+          // Look for not covered procedures - records all things that are shown as not covered
+          /*
           const notCoveredProcedures = [];
           coInsuranceData.forEach(benefit =>
           {
@@ -418,6 +564,7 @@ function runBackend()
           {
             variables[13] = ["Not Covered:", ...notCoveredProcedures.map(p => [p])];
           }
+          */
         }
       }
 
@@ -449,22 +596,26 @@ function runBackend()
 });
 }
 
+
+
+
 var maximumRemaining = "";
 var percentOfMaxUsed = "";
 var deductibleRemaining = "";
 var calendarYear = false;
 
 
-
 function showLoading()
 {
   clearExistingErrors();
-  
+
   // Start the loading animation
-  loadingTimer = setTimeout(() => {
+  loadingTimer = setTimeout(() =>
+  {
     document.getElementsByClassName("loading-container")[0].style.opacity = 1;
     const dots = document.querySelectorAll(".loading-dot");
-    dots.forEach(dot => {
+    dots.forEach(dot =>
+    {
       dot.style.animation = "none";
     });
     dots[0].offsetWidth;
@@ -474,56 +625,52 @@ function showLoading()
     dots[1].style.animation = "dot2 1s infinite 0.33s";
     dots[2].style.animation = "dot3 1s infinite 0.66s";
   }, 500);
-  
+
   // Wait for the backend response
   runBackend()
-  .then(data => {
+  .then(data =>
+  {
       // Backend is done, hide loading and proceed
       document.getElementsByClassName("loading-container")[0].style.opacity = "0";
       doneLoading = true;
-      
-      setTimeout(() => {
+
+      setTimeout(() =>
+      {
         // Check if insurance is found based on the response
-        if (variables[3][1] != "Active") {
+        if (variables[3][1] == "Timeout")
+        {
+          showInsuranceError(3);
+        }
+        else if (variables[3][1] == "TimeoutAll")
+        {
+          showInsuranceError(4);
+        }
+        else if (variables[3][1] != "Active")
+        {
           showInsuranceError(2);
         }
-        else if ((variables[2][1] == "Not Found")) {
+        else if ((variables[2][1] == "Not Found"))
+        {
           showInsuranceError(1);
         }
-        else {
+        else
+        {
           showNext();
         }
       }, 300); // Small delay for loading fade out
     })
-  .catch(err => {
+  .catch(err =>
+  {
       // Handle error case
       document.getElementsByClassName("loading-container")[0].style.opacity = "0";
       doneLoading = true;
-      
-      setTimeout(() => {
+
+      setTimeout(() =>
+      {
         showInsuranceError(1); // Show error - insurance not found
       }, 300);
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -598,7 +745,7 @@ document.addEventListener('DOMContentLoaded', function()
 
     function typeLoop()
     {
-      const wordsToType = ["benefit", "clarity", "use", "money"];
+      const wordsToType = ["free.", "coverage.", "copays.", "tips."];
       const currentWord = wordsToType[wordIndex];
 
       if (isDeleting)
@@ -1022,48 +1169,57 @@ function openHowItWorksFromForm(event)
   const menu = document.getElementById('mobile-menu');
   const menuButton = document.querySelector('.menu-button');
   const hamburger = menuButton.querySelector('.hamburger');
-  
+
   // Open the menu if it's not already open
-  if (!menu.classList.contains('show')) {
+  if (!menu.classList.contains('show'))
+  {
     menu.classList.add('show');
     hamburger.classList.add('active');
     document.body.style.touchAction = "none";
   }
-  
+
   // Directly show the "How openbook Works" content without any animations
   // First, hide all menu items
   const menuItems = menu.querySelectorAll('.menu-item');
-  menuItems.forEach(menuItem => {
+  menuItems.forEach(menuItem =>
+  {
     menuItem.style.display = 'none';
   });
-  
+
   // Remove any existing content wrapper
   const existingWrapper = menu.querySelector('.menu-content-wrapper');
-  if (existingWrapper) {
+  if (existingWrapper)
+  {
     existingWrapper.remove();
   }
-  
+
   // Create and show the "How openbook Works" section directly
   showMenuSection("How openbook Works");
 }
 
 // Set up the "Learn more" text in the form paragraph to be clickable
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function()
+{
   // Find the paragraph in the main form and make the "Learn more" text clickable
   const formParagraph = document.querySelector('#main-form p');
-  
-  if (formParagraph) {
+
+  if (formParagraph)
+  {
     // Find the span with "Learn more" text and make it clickable
     const spans = formParagraph.querySelectorAll('span');
-    spans.forEach(span => {
-      if (span.textContent.includes('Learn more') && span.style.textDecoration.includes('underline')) {
+    spans.forEach(span =>
+    {
+      if (span.textContent.includes('Learn more') && span.style.textDecoration.includes('underline'))
+      {
         span.addEventListener('click', openHowItWorksFromForm);
         span.style.cursor = 'pointer';
         // Add a slight hover effect
-        span.addEventListener('mouseenter', function() {
+        span.addEventListener('mouseenter', function()
+        {
           this.style.opacity = '0.8';
         });
-        span.addEventListener('mouseleave', function() {
+        span.addEventListener('mouseleave', function()
+        {
           this.style.opacity = '1';
         });
       }
@@ -1074,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Make Search Function work */
 window.insuranceCompanies = insuranceCompanies;
-document.addEventListener('DOMContentLoaded', function() 
+document.addEventListener('DOMContentLoaded', function()
 {
   const insuranceInput = document.getElementById('insuranceName');
   if (!insuranceInput) return;
@@ -1084,31 +1240,37 @@ document.addEventListener('DOMContentLoaded', function()
   dropdown.className = 'insurance-dropdown';
   // Insert dropdown after the input container
   const inputContainer = insuranceInput.closest('.input-container');
-  if (inputContainer) {
+  if (inputContainer)
+  {
     inputContainer.appendChild(dropdown);
   }
   let isDropdownVisible = false;
   let selectedIndex = -1;
   // Show dropdown with filtered results
-  function showDropdown(searchTerm = '') {
-    if (searchTerm.length < 1) {
+  function showDropdown(searchTerm = '')
+  {
+    if (searchTerm.length < 1)
+    {
       hideDropdown();
       return;
     }
-    const filtered = insuranceCompanies.filter(company => 
+    const filtered = insuranceCompanies.filter(company =>
       company.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 2); // Limit to 6 results
 
-    if (filtered.length === 0) {
+    if (filtered.length === 0)
+    {
       hideDropdown();
       return;
     }
     dropdown.innerHTML = '';
-    filtered.forEach((company, index) => {
+    filtered.forEach((company, index) =>
+    {
       const item = document.createElement('div');
       item.className = 'dropdown-item';
       item.textContent = company;
-      item.addEventListener('click', function() {
+      item.addEventListener('click', function()
+      {
         selectInsurance(company);
       });
       dropdown.appendChild(item);
@@ -1119,31 +1281,37 @@ document.addEventListener('DOMContentLoaded', function()
     selectedIndex = -1;
   }
   // Hide dropdown
-  function hideDropdown() {
+  function hideDropdown()
+  {
     dropdown.style.display = 'none';
     isDropdownVisible = false;
     selectedIndex = -1;
   }
   // Select insurance company
-  function selectInsurance(company) {
+  function selectInsurance(company)
+  {
     insuranceInput.value = company;
     hideDropdown();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
+    if (isMobile)
+    {
 
-      setTimeout(() => {
+      setTimeout(() =>
+      {
         insuranceInput.blur();
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
       }, 200);
     }
   }
   // Handle keyboard navigation
-  function handleKeyNavigation(e) {
+  function handleKeyNavigation(e)
+  {
     if (!isDropdownVisible) return;
 
     const items = dropdown.querySelectorAll('.dropdown-item');
-    
-    switch(e.key) {
+
+    switch (e.key)
+    {
       case 'ArrowDown':
       e.preventDefault();
       selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
@@ -1156,7 +1324,8 @@ document.addEventListener('DOMContentLoaded', function()
       break;
       case 'Enter':
       e.preventDefault();
-      if (selectedIndex >= 0 && items[selectedIndex]) {
+      if (selectedIndex >= 0 && items[selectedIndex])
+      {
         selectInsurance(items[selectedIndex].textContent);
       }
       break;
@@ -1166,25 +1335,35 @@ document.addEventListener('DOMContentLoaded', function()
     }
   }
   // Update visual selection
-  function updateSelection(items) {
-    items.forEach((item, index) => {
-      if (index === selectedIndex) {
+  function updateSelection(items)
+  {
+    items.forEach((item, index) =>
+    {
+      if (index === selectedIndex)
+      {
         item.classList.add('selected');
-      } else {
+      }
+      else
+      {
         item.classList.remove('selected');
       }
     });
   }
   // Event listeners
-  insuranceInput.addEventListener('input', function(e) {
+  insuranceInput.addEventListener('input', function(e)
+  {
     const value = e.target.value.trim();
-    if (this.value.length > 0) {
+    if (this.value.length > 0)
+    {
       clearInputError(this);
       const errorMsg = this.closest('.input-container').querySelector('.input-error-message');
-      if (errorMsg) {
+      if (errorMsg)
+      {
         errorMsg.classList.add('hide');
-        setTimeout(() => {
-          if (errorMsg.parentNode) {
+        setTimeout(() =>
+        {
+          if (errorMsg.parentNode)
+          {
             errorMsg.parentNode.removeChild(errorMsg);
           }
         }, 300);
@@ -1193,45 +1372,55 @@ document.addEventListener('DOMContentLoaded', function()
     showDropdown(value);
   });
 
-  insuranceInput.addEventListener('focus', function(e) {
+  insuranceInput.addEventListener('focus', function(e)
+  {
     const value = e.target.value.trim();
-    if (value.length >= 1) {
+    if (value.length >= 1)
+    {
       showDropdown(value);
     }
   });
 
-  insuranceInput.addEventListener('blur', function(e) {
-    setTimeout(() => {
+  insuranceInput.addEventListener('blur', function(e)
+  {
+    setTimeout(() =>
+    {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile && isDropdownVisible) {
+      if (isMobile && isDropdownVisible)
+      {
         const firstItem = dropdown.querySelector('.dropdown-item');
-        if (firstItem) {
+        if (firstItem)
+        {
           selectInsurance(firstItem.textContent);
           showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
           return;
         }
       }
 
-    // Clear field if no valid selection was made
-    if (insuranceInput.value.trim().length > 0) {
-      const enteredValue = insuranceInput.value.trim();
-      const isValidInsurance = insuranceCompanies.some(company => 
-        company.toLowerCase() === enteredValue.toLowerCase()
-        );
-      
-      if (!isValidInsurance) {
-        insuranceInput.value = ''; // Clear the field
-        showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
+      // Clear field if no valid selection was made
+      if (insuranceInput.value.trim().length > 0)
+      {
+        const enteredValue = insuranceInput.value.trim();
+        const isValidInsurance = insuranceCompanies.some(company =>
+          company.toLowerCase() === enteredValue.toLowerCase()
+          );
+
+        if (!isValidInsurance)
+        {
+          insuranceInput.value = ''; // Clear the field
+          showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
+        }
       }
-    }
-    
-    hideDropdown();
-  }, 150);
+
+      hideDropdown();
+    }, 150);
   });
   insuranceInput.addEventListener('keydown', handleKeyNavigation);
   // Close dropdown when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!inputContainer.contains(e.target)) {
+  document.addEventListener('click', function(e)
+  {
+    if (!inputContainer.contains(e.target))
+    {
       hideDropdown();
     }
   });
@@ -1253,7 +1442,7 @@ insuranceSearchStyles.textContent = `
   border-bottom-right-radius: 12.5px;
   max-height: 240px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 10001;
   display: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -1450,32 +1639,37 @@ function formValidation()
   const insuranceInput = document.getElementById('insuranceName');
   var insuranceError = false;
 
-  if (insuranceInput.value.trim().length == 0) {
-   insuranceError = true;
-   hasErrors = true;
-   showInputError(insuranceInput, "Please enter an insurance company name");
- } 
- else {
- // Check if the entered value matches any insurance company from dropdown
- const enteredValue = insuranceInput.value.trim();
- const isValidInsurance = insuranceCompanies.some(company => 
-   company.toLowerCase() === enteredValue.toLowerCase()
-   );
- 
- if (!isValidInsurance) {
-   insuranceError = true;
-   hasErrors = true;
-   showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
- } else {
-   insuranceError = false;
- }
-}
+  if (insuranceInput.value.trim().length == 0)
+  {
+    insuranceError = true;
+    hasErrors = true;
+    showInputError(insuranceInput, "Please enter an insurance company name");
+  }
+  else
+  {
+    // Check if the entered value matches any insurance company from dropdown
+    const enteredValue = insuranceInput.value.trim();
+    const isValidInsurance = insuranceCompanies.some(company =>
+      company.toLowerCase() === enteredValue.toLowerCase()
+      );
+
+    if (!isValidInsurance)
+    {
+      insuranceError = true;
+      hasErrors = true;
+      showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
+    }
+    else
+    {
+      insuranceError = false;
+    }
+  }
 
 
-if (!hasErrors)
-{
-  processTransition();
-}
+  if (!hasErrors)
+  {
+    processTransition();
+  }
 }
 
 /* FUNCTIONS TO MAKE ERRORS WORK SEAMLESSLY*/
@@ -1635,13 +1829,15 @@ idInput.addEventListener("input", function(event)
 
 const originalShowInputError = showInputError;
 
-nameInput.addEventListener("blur", function() 
+nameInput.addEventListener("blur", function()
 {
   const trimmedValue = this.value.trim();
-  if (trimmedValue.length === 0) {
+  if (trimmedValue.length === 0)
+  {
     return;
   }
-  if (trimmedValue.split(" ").length < 2 || trimmedValue.length < 4) {
+  if (trimmedValue.split(" ").length < 2 || trimmedValue.length < 4)
+  {
     originalShowInputError(this, "Please enter a valid full name (first and last)");
     nameError = true;
     return;
@@ -1651,10 +1847,11 @@ nameInput.addEventListener("blur", function()
   nameError = false;
 });
 
-dateInput.addEventListener("blur", function() 
+dateInput.addEventListener("blur", function()
 {
   const trimmedValue = this.value.trim();
-  if (trimmedValue.length === 0) {
+  if (trimmedValue.length === 0)
+  {
     return;
   }
   if (dateInput.value.replace(/\D/g, "").length < 6 || dateInput.value.replace(/\D/g, "").length > 8 || dateInput.value.replace(/\D/g, "").length == 7)
@@ -1668,7 +1865,8 @@ dateInput.addEventListener("blur", function()
   let year = parseInt(trimmedValue.slice(6));
   let fullYear = year < 100 ? (year <= 30 ? 2000 + year : 1900 + year) : year;
   const dateObj = new Date(fullYear, month - 1, day);
-  if (!(dateObj.getDate() === day && month >= 1 && month <= 12 && fullYear >= 1900 && fullYear <= 2100)) {
+  if (!(dateObj.getDate() === day && month >= 1 && month <= 12 && fullYear >= 1900 && fullYear <= 2100))
+  {
     originalShowInputError(this, "Please enter a valid date of birth (MM/DD/YYYY)");
     dateError = true;
     return;
@@ -1677,9 +1875,9 @@ dateInput.addEventListener("blur", function()
   dateError = false;
 });
 
-idInput.addEventListener("blur", function() 
+idInput.addEventListener("blur", function()
 {
-  if (this.value.trim().length === 0) 
+  if (this.value.trim().length === 0)
   {
     return;
   }
@@ -1745,80 +1943,91 @@ friendlyStyle.textContent = `
 `;
 document.head.appendChild(friendlyStyle);
 
-function showFriendlyMessage(input, message, emojiClass) {
+function showFriendlyMessage(input, message, emojiClass)
+{
   const container = input.closest('.input-container');
-  
+
   // Check if a friendly message already exists
   const existingMsg = container.querySelector('.friendly-message');
-  
+
   // If a friendly message already exists with the same class, just update text if needed
-  if (existingMsg && existingMsg.classList.contains(emojiClass)) {
-    if (existingMsg.textContent !== message) {
+  if (existingMsg && existingMsg.classList.contains(emojiClass))
+  {
+    if (existingMsg.textContent !== message)
+    {
       existingMsg.textContent = message;
     }
     return; // Exit early - no need to recreate or animate
   }
-  
+
   // Remove any existing friendly messages if it's different
   if (existingMsg) existingMsg.remove();
-  
+
   // Create new friendly message
   const messageEl = document.createElement('div');
   messageEl.className = `friendly-message ${emojiClass}`;
   messageEl.textContent = message;
-  
+
   // Add to container
   container.appendChild(messageEl);
-  
+
   // Style the input field with green highlight
   input.classList.add('friendly-input');
-  
+
   // Make icon friendly colored
   const icon = container.querySelector('i');
-  if (icon) {
+  if (icon)
+  {
     icon.classList.add('friendly');
     icon.style.color = '#2ECC71';
     icon.style.opacity = '1';
   }
-  
+
   // Show with animation - only for new messages
-  setTimeout(() => {
+  setTimeout(() =>
+  {
     messageEl.classList.add('show');
   }, 10);
-  
+
   // Remove friendly message when user types in the input
   // Check if we already have an input listener to avoid duplicates
-  if (!input._hasFriendlyListener) {
+  if (!input._hasFriendlyListener)
+  {
     input._hasFriendlyListener = true;
-    
-    input.addEventListener('input', function removeFriendlyMessage() {
+
+    input.addEventListener('input', function removeFriendlyMessage()
+    {
       // Hide message with animation
       const msgToRemove = container.querySelector('.friendly-message');
-      if (msgToRemove) {
+      if (msgToRemove)
+      {
         msgToRemove.classList.remove('show');
         msgToRemove.classList.add('hide');
-        
+
         // Remove the message after animation completes
-        setTimeout(() => {
-          if (msgToRemove.parentNode) {
+        setTimeout(() =>
+        {
+          if (msgToRemove.parentNode)
+          {
             msgToRemove.remove();
           }
         }, 400);
       }
-      
+
       // Remove friendly styling from input
       input.classList.remove('friendly-input');
-      
+
       // Reset icon styling
-      if (icon) {
+      if (icon)
+      {
         icon.classList.remove('friendly');
         icon.style.color = '';
         icon.style.opacity = '';
       }
-      
+
       // Remove this flag
       input._hasFriendlyListener = false;
-      
+
       // Remove this event listener to prevent multiple calls
       input.removeEventListener('input', removeFriendlyMessage);
     });
@@ -2065,7 +2274,7 @@ function processTransition()
   document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
   document.getElementsByClassName("second-content")[0].style.zIndex = "999";
   showLoading();
-  
+
 }
 
 
@@ -2097,7 +2306,15 @@ function showInsuranceError(type)
   }
   if (type == 2)
   {
-    displayError("<span class='error-header'>This coverage under this plan is no longer active.</span><br><br>This may be due to a recent change in employment or a change in insurance policy. Please double check that you do not have a new plan.<br>If you are not sure why this plan is not active, reach out to your HR department for additional help.", true);
+    displayError("<span class='error-header'>The coverage under this plan is no longer active.</span><br><br>This may be due to a recent change in employment or a change in insurance policy. Please double check that you do not have a new plan.<br>If you are not sure why this plan is not active, reach out to your HR department for additional help.", true);
+  }
+  if (type == 3)
+  {
+    displayError("<span class='error-header'>Please slow down a bit!</span><br><br>To keep our insurance verification service free, we limit how often it can be used. You've reached your hourly limit.<br><br>Please try again in about an hour. Thanks for understanding!", true);
+  }
+  if (type == 4)
+  {
+    displayError("<span class='error-header'>Please slow down a bit!</span><br><br>To keep our insurance verification service free, we limit how often it can be used. You've reached your hourly limit.<br><br>Please try again in about an hour. Thanks for understanding!", true);
   }
 
   // Wait for the error to display before returning to main page
@@ -2136,7 +2353,7 @@ function showInsuranceError(type)
 
     // Reset loading status
     doneLoading = false;
-  }, 0); 
+  }, 0);
 }
 
 if (!document.getElementById('error-popup-styles'))
@@ -2221,7 +2438,7 @@ if (!document.getElementById('error-popup-styles'))
     flex-shrink: 0;
     animation: iconPulse 2s infinite;
     position: absolute;
-    top: 18px;
+    top: 15px;
     left: 10px;
   }
   .error-popup .error-message {
@@ -2553,7 +2770,7 @@ document.getElementById("tab2").addEventListener("click", function()
   tabNumber = 2;
   scrollTop();
   showNext();
-  setTimeout (() =>
+  setTimeout(() =>
   {
     document.body.style.overflow = testTab2Overflow();
   }, 50);
@@ -2589,30 +2806,37 @@ document.querySelectorAll('.tab').forEach(tab =>
 });
 
 
-function testTab2Overflow() 
+function testTab2Overflow()
 {
+  if (rootCanalMajor || extMajor) //if anything is moved, make it auto
+  {
+    return "auto";
+  }
   // Get all coverage sections in Tab 2
   const sections = document.querySelectorAll('.coverage-section');
   // Log each section with its display style for debugging
-  sections.forEach((section, index) => {
+  sections.forEach((section, index) =>
+  {
     const style = window.getComputedStyle(section);
 
   });
   // Count only truly visible sections
   let visibleSectionCount = 0;
-  sections.forEach(section => {
+  sections.forEach(section =>
+  {
     // Check computed style and other visibility factors
     const style = window.getComputedStyle(section);
     const hasVisibleItems = section.querySelectorAll('.coverage-item').length > 0;
-    const isActuallyVisible = style.display !== 'none' && 
-    style.visibility !== 'hidden' && 
+    const isActuallyVisible = style.display !== 'none' &&
+    style.visibility !== 'hidden' &&
     parseInt(style.height) > 0 &&
     hasVisibleItems;
-    if (isActuallyVisible) {
+    if (isActuallyVisible)
+    {
       visibleSectionCount++;
     }
   });
-  
+
   const result = visibleSectionCount < 4 ? 'hidden' : 'auto';
   return result;
 }
@@ -3297,7 +3521,7 @@ function initializeTab2()
   addPulseAnimationAfterDelay(); // Prompts user to click on procedure if not clicked for time period
 }
 
-// Process and move procedures marked as "Not Covered" in the variables array
+// Process and move procedures marked as "Not Covered" in the variables array - and move around ext or root to major if necessary
 function processNotCoveredProcedures()
 {
   const allSections = document.querySelectorAll(".coverage-section");
@@ -3314,9 +3538,9 @@ function processNotCoveredProcedures()
       // Use columns equal to the number of items
       grid.style.gridTemplateColumns = `repeat(${itemCount}, 1fr)`;
 
-      // Calculate exact width needed for perfect centering
-      const itemWidth = 95; // Width of each item in px
-      const gap = 5; // Gap between items in px
+      // Calculate exact width needed for perfect centering - USE CONSISTENT VALUES
+      const itemWidth = 91.5; // Width of each item in px (consistent with other sections)
+      const gap = 4; // Gap between items in px (consistent with other sections)
       const newWidth = (itemCount * itemWidth) + ((itemCount - 1) * gap);
 
       // Apply precision centering
@@ -3324,6 +3548,7 @@ function processNotCoveredProcedures()
       grid.style.margin = "0 auto";
     }
   });
+
   // Find the "Not Covered" array from the variables
   let notCoveredItems = [];
   for (let i = 0; i < variables.length; i++)
@@ -3334,6 +3559,7 @@ function processNotCoveredProcedures()
       break;
     }
   }
+
   // If there are no not-covered items, hide the section instead of removing it
   if (!notCoveredItems || notCoveredItems.length === 0)
   {
@@ -3346,106 +3572,144 @@ function processNotCoveredProcedures()
         notCoveredSection.style.display = 'none'; // Hide instead of remove
       }
     }
-    return;
+    // Continue to process root canal/extraction moves even if no not-covered items
   }
-  // Find the coverage sections
+  else
+  {
+    // Find the coverage sections
+    const coverageSections = document.querySelectorAll(".coverage-section");
+    if (coverageSections.length < 4) return; // Need at least 4 sections
+    const notCoveredSection = coverageSections[3]; // The 4th section
+    if (!notCoveredSection) return;
+
+    // Make sure the not covered section is visible
+    notCoveredSection.style.display = '';
+
+    // Update the 4th section to match the styling of other sections
+    // Update the "Not Covered" heading to match other headings
+    const notCoveredHeading = notCoveredSection.querySelector(".coverage-heading");
+    if (notCoveredHeading)
+    {
+      notCoveredHeading.textContent = "Not Covered";
+      notCoveredHeading.style.textAlign = "center";
+      notCoveredHeading.style.color = "#f5f5f5"; // Light grey text
+    }
+
+    // Get or create grid for the not covered items
+    let notCoveredGrid = notCoveredSection.querySelector(".coverage-grid");
+    if (!notCoveredGrid)
+    {
+      notCoveredGrid = document.createElement("div");
+      notCoveredGrid.className = "coverage-grid";
+      notCoveredSection.appendChild(notCoveredGrid);
+    }
+
+    // Process each "Not Covered" item
+    notCoveredItems.forEach(notCoveredItem =>
+    {
+      let itemName = "";
+      if (Array.isArray(notCoveredItem))
+      {
+        itemName = notCoveredItem[0];
+      }
+      else
+      {
+        itemName = notCoveredItem;
+      }
+
+      // Find items to move across all coverage sections
+      let itemToMove = null;
+      let sourceSection = null;
+      let sourceGrid = null;
+      let sourceSectionIndex = -1;
+
+      // Search through all other sections (100%, 80%, 50%)
+      for (let i = 0; i < 3; i++)
+      {
+        const section = coverageSections[i];
+        const items = section.querySelectorAll(".coverage-item");
+        items.forEach(item =>
+        {
+          const name = item.querySelector(".coverage-name");
+          if (name && name.textContent.toLowerCase().includes(itemName.toLowerCase()))
+          {
+            itemToMove = item;
+            sourceSection = section;
+            sourceGrid = section.querySelector(".coverage-grid");
+            sourceSectionIndex = i;
+          }
+        });
+      }
+
+      // Now move the item if found
+      if (itemToMove && sourceGrid)
+      {
+        // Remove from original parent
+        if (itemToMove.parentNode)
+        {
+          itemToMove.parentNode.removeChild(itemToMove);
+        }
+
+        // Add to Not Covered section
+        notCoveredGrid.appendChild(itemToMove);
+
+        // Reset the animation
+        itemToMove.style.opacity = 0;
+        itemToMove.style.animationDelay = `${0.1 * notCoveredGrid.children.length}s`;
+      }
+    });
+  }
+
+  // NEW: Move root canals and extractions from basic to major if their booleans are true
   const coverageSections = document.querySelectorAll(".coverage-section");
-  if (coverageSections.length < 4) return; // Need at least 4 sections
-  const notCoveredSection = coverageSections[3]; // The 4th section
-  if (!notCoveredSection) return;
-
-  // Make sure the not covered section is visible
-  notCoveredSection.style.display = '';
-
-  // Update the 4th section to match the styling of other sections
-  // Update the "Not Covered" heading to match other headings
-  const notCoveredHeading = notCoveredSection.querySelector(".coverage-heading");
-  if (notCoveredHeading)
-  {
-    notCoveredHeading.textContent = "Not Covered";
-    notCoveredHeading.style.textAlign = "center";
-    notCoveredHeading.style.color = "#f5f5f5"; // Light grey text
+  if (coverageSections.length >= 3) {
+    const basicSection = coverageSections[1]; // Basic section (index 1)
+    const majorSection = coverageSections[2]; // Major section (index 2)
+    
+    if (basicSection && majorSection) {
+      const basicItems = basicSection.querySelectorAll(".coverage-item");
+      const majorGrid = majorSection.querySelector(".coverage-grid");
+      
+      if (majorGrid) {
+        basicItems.forEach(item => {
+          const nameElement = item.querySelector(".coverage-name");
+          if (nameElement) {
+            const procedureName = nameElement.textContent.toLowerCase();
+            
+            // Check if this is a root canal and should be moved to major
+            if (rootCanalMajor && procedureName.includes("root canal")) {
+              // Remove from basic section
+              if (item.parentNode) {
+                item.parentNode.removeChild(item);
+              }
+              // Add to major section
+              majorGrid.appendChild(item);
+              // Reset animation
+              item.style.opacity = 0;
+              item.style.animationDelay = `${0.1 * majorGrid.children.length}s`;
+            }
+            
+            // Check if this is an extraction and should be moved to major
+            if (extMajor && (procedureName.includes("extract") || procedureName.includes("extrac-"))) {
+              // Remove from basic section
+              if (item.parentNode) {
+                item.parentNode.removeChild(item);
+              }
+              // Add to major section
+              majorGrid.appendChild(item);
+              // Reset animation
+              item.style.opacity = 0;
+              item.style.animationDelay = `${0.1 * majorGrid.children.length}s`;
+            }
+          }
+        });
+      }
+    }
   }
-  // Get or create grid for the not covered items
-  let notCoveredGrid = notCoveredSection.querySelector(".coverage-grid");
-  if (!notCoveredGrid)
-  {
-    notCoveredGrid = document.createElement("div");
-    notCoveredGrid.className = "coverage-grid";
-    notCoveredSection.appendChild(notCoveredGrid);
-  }
 
-  // Track which sections had items removed
+  // Track which sections had items removed for grid adjustments
   const sectionsToCheck = [0, 1, 2]; // indexes of sections to check for emptiness
   const sectionsModified = new Set();
-
-  // Process each "Not Covered" item
-  notCoveredItems.forEach(notCoveredItem =>
-  {
-    let itemName = "";
-    if (Array.isArray(notCoveredItem))
-    {
-      itemName = notCoveredItem[0];
-    }
-    else
-    {
-      itemName = notCoveredItem;
-    }
-    // Find items to move across all coverage sections
-    let itemToMove = null;
-    let sourceSection = null;
-    let sourceGrid = null;
-    let sourceSectionIndex = -1;
-
-    // Search through all other sections (100%, 80%, 50%)
-    for (let i = 0; i < 3; i++)
-    {
-      const section = coverageSections[i];
-      const items = section.querySelectorAll(".coverage-item");
-      items.forEach(item =>
-      {
-        const name = item.querySelector(".coverage-name");
-        if (name && name.textContent.toLowerCase().includes(itemName.toLowerCase()))
-        {
-          itemToMove = item;
-          sourceSection = section;
-          sourceGrid = section.querySelector(".coverage-grid");
-          sourceSectionIndex = i;
-        }
-      });
-    }
-    // Now move the item if found
-    if (itemToMove && sourceGrid)
-    {
-      // Remove from original parent
-      if (itemToMove.parentNode)
-      {
-        itemToMove.parentNode.removeChild(itemToMove);
-        // Mark this section as modified
-        sectionsModified.add(sourceSectionIndex);
-
-        // After removing, check how many items remain in the source grid
-        const remainingItems = sourceGrid.querySelectorAll(".coverage-item").length;
-        // Adjust grid template columns based on remaining items
-        if (remainingItems > 0)
-        {
-          // Use columns equal to the number of remaining items
-          sourceGrid.style.gridTemplateColumns = `repeat(${remainingItems}, 1fr)`;
-          // Increase max-width to ensure proper centering
-          const itemWidth = 95; // Width of each item in px
-          const gap = 5; // Gap between items in px
-          const newWidth = (remainingItems * itemWidth) + ((remainingItems - 1) * gap);
-          sourceGrid.style.maxWidth = `${newWidth}px`;
-          sourceGrid.style.margin = "0 auto";
-        }
-      }
-      // Add to Not Covered section
-      notCoveredGrid.appendChild(itemToMove);
-      // Reset the animation
-      itemToMove.style.opacity = 0;
-      itemToMove.style.animationDelay = `${0.1 * notCoveredGrid.children.length}s`;
-    }
-  });
 
   // Check if any source sections have become empty and need to be hidden
   sectionsModified.forEach(index =>
@@ -3456,92 +3720,153 @@ function processNotCoveredProcedures()
     {
       // This section is now empty, hide it instead of removing
       section.style.display = 'none';
-
       // Also add a class to mark it as empty for potential future reference
       section.classList.add('empty-section');
     }
   });
 
-  // If no items were found/moved to the not covered section, hide the section
-  if (notCoveredGrid.children.length === 0)
-  {
-    notCoveredSection.style.display = 'none';
-    return;
-  }
-
-  // Handle multiple rows when more than 4 items
-  const itemCount = notCoveredGrid.children.length;
-
-  // Always use 4 columns maximum per row
-  notCoveredGrid.style.display = "grid";
-  notCoveredGrid.style.rowGap = "10px";
-  notCoveredGrid.style.columnGap = "5px";
-
-  // If we have more than 4 items, explicitly set the rows
-  if (itemCount > 4)
-  {
-    const rowCount = Math.ceil(itemCount / 4);
-    notCoveredGrid.style.gridTemplateRows = `repeat(${rowCount}, auto)`;
-  }
-
-  if (itemCount < 4 && itemCount > 0)
-  {
-    Array.from(notCoveredGrid.children).forEach(child =>
+  // Handle not covered section display logic
+  const notCoveredSection = coverageSections[3];
+  if (notCoveredSection) {
+    const notCoveredGrid = notCoveredSection.querySelector(".coverage-grid");
+    
+    // If no items were found/moved to the not covered section, hide the section
+    if (!notCoveredGrid || notCoveredGrid.children.length === 0)
     {
-      child.style.left = "7px";
-    });
+      notCoveredSection.style.display = 'none';
+    }
+    else {
+      // Handle multiple rows when more than 4 items
+      const itemCount = notCoveredGrid.children.length;
+
+      // Set up grid properties
+      notCoveredGrid.style.display = "grid";
+      notCoveredGrid.style.rowGap = "10px";
+      notCoveredGrid.style.columnGap = "5px"; // Consistent with other sections
+
+      // Calculate columns and rows
+      const maxColumns = Math.min(itemCount, 4);
+      notCoveredGrid.style.gridTemplateColumns = `repeat(${maxColumns}, 1fr)`;
+
+      // If we have more than 4 items, explicitly set the rows
+      if (itemCount > 4)
+      {
+        const rowCount = Math.ceil(itemCount / 4);
+        notCoveredGrid.style.gridTemplateRows = `repeat(${rowCount}, auto)`;
+      }
+
+      // Calculate width for centering - USE CONSISTENT VALUES
+      const itemWidth = 91.5; // Width of each item in px (same as other sections)
+      const gap = 4; // Gap between items in px (same as other sections)
+      const newWidth = (maxColumns * itemWidth) + ((maxColumns - 1) * gap);
+
+      // Apply the precise width to center perfectly
+      notCoveredGrid.style.maxWidth = `${newWidth}px`;
+      notCoveredGrid.style.margin = "0 auto";
+
+      // Remove the left offset for items when less than 4
+      if (itemCount < 4 && itemCount > 0)
+      {
+        Array.from(notCoveredGrid.children).forEach(child =>
+        {
+          child.style.left = ""; // Remove any left positioning
+        });
+      }
+
+      // Add more vertical spacing between sections if we have multiple rows
+      if (itemCount > 4)
+      {
+        notCoveredSection.style.paddingBottom = "15px";
+      }
+    }
   }
 
-  // Calculate width for 4 columns (or fewer if we have less than 4 items)
-  const itemWidth = 95; // Width of each item in px
-  const gap = 5; // Gap between items in px
-  const maxColumns = Math.min(itemCount, 4);
-  const newWidth = (maxColumns * itemWidth) + ((maxColumns - 1) * gap);
-
-  // Apply the precise width to center perfectly
-  notCoveredGrid.style.maxWidth = `${newWidth}px`;
-  notCoveredGrid.style.margin = "0 auto";
-
-  // Add more vertical spacing between sections if we have multiple rows
-  if (itemCount > 4)
-  {
-    notCoveredSection.style.paddingBottom = "15px";
-  }
-
-  // After all moves are done, adjust each section's grid
   for (let i = 0; i < coverageSections.length; i++)
   {
-    // Skip hidden sections
-    if (coverageSections[i].style.display === 'none')
-    {
-      continue;
+  // Skip hidden sections
+  if (coverageSections[i].style.display === 'none')
+  {
+    continue;
+  }
+
+  const section = coverageSections[i];
+  if (!section) continue;
+
+  const grid = section.querySelector(".coverage-grid");
+  if (!grid) continue;
+
+  const items = grid.querySelectorAll(".coverage-item");
+  const itemCount = items.length;
+
+  if (itemCount > 0)
+  {
+    // Special handling for major section (index 2) and not covered section (index 3)
+    if (i === 2 || i === 3) {
+      // Handle multiple rows when more than 4 items (same as not covered logic)
+      
+      // Set up grid properties
+      grid.style.display = "grid";
+      grid.style.rowGap = "10px";
+      grid.style.columnGap = "5px"; // Consistent with other sections
+
+      // Calculate columns and rows
+      const maxColumns = Math.min(itemCount, 4);
+      grid.style.gridTemplateColumns = `repeat(${maxColumns}, 1fr)`;
+
+      // If we have more than 4 items, explicitly set the rows
+      if (itemCount > 4)
+      {
+        const rowCount = Math.ceil(itemCount / 4);
+        grid.style.gridTemplateRows = `repeat(${rowCount}, auto)`;
+      }
+
+      // Calculate width for centering - USE CONSISTENT VALUES
+      const itemWidth = 91.5; // Width of each item in px (same as other sections)
+      const gap = 4; // Gap between items in px (same as other sections)
+      const newWidth = (maxColumns * itemWidth) + ((maxColumns - 1) * gap);
+
+      // Apply the precise width to center perfectly
+      grid.style.maxWidth = `${newWidth}px`;
+      grid.style.margin = "0 auto";
+
+      // Remove the left offset for items when less than 4
+      if (itemCount < 4 && itemCount > 0)
+      {
+        Array.from(grid.children).forEach(child =>
+        {
+          child.style.left = ""; // Remove any left positioning
+        });
+      }
+
+      // Add more vertical spacing between sections if we have multiple rows
+      if (itemCount > 4)
+      {
+        section.style.paddingBottom = "15px";
+      }
     }
-
-    const section = coverageSections[i];
-    if (!section) continue;
-
-    const grid = section.querySelector(".coverage-grid");
-    if (!grid) continue;
-
-    const items = grid.querySelectorAll(".coverage-item");
-    const itemCount = items.length;
-
-    if (itemCount > 0)
-    {
+    else {
+      // Original logic for preventive and basic sections (single row only)
       // Set grid to match exact number of items
       grid.style.gridTemplateColumns = `repeat(${itemCount}, 1fr)`;
-      // Calculate exact width needed
-      const itemWidth = 95; // Width of each item in px
-      const gap = 5; // Gap between items in px
+
+      // Calculate exact width needed - USE CONSISTENT VALUES
+      const itemWidth = 91.5; // Width of each item in px
+      const gap = 4; // Gap between items in px
       const newWidth = (itemCount * itemWidth) + ((itemCount - 1) * gap);
+
       // Apply the precise width to center perfectly
       grid.style.maxWidth = `${newWidth}px`;
       grid.style.margin = "0 auto";
     }
   }
+}
+
   // Modify showProcedurePopup function to handle not-covered items
   updateShowProcedurePopupFunction();
 }
+
+
+
 
 /// Function to modify showProcedurePopup to handle not-covered items
 function updateShowProcedurePopupFunction()
@@ -5373,7 +5698,7 @@ function updateCalculatorDisplay()
       }
 
       //change spacing if between 5-7 items in not covered
-      const notCoveredItemCount = notCoveredSection ? 
+      const notCoveredItemCount = notCoveredSection ?
       notCoveredSection.querySelectorAll('.coverage-item').length : 0;
       if (notCoveredItemCount >= 5 && notCoveredItemCount < 8)
       {
@@ -6351,48 +6676,57 @@ function scrollTop()
 function scrollTopSmallDistance()
 {
   const currentPosition = window.scrollY;
-  
+
   // If we're not already at the top, use multiple techniques to ensure we get there
-  if (currentPosition > 0) {
+  if (currentPosition > 0)
+  {
     // Create a "bounce" effect to ensure address bar appears
     // First scroll up beyond the top (browser will normalize this)
     window.scrollTo(0, -120);
-    
+
     // Create a series of rapid scrolls with varying timing and positions
-    setTimeout(() => {
+    setTimeout(() =>
+    {
       window.scrollTo(0, -80);
-      
-      setTimeout(() => {
+
+      setTimeout(() =>
+      {
         window.scrollTo(0, -40);
-        
-        setTimeout(() => {
+
+        setTimeout(() =>
+        {
           // Final position to the exact top
           window.scrollTo(0, 0);
         }, 30);
       }, 30);
     }, 30);
-  } 
+  }
   // If already at the top (or very close), we need a different approach
-  else if (currentPosition < 3) {
+  else if (currentPosition < 3)
+  {
     // Create small downward scroll first, then back to top
     // This can help "wake up" the browser UI
     window.scrollTo(0, 10);
-    
-    setTimeout(() => {
+
+    setTimeout(() =>
+    {
       window.scrollTo(0, 0);
     }, 40);
   }
-  
+
   // Final attempt with different method after all other attempts
-  setTimeout(() => {
+  setTimeout(() =>
+  {
     // If we're still not at the top, try a scroll with behavior: smooth
-    if (window.scrollY > 0) {
-      window.scrollTo({
+    if (window.scrollY > 0)
+    {
+      window.scrollTo(
+      {
         top: 0,
         behavior: 'smooth'
       });
     }
-    
+
     // Force a focus change which can help show address bar on some browsers
     const tempButton = document.createElement('button');
     tempButton.style.position = 'fixed';
@@ -6401,9 +6735,10 @@ function scrollTopSmallDistance()
     tempButton.style.opacity = '0';
     tempButton.style.pointerEvents = 'none';
     document.body.appendChild(tempButton);
-    
+
     tempButton.focus();
-    setTimeout(() => {
+    setTimeout(() =>
+    {
       tempButton.blur();
       document.body.removeChild(tempButton);
     }, 100);
@@ -6577,21 +6912,22 @@ document.getElementById("tab1").addEventListener("click", function()
 
 // Replace the existing mobile scroll lock code with this improved version
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function()
+{
   // Check if we're on a mobile device
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) return; // Only apply on mobile devices
-  
+
   // Get all form inputs
   const inputs = document.querySelectorAll('#main-form input');
-  
+
   // Store original body styles
   let originalStyles = {
     height: '',
     overflow: '',
     position: ''
   };
-  
+
   // Create a fixed position overlay to block all scrolling
   const scrollBlocker = document.createElement('div');
   scrollBlocker.style.position = 'fixed';
@@ -6602,120 +6938,146 @@ document.addEventListener('DOMContentLoaded', function() {
   scrollBlocker.style.zIndex = '-1'; // Below content but above body
   scrollBlocker.style.display = 'none';
   document.body.appendChild(scrollBlocker);
-  
+
   // Function to lock scrolling completely
-  function lockScroll() {
+  function lockScroll()
+  {
     // Save current styles
     originalStyles.height = document.body.style.height;
     originalStyles.overflow = document.body.style.overflow;
     originalStyles.position = document.body.style.position;
-    
+
     // Lock the body in place
     document.body.style.height = '100%';
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
-    
+
     // Show scroll blocker
     scrollBlocker.style.display = 'block';
-    
+
     // Save current scroll position
     document.body.setAttribute('data-scroll-top', window.pageYOffset.toString());
   }
-  
+
   // Function to unlock scrolling
-  function unlockScroll() {
+  function unlockScroll()
+  {
     // Restore original styles
     document.body.style.height = originalStyles.height;
     document.body.style.overflow = originalStyles.overflow;
     document.body.style.position = originalStyles.position;
     document.body.style.width = '';
-    
+
     // Hide scroll blocker
     scrollBlocker.style.display = 'none';
-    
+
     // Restore scroll position
     const scrollTop = parseInt(document.body.getAttribute('data-scroll-top') || '0');
     window.scrollTo(0, scrollTop);
   }
-  
+
   // Track if any input is focused
   let inputFocused = false;
   let lockScrollTimeout = null;
-  
+
   // Apply to each input
-  inputs.forEach(input => {
+  inputs.forEach(input =>
+  {
     // When input is focused
-    input.addEventListener('focus', function() {
-      if (!inputFocused) {
+    input.addEventListener('focus', function()
+    {
+      if (!inputFocused)
+      {
         inputFocused = true;
-        
+
         // Clear any existing timeout
-        if (lockScrollTimeout) {
+        if (lockScrollTimeout)
+        {
           clearTimeout(lockScrollTimeout);
         }
-        
+
         // Delay the scroll lock slightly to allow cursor to appear
-        lockScrollTimeout = setTimeout(() => {
-          if (inputFocused) { // Double check input is still focused
+        lockScrollTimeout = setTimeout(() =>
+        {
+          if (inputFocused)
+          { // Double check input is still focused
             lockScroll();
           }
         }, 100); // Small delay to let cursor appear first
       }
     });
-    
+
     // When input loses focus
-    input.addEventListener('blur', function() {
+    input.addEventListener('blur', function()
+    {
       // Clear the lock timeout if it hasn't fired yet
-      if (lockScrollTimeout) {
+      if (lockScrollTimeout)
+      {
         clearTimeout(lockScrollTimeout);
         lockScrollTimeout = null;
       }
-      
+
       // Check if focus moved to another input
-      setTimeout(() => {
-        if (!document.activeElement || !document.activeElement.matches('#main-form input')) {
+      setTimeout(() =>
+      {
+        if (!document.activeElement || !document.activeElement.matches('#main-form input'))
+        {
           unlockScroll();
           inputFocused = false;
         }
       }, 10);
     });
-    
+
     // Add touchstart event to improve responsiveness
-    input.addEventListener('touchstart', function() {
+    input.addEventListener('touchstart', function()
+    {
       // Pre-focus the input on touch to improve cursor response
-      if (!inputFocused) {
+      if (!inputFocused)
+      {
         // Force focus slightly before the actual focus event
-        setTimeout(() => {
-          if (!this.matches(':focus')) {
+        setTimeout(() =>
+        {
+          if (!this.matches(':focus'))
+          {
             this.focus();
           }
         }, 0);
       }
     });
   });
-  
+
   // Block all touch move events when input is focused (but only after lock is applied)
-  document.addEventListener('touchmove', function(e) {
-    if (inputFocused && document.body.style.overflow === 'hidden') {
+  document.addEventListener('touchmove', function(e)
+  {
+    if (inputFocused && document.body.style.overflow === 'hidden')
+    {
       e.preventDefault();
     }
-  }, { passive: false });
-  
+  },
+  {
+    passive: false
+  });
+
   // iOS safeguard - re-check on resize (keyboard appears/disappears)
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function()
+  {
     // If we have focused inputs but somehow scroll is unlocked
-    if (inputFocused && document.body.style.overflow !== 'hidden') {
+    if (inputFocused && document.body.style.overflow !== 'hidden')
+    {
       // Only lock if we're not in the middle of a delayed lock
-      if (!lockScrollTimeout) {
+      if (!lockScrollTimeout)
+      {
         lockScroll();
       }
     }
     // If no inputs are focused but we're still locked
-    else if (!inputFocused && document.body.style.overflow === 'hidden') {
+    else if (!inputFocused && document.body.style.overflow === 'hidden')
+    {
       // Double check no inputs are actually focused
       const hasFocusedInput = document.activeElement && document.activeElement.matches('#main-form input');
-      if (!hasFocusedInput) {
+      if (!hasFocusedInput)
+      {
         unlockScroll();
       }
     }
@@ -6742,7 +7104,3 @@ document.getElementById("tab3").addEventListener("click", function()
     }
   }, 300);
 });
-
-
-
-

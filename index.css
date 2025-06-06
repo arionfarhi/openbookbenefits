@@ -582,6 +582,13 @@ input:-webkit-autofill:focus {
 	transition: opacity 1s ease-in-out;
 	border: none;
 }
+/* make submit go beneath dropdown */
+body:has(.insurance-dropdown[style*="display: block"]) #submit 
+{
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
 
 /* Ripple container to properly position the effect */
 #submit .ripple-container 
@@ -712,7 +719,6 @@ input:-webkit-autofill:focus {
 	0% { transform: scale(0); opacity: 0.4; }
 	100% { transform: scale(2.5); opacity: 0; }
 }
-
 
 
 

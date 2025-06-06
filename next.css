@@ -529,8 +529,8 @@ b
 /* Not Covered Section */
 .coverage-section:nth-child(4) .coverage-grid 
 {
-  grid-template-columns: repeat(4, 1fr) !important;
   justify-content: center;
+  text-align: center;
   width: 100%;
 }
 .coverage-section:nth-child(4) 
