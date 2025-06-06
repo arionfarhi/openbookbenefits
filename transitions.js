@@ -4657,7 +4657,7 @@ function showProcedurePopup(item)
   const popup = document.getElementById('procedure-popup');
   if (!popup) return;
 
-  document.body.style.overflow = "hidden";
+
   document.body.style.touchAction = 'none';
 
   const popupContent = popup.querySelector('.popup-content');
