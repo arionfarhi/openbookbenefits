@@ -5125,8 +5125,6 @@ function enhancePopupWithCalculator()
   // Make sure the popup exists
   if (!document.getElementById('procedure-popup')) return;
 
-  scrollTopAndLock();
-
   const popup = document.getElementById('procedure-popup');
   const popupContent = popup.querySelector('.popup-content');
 
@@ -5214,6 +5212,7 @@ function enhancePopupWithCalculator()
 
     newAddButton.addEventListener('click', function()
     {
+      scrollTopAndLock();
       // Get current procedure details
       const titleElement = document.getElementById('popup-title');
       if (!titleElement) return;
