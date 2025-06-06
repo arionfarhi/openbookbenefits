@@ -4941,7 +4941,7 @@ window.showProcedurePopup = function(item)
   const header = document.getElementsByClassName("header-container")[0];
 
   // Prevent scrolling when popup is open
- // document.body.style.overflow = "hidden";
+  //document.body.style.overflow = "hidden";
 
   // Full screen overlay - apply to the popup container itself
   if (popup)
@@ -5538,9 +5538,6 @@ function updateCalculatorDisplay()
     // Track previous values for animation
     let previousPatientCost = 0;
     let previousBenefitsRemaining = parseInt(maximumRemaining.replace('$', ''));
-
-    scrollTopAndLock();
-    document.body.style.overflow = testTab2Overflow(); //allow the calculator to scroll if tab2 is scrolling
 
     if (calculatorHeading)
     {
