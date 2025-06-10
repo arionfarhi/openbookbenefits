@@ -898,7 +898,7 @@ b
 @keyframes fadeInSlideUp {
   from {
     opacity: 0;
-    transform: translateY(70px) scale(.9);
+    transform: translateY(70px) scale(1);
   }
   to {
     opacity: 1;

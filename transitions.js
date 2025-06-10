@@ -38,6 +38,7 @@ const variables = [
   /*FOR TESTING!*/
   document.addEventListener('DOMContentLoaded', function()
   {
+    /*
     document.getElementsByClassName("content")[0].style.opacity = "0";
     document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
     document.getElementById("submit").style.opacity = "0";
@@ -54,7 +55,7 @@ const variables = [
     variables[10][1] = "100%";
     variables[11][1] = "80%";
     variables[12][1] = "50%";
-
+  */
   });
 
   const insuranceCompanies = [
