@@ -1,5 +1,4 @@
 // ENHANCED INSURANCE CARD OCR - Extracts actual data from insurance cards
-// Improved parsing based on real card examples
 
 function initNativeCameraScanner() {
     // Load Tesseract.js for OCR processing
@@ -137,6 +136,20 @@ function initNativeCameraScanner() {
     if (!document.getElementById('processingCardOverlay')) {
         document.body.insertAdjacentHTML('beforeend', processingOverlay);
     }
+
+    function addConsoleToPage() {
+   const consoleDiv = document.createElement('div');
+   consoleDiv.id = 'page-console';
+   consoleDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#000;color:#0f0;font-family:monospace;height:150px;overflow-y:auto;padding:10px;z-index:999999;';
+   document.body.insertBefore(consoleDiv, document.body.firstChild);
+   
+   const originalLog = console.log;
+   console.log = function(...args) {
+       originalLog.apply(console, args);
+       consoleDiv.innerHTML += args.join(' ') + '<br>';
+       consoleDiv.scrollTop = consoleDiv.scrollHeight;
+   };
+}
     
     // Set up the scanner button click handler
     const scannerButton = document.querySelector('.scanner-option');

@@ -229,14 +229,9 @@
       });
       document.body.style.touchAction = "none";
     } 
-    else {
-      // Restore original overflow when menu closes
-      if (tabNumber == 3) {
-        document.body.style.touchAction = "auto";
-      }
-      if (tabNumber == 2) {
-        document.body.style.touchAction = testTab2Overflow();
-      }
+    else 
+    {
+      document.body.style.touchAction = "auto";
     }
   }
   // Update the event listeners
@@ -254,14 +249,7 @@
       const hamburger = menuButton.querySelector('.hamburger');
       hamburger.classList.remove('active'); // Also remove active state from hamburger
     }
-    if (tabNumber == 3)
-    {
       document.body.style.touchAction = "auto";
-    }
-    if (tabNumber == 2)
-    {
-      document.body.style.touchAction = testTab2Overflow();
-    }
   });
 
 

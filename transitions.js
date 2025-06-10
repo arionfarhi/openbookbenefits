@@ -12,7 +12,7 @@ const variables = [
   ["Prev %", ""],
   ["Basic %", ""],
   ["Major %", ""], //please make sure that anything covered at 0% shows up as Not Covered as opposed to 0% - it makes more sense
-  ["Not Covered:", ["Filling"]], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
+  ["Not Covered:", ], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
   ["Frequencies:", //the cleaning and exams & xrays will always be there. Also note formatting in popup (can say "once per five years" as well).
   ["Cleaning: twice per year"],
   ["Exams & X-Rray: twice per year"] /*,["Crown: once per 5 years"]*/
@@ -33,14 +33,11 @@ const variables = [
     deepCleaning: null
   };
 
-  extMajor= true;
-
 
 
   /*FOR TESTING!*/
   document.addEventListener('DOMContentLoaded', function()
   {
-    /*
     document.getElementsByClassName("content")[0].style.opacity = "0";
     document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
     document.getElementById("submit").style.opacity = "0";
@@ -57,7 +54,6 @@ const variables = [
     variables[10][1] = "100%";
     variables[11][1] = "80%";
     variables[12][1] = "50%";
-    */
 
   });
 
@@ -2339,7 +2335,7 @@ incompleteStyle.textContent = `
 #submit:not(.incomplete) 
 {
   transform: scale(1) !important;
-  box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(41, 128, 185, 0.32);
 }
 `;
 document.head.appendChild(incompleteStyle);
