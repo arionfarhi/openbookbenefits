@@ -1370,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', function()
       {
         insuranceInput.blur();
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
-      }, 200);
+      }, 100);
     }
   }
   // Handle keyboard navigation
