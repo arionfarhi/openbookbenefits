@@ -1362,6 +1362,7 @@ document.addEventListener('DOMContentLoaded', function()
   {
     insuranceInput.value = company;
     hideDropdown();
+    checkSuccessMessages();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile)
     {
@@ -1370,7 +1371,7 @@ document.addEventListener('DOMContentLoaded', function()
       {
         insuranceInput.blur();
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
-      }, 0); //no delay necessary
+      }, 100); 
     }
   }
   // Handle keyboard navigation
@@ -1968,7 +1969,7 @@ friendlyStyle.textContent = `
   padding-bottom: 4.5px;
   opacity: 0;
   transform: translateY(7.5px);
-  transition: opacity 0.5s ease-out 0.1s, transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s; //100ms delay
+  transition: opacity 0.5s ease-out, transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   z-index: 10;
   pointer-events: none;
 }
