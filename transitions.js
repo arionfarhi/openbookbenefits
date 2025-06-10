@@ -1370,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', function()
       {
         insuranceInput.blur();
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
-      }, 100);
+      }, 0); //no delay necessary
     }
   }
   // Handle keyboard navigation
@@ -1968,7 +1968,7 @@ friendlyStyle.textContent = `
   padding-bottom: 4.5px;
   opacity: 0;
   transform: translateY(7.5px);
-  transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  transition: opacity 0.5s ease-out 0.1s, transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s; //100ms delay
   z-index: 10;
   pointer-events: none;
 }
@@ -2365,13 +2365,13 @@ const originalShowFriendlyMessage = showFriendlyMessage;
 showFriendlyMessage = function(input, message, emojiClass) 
 {
   originalShowFriendlyMessage(input, message, emojiClass);
-  setTimeout(checkSuccessMessages, 10);
+  setTimeout(checkSuccessMessages, 120);
 };
 
 // Also check when messages are removed (when user starts typing)
 document.addEventListener('input', function() 
 {
-  setTimeout(checkSuccessMessages, 10);
+  setTimeout(checkSuccessMessages, 120);
 });
 
 
