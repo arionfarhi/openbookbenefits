@@ -2332,7 +2332,11 @@ incompleteStyle.textContent = `
 }
 #submit 
 {
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#submit:not(.incomplete) 
+{
+  transform: scale(1) !important;
 }
 `;
 document.head.appendChild(incompleteStyle);
@@ -6014,7 +6018,7 @@ function updateCalculatorDisplay()
             // Then in your positioning logic:
             if (testTab2Overflow() && sectionIndex === 3) 
             {
-                position = topSpacing - (spacing * (sectionIndex - (adjustment + 1))) - window.storedOverflowOffset;
+              position = topSpacing - (spacing * (sectionIndex - (adjustment + 1))) - window.storedOverflowOffset;
             }
             // Set the transform
             item.style.transform = `translateY(${position}px)`;
