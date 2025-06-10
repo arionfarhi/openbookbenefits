@@ -2331,7 +2331,7 @@ incompleteStyle.textContent = `
 }
 #submit 
 {
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #submit:not(.incomplete) 
 {
