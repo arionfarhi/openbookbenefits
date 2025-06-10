@@ -5,14 +5,14 @@ const variables = [
   ["Is Active", ""],
   ["Renewal Date", "01/01/2026"],
   ["Termination Date", ""],
-  ["Maximum", "$1500"],
-  ["Maximum Used", "$1300"],
+  ["Maximum", ""],
+  ["Maximum Used", ""],
   ["Deductible", ""], //ignored for now
   ["Deductible Used", ""], //ignored for now
   ["Prev %", ""],
   ["Basic %", ""],
   ["Major %", ""], //please make sure that anything covered at 0% shows up as Not Covered as opposed to 0% - it makes more sense
-  ["Not Covered:", ], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
+  ["Not Covered:", ["Filling"]], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
   ["Frequencies:", //the cleaning and exams & xrays will always be there. Also note formatting in popup (can say "once per five years" as well).
   ["Cleaning: twice per year"],
   ["Exams & X-Rray: twice per year"] /*,["Crown: once per 5 years"]*/
@@ -33,27 +33,33 @@ const variables = [
     deepCleaning: null
   };
 
+  extMajor= true;
+
 
 
   /*FOR TESTING!*/
   document.addEventListener('DOMContentLoaded', function()
   {
     /*
-  document.getElementsByClassName("content")[0].style.opacity = "0";
-  document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
-  document.getElementById("submit").style.opacity = "0";
-  document.getElementById("main-form").style.pointerEvents = "none";
-  document.getElementById("submit").style.pointerEvents = "none";
-  document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
-  document.getElementById("tabs-div").style.pointerEvents = "auto";
-  document.getElementById("tabs-div").style.zIndex = "9999";
-  document.getElementsByClassName("content")[0].style.zIndex = "-999";
-  document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
-  document.getElementsByClassName("second-content")[0].style.zIndex = "999";
-  showNext();
-  maximumRemaining = "$300";
-  */
-});
+    document.getElementsByClassName("content")[0].style.opacity = "0";
+    document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
+    document.getElementById("submit").style.opacity = "0";
+    document.getElementById("main-form").style.pointerEvents = "none";
+    document.getElementById("submit").style.pointerEvents = "none";
+    document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
+    document.getElementById("tabs-div").style.pointerEvents = "auto";
+    document.getElementById("tabs-div").style.zIndex = "9999";
+    document.getElementsByClassName("content")[0].style.zIndex = "-999";
+    document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
+    document.getElementsByClassName("second-content")[0].style.zIndex = "999";
+    showNext();
+    maximumRemaining = "$300";
+    variables[10][1] = "100%";
+    variables[11][1] = "80%";
+    variables[12][1] = "50%";
+    */
+
+  });
 
   const insuranceCompanies = [
   "Delta Dental of Michigan", "Delta Dental of Alabama", "Delta Dental of Florida", "Delta Dental of Georgia", "Delta Dental of Louisiana", "Delta Dental of Mississippi", "Delta Dental of Montana", "Delta Dental of Nevada", "Delta Dental of Texas", "Delta Dental of Utah", "Delta Dental of Minnesota", "Delta Dental of New Jersey", "Delta Dental of Connecticut", "Delta Dental of Illinois", "Delta Dental of Maryland", "Delta Dental of Pennsylvania", "Delta Dental of Oregon", "Delta Dental of Alaska", "Delta Dental of New York", "Delta Dental of Colorado", "Delta Dental of Arkansas", "Delta Dental of North Carolina", "Delta Dental of Northeast", "Delta Dental of Iowa - Dental Wellness Plan", "Delta Dental of District of Colombia", "Delta Dental of California", "Delta Dental of Washington", "Delta Dental of Massachusetts", "Delta Dental of Missouri", "Delta Dental of Virginia", "Delta Dental of Ohio", "Delta Dental of Kansas", "Delta Dental of Wisconsin", "Delta Dental of Tennessee", "Delta Dental of Kentucky", "Delta Dental of Idaho", "Delta Dental of Arizona", "Delta Dental of Indiana", "Delta Dental of Rhode Island", "Delta Dental of Iowa", "Delta Dental of New Mexico", "Delta Dental of Oklahoma", "Delta Dental of Nebraska", "Delta Dental of Delaware", "Delta Dental of Wyoming", "Delta Dental of South Carolina", "Delta Dental of West Virginia", "Delta Dental of Puerto Rico", "Delta Dental of South Dakota", "Metlife", "Aetna", "Cigna", "UnitedHealthCare", "DentaQuest", "Guardian", "Humana", "Ameritas", "United Concordia - Dental Plus", "United Concordia - Tricare Dental", "United Concordia Fee-for-Service ", "Blue Cross of Idaho", "Blue Cross Blue Shield of Texas", "Anthem Blue Cross Blue Shield of California", "Blue Cross Blue Shield of Illinois", "Horizon Blue Cross Blue Shield of New Jersey", "Blue Cross Blue Shield Massachusetts", "Anthem Blue Cross Blue Shield of New York", "Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "Anthem Blue Cross Blue Shield of Indiana", "Blue Cross Blue Shield of North Carolina", "Blue Cross Blue Shield of Michigan", "Independence Blue Cross Pennsylvania", "Premera Blue Cross of Washington", "Anthem Blue Cross Blue Shield of Virginia", "Blue Cross Blue Shield Of Alabama", "Anthem Blue Cross Blue Shield of Colorado", "Anthem Blue Cross Blue Shield of Georgia", "Anthem Blue Cross Blue Shield Ohio", "Blue Cross Blue Shield of South Carolina", "Blue Cross Blue Shield of Florida", "Anthem Blue Cross Blue Shield of Connecticut", "Anthem Blue Cross Blue Shield Dental", "Premera Blue Cross Alaska", "Anthem Blue Cross Blue Shield Missouri", "Capital Blue Cross of Pennsylvania", "CareFirst Blue Cross Blue Shield Maryland", "Blue Cross Blue Shield of Kansas City", "Anthem Blue Cross Blue Shield Nevada", "Blue Cross Blue Shield of Arkansas", "Blue Cross Blue Shield of Michigan/Medicare Advantage", "Anthem Blue Cross Blue Shield New Hampshire", "Anthem Blue Cross Blue Shield of Wisconsin", "Anthem Blue Cross Blue Shield of Maine", "Blue Cross Blue Shield of Wyoming", "Blue Cross Blue Shield of Nebraska", "Blue Cross Blue Shield of Vermont", "Blue Cross Blue Shield Rhode Island", "Blue Cross Blue Shield of Kansas", "Blue Cross Blue Shield of New Mexico", "Highmark Blue Cross Blue Shield of West Virginia", "Blue Cross Blue Shield of North Dakota", "Blue Cross Blue Shield of Montana", "Blue Cross Illinois Medicare Advantage", "Excellus Blue Cross Blue Shield New York Rochester Area", "Blue Cross Community Options", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield New Jersey", "Arizona Blue (Blue Cross Blue Shield Arizona)", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Excellus Blue Cross Blue Shield New York Central", "CareFirst BlueCross BlueShield District of Columbia (NCA)", "Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "Blue Cross Blue Shield Oklahoma", "Blue Cross Blue Shield of Tennessee", "Regence BlueCross BlueShield of Oregon", "Anthem BlueCross BlueShield Kentucky", "Blue Cross Blue Shield Louisiana Blue Advantage", "Highmark Blue Cross Blue Shield of Delaware", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Blue Cross Blue Shield Louisiana", "Blue Cross Blue Shield Mississippi", "Anthem Blue Cross of New York Dental", "Excellus Blue Cross Blue Shield New York Utica Watertown", "Blue Cross Blue Shield of Hawaii", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Blue Cross Blue Shield Anthem Vivity", "Blue Cross New York Northeastern", "Empire Blue Cross Blue Shield New York", "Blue Cross Blue Shield of Kentucky (FEP)", "Blue Cross Blue Shield of Ohio (FEP)", "Blue Cross Blue Shield Minnesota", "Blue Cross Blue Shield of Minnesota (FEP)", "Blue Cross Blue Shield of Washington DC", "CareFirst BlueCross BlueShield Community Health Plan Maryland", "BCBS Michigan and Blue Care Network", "Blue Cross Community Centennial", "Blue Cross Blue Shield Pennsylvania Northeast", "BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "HealthNow BlueCross BlueShield New York Northeastern", "Highmark Blue Cross Blue Shield Pennsylvania Institutional", "Blue Cross Blue Shield FEP BlueDental", "Excellus BlueCross BlueShield of New York", "Blue Cross Blue Shield Delaware", "BlueCross BlueShield of South Carolina Federal Employee Program", "Blue Cross Blue Shield of Connecticut- Family Plan", "Regence BlueCross BlueShield of Utah", "Blue Cross Blue Shield Pennsylvania Northwest", "Blue Cross Blue Shield South Carolina State Health Plan", "Blue Cross Blue Shield South Carolina Medicare Blue", "Mountain State Blue Cross Blue Shield West Virginia", "Delta Dental of North Dakota", "Delta Dental of Maine", "Delta Dental of New Hampshire", "Delta Dental of Vermont", "Principal Financial Group", "Sunlife", "Assurant Health", "Kaiser Permanente Northern California", "Kaiser Permanente Health Plan Hawaii", "Kaiser Permanente Georgia", "Ambetter", "HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "Maine Medicaid", "Humana - Healthy Horizons (Ohio Medicaid)", "Medicaid Washington", "Medicaid Massachusetts", "Indiana Medicaid", "Medicaid Oregon", "Medicaid Texas - CHIP", "North Carolina Medicaid", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Medicaid Illinois", "Medicaid Rhode Island", "Medicaid Idaho", "United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Centene Ohio Medicaid Managed Care Entity", "AmeriHealth Caritas Ohio Medicaid MCE", "Medicaid Louisiana", "Aetna OhioRise Medicaid Managed Care Entity", "Medicaid California Medi-Cal", "Medicaid New York", "Medicaid Texas - Acute", "West Virginia Medicaid", "CareSource Medicaid Ohio", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Medicaid Kentucky", "Medicaid South Carolina", "Medicaid New Hampshire", "Medicaid Alabama", "Molina Ohio Medicaid Managed Care Entity", "Medicaid Vermont", "Medicaid South Dakota", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Medicaid Missouri", "Medicaid Michigan", "Medicaid Ohio", "Medicaid Connecticut", "Medicaid Alaska", "Amerigroup-Medicaid", "Medicaid Arizona", "Medicaid Georgia", "Medicaid Maryland", "Medicaid Nevada", "Medicaid Pennsylvania", "Medicaid Oklahoma", "Medicaid Virginia", "Texas Children's Health Plan (Medicaid) CHIP", "Medicaid Montana", "Medicaid Tennessee", "Medicaid Florida", "Medicaid Iowa", "Medicaid of Virginia", "Medicaid Wisconsin", "Medicaid New Jersey", "Medicaid Tennessee BlueCare TennCare Select", "Aetna Medicaid Illinois", "McLaren Medicaid", "Medicaid Maryland Department of Health and Mental Hygiene", "Medicaid New Mexico", "CareSource Ohio Medicaid Managed Care Entity", "FirstCare Star Medicaid", "Medicaid North Dakota", "Medicaid Hawaii", "Medicaid Kansas", "Medicaid Arkansas", "Medicaid District of Columbia", "CareSource of Michigan Medicaid", "Medicaid Delaware", "Medicaid of Kentucky (Region 3 - Doral Dental)", "Christus Health Plan Medicaid", "Medicaid Wyoming", "Medicaid Louisiana Durable Medical Equipment Claims", "Medicaid Mississippi", "Blue Cross Blue Shield of Texas"
@@ -160,7 +166,7 @@ function runBackend()
 
     const stringData = JSON.stringify(data, null, 2);
 
-    if (stringData.includes("Patient Birth Date Does Not Match That for the Patient on the Database") || stringData.includes("the length of the value must be `>=") || stringData.includes("The payer or clearinghouse rejected the request with validation errors.") || stringData.includes("Please Correct and Resubmit"))
+    if (stringData.includes("Patient Birth Date Does Not Match That for the Patient on the Database") || stringData.includes("the length of the value must be `>=") || stringData.includes("The payer or clearinghouse rejected the request with validation errors.") || stringData.includes("Please Correct and Resubmit") || stringData.includes("the value must match the pattern"))
     {
       if (memberID.toLowerCase() !== "bypass")
       {
@@ -239,7 +245,7 @@ function runBackend()
             b.code === "F" &&
             b.name === "Limitations" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) //general dental codes
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38") || b.serviceTypeCodes.includes("30")) //general dental codes
             &&
             (b.timeQualifierCode === "23" || b.timeQualifierCode === "22" || b.timeQualifierCode === "25") //contract or calendar year (some have just one)
             ) || benefits.find(b =>
@@ -259,7 +265,7 @@ function runBackend()
             b.code === "F" &&
             b.name === "Limitations" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38") ||  b.serviceTypeCodes.includes("30")) &&
             b.timeQualifierCode === "29" //remaining benefit
             );
 
@@ -280,7 +286,7 @@ function runBackend()
             b.code === "C" &&
             b.name === "Deductible" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38")) &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38") || b.serviceTypeCodes.includes("30")) &&
             (b.timeQualifierCode === "23" || b.timeQualifierCode === "22") //contract or calendar year (some have just one)
             );
 
@@ -309,7 +315,7 @@ function runBackend()
 
 
           // Extract coverage percentages from co-insurance data - only in network
-          const coInsuranceData = benefits.filter(b => b.code === "A" && b.name === "Co-Insurance" && b.inPlanNetworkIndicatorCode === "Y");
+          const coInsuranceData = benefits.filter(b => b.code === "A" && b.name === "Co-Insurance" && (b.inPlanNetworkIndicatorCode === "Y" || b.inPlanNetworkIndicatorCode === "W"));
           let preventiveSet = false;
           let basicSet = false;
           let basicHighest = 0;
@@ -348,7 +354,7 @@ function runBackend()
                 variables[10][1] = `${insurancePercent}%`;
                 preventiveSet = true;
               }
-              else if (!basicSet && serviceTypes.includes("restorative") || serviceTypes.includes("endodontics") || serviceTypes.includes("periodontics"))
+              else if (!basicSet && serviceTypes.includes("restorative") || serviceTypes.includes("endodontics"))
               {
                 if (insurancePercent > basicHighest) //get the highest number
                 {
@@ -356,18 +362,36 @@ function runBackend()
                   basicHighest = insurancePercent;
                 }
               }
-              else if (!majorSet && (majorCodes.includes(procedureCode) ||
-                serviceTypes.includes("prosthodontics") ||
-                serviceTypes.includes("crowns") ||
-                serviceTypes.includes("bridges") ||
-                serviceTypes.includes("dentures")))
-              {
-                variables[12][1] = `${insurancePercent}%`;
-                majorSet = true;
+              else if (majorCodes.includes(procedureCode) || serviceTypes.includes("prosthodontics") || serviceTypes.includes("crowns") ||serviceTypes.includes("bridges") || serviceTypes.includes("dentures"))
+              { //takes lowest non-zero value, unless there are none
+                if (!majorSet) {
+                  // First major service found - set it
+                  variables[12][1] = `${insurancePercent}%`;
+                  majorSet = true;
+                } else {
+                  // Compare with existing value
+                  const currentMajorPercent = parseInt(variables[12][1].replace('%', ''));
+                  
+                  if (currentMajorPercent === 0) {
+                    // Current is zero, take any non-zero value
+                    if (insurancePercent > 0) {
+                      variables[12][1] = `${insurancePercent}%`;
+                    }
+                  } else if (insurancePercent > 0 && insurancePercent < currentMajorPercent) {
+                    // Take the lower non-zero value
+                    variables[12][1] = `${insurancePercent}%`;
+                  } else if (insurancePercent === 0 && currentMajorPercent > 0) {
+                    // Keep the non-zero value, don't replace with zero
+                    // Do nothing
+                  }
+                }
               }
-              if (basicCodes.includes(procedureCode))
+              if (basicCodes.includes(procedureCode)) //record highest out of all basic codes
               {
-                basicBackup = `${insurancePercent}%`
+                const currentBackupPercent = basicBackup ? parseInt(basicBackup.replace('%', '')) : 0;
+                if (insurancePercent > currentBackupPercent) {
+                  basicBackup = `${insurancePercent}%`;
+                }
               }
 
               // Capture specific coverages for analysis - always find the highest number in case just one of the coes isn't covered!
@@ -2299,6 +2323,54 @@ function displayError(message = null, highlightInputs = true)
 }
 
 
+//Show dulled button until 4 success messages
+const incompleteStyle = document.createElement('style');
+incompleteStyle.textContent = `
+#submit.incomplete 
+{
+  background-color: rgba(41, 128, 185, .32);
+}
+#submit 
+{
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+}
+`;
+document.head.appendChild(incompleteStyle);
+
+// Initialize button as incomplete
+document.addEventListener('DOMContentLoaded', function() 
+{
+  document.getElementById('submit').classList.add('incomplete');
+});
+
+// Check if 4 success messages exist
+function checkSuccessMessages() 
+{
+  const successMessages = document.querySelectorAll('.friendly-message.show');
+  const submitBtn = document.getElementById('submit');
+  
+  if (successMessages.length >= 4) {
+    submitBtn.classList.remove('incomplete');
+  } else {
+    submitBtn.classList.add('incomplete');
+  }
+}
+
+// Check whenever a friendly message is shown
+const originalShowFriendlyMessage = showFriendlyMessage;
+showFriendlyMessage = function(input, message, emojiClass) 
+{
+  originalShowFriendlyMessage(input, message, emojiClass);
+  setTimeout(checkSuccessMessages, 10);
+};
+
+// Also check when messages are removed (when user starts typing)
+document.addEventListener('input', function() 
+{
+  setTimeout(checkSuccessMessages, 10);
+});
+
+
 
 var doneLoading = false;
 var loadingTimer = null;
@@ -2589,6 +2661,7 @@ function showNext()
   var secondPage = document.getElementsByClassName("second-content")[0];
 
   secondPage.style.opacity = 1;
+  document.body.style.overflow = "auto";
   document.getElementById("tabs-div").style.opacity = 1;
   makeTabActive();
   runLoadingAnimation();
@@ -2648,7 +2721,7 @@ function showNext()
     secondPage.innerHTML = `
     <div id="coverage-div" class='loading-up'>
     <div class="coverage-section">
-    <h3 class="coverage-heading"><b>${variables[10][1]}</b> Covered</h3>
+    <h3 class="coverage-heading"><b>Routine - </b>${variables[10][1]} Covered</h3>
     <div class="coverage-grid">
     <div class="coverage-item">
     <div class="coverage-icon"><i class="fas fa-tooth"></i></div>
@@ -2666,7 +2739,7 @@ function showNext()
     </div>
 
     <div class="coverage-section">
-    <h3 class="coverage-heading"><b>${variables[11][1]}</b> Covered</h3>
+    <h3 class="coverage-heading"><b>Basic - </b>${variables[11][1]} Covered</h3>
     <div class="coverage-grid">
     <div class="coverage-item">
     <div class="coverage-icon"><i class="fas fa-fill-drip"></i></div>
@@ -2688,7 +2761,7 @@ function showNext()
     </div>
 
     <div class="coverage-section">
-    <h3 class="coverage-heading"><b>${variables[12][1]}</b> Covered</h3>
+    <h3 class="coverage-heading"><b>Major - </b>${variables[12][1]} Covered</h3>
     <div class="coverage-grid">
     <div class="coverage-item">
     <div class="coverage-icon"><i class="fas fa-crown"></i></div>
@@ -2710,7 +2783,7 @@ function showNext()
     </div>
 
     <div class="coverage-section" id='notCovered-section'>
-    <h3 class="coverage-heading">Not Covered:</h3>
+    <h3 class="coverage-heading"><b>Not Covered</b></h3>
     <div class="coverage-grid">
     </div>
     </div>
@@ -2807,7 +2880,6 @@ function showNext()
 /* MAKE TAB APPEAR AS ACTIVE */
 document.getElementById("tab1").addEventListener("click", function()
 {
-  document.body.style.overflow = "hidden";
   tabNumber = 1;
   showNext();
 });
@@ -2816,14 +2888,9 @@ document.getElementById("tab2").addEventListener("click", function()
   tabNumber = 2;
   scrollTop();
   showNext();
-  setTimeout(() =>
-  {
-    document.body.style.overflow = testTab2Overflow();
-  }, 50);
 });
 document.getElementById("tab3").addEventListener("click", function()
 {
-  document.body.style.overflow = "auto";
   tabNumber = 3;
   scrollTopSmallDistance();
   showNext();
@@ -2852,40 +2919,44 @@ document.querySelectorAll('.tab').forEach(tab =>
 });
 
 
-function testTab2Overflow()
+
+function testTab2Overflow() //returns true if 5+ majors AND not covered has items
 {
-  if (rootCanalMajor || extMajor) //if anything is moved, make it auto
-  {
-    return "auto";
-  }
   // Get all coverage sections in Tab 2
   const sections = document.querySelectorAll('.coverage-section');
-  // Log each section with its display style for debugging
-  sections.forEach((section, index) =>
-  {
-    const style = window.getComputedStyle(section);
-
-  });
-  // Count only truly visible sections
-  let visibleSectionCount = 0;
-  sections.forEach(section =>
-  {
-    // Check computed style and other visibility factors
-    const style = window.getComputedStyle(section);
-    const hasVisibleItems = section.querySelectorAll('.coverage-item').length > 0;
-    const isActuallyVisible = style.display !== 'none' &&
-    style.visibility !== 'hidden' &&
-    parseInt(style.height) > 0 &&
-    hasVisibleItems;
-    if (isActuallyVisible)
-    {
-      visibleSectionCount++;
+  
+  // Get the major section (index 2) and not covered section (index 3)
+  const majorSection = sections[2]; // Major section
+  const notCoveredSection = sections[3]; // Not covered section
+  
+  // Count major section items
+  let majorItemCount = 0;
+  if (majorSection) {
+    const majorItems = majorSection.querySelectorAll('.coverage-item');
+    const style = window.getComputedStyle(majorSection);
+    const isMajorVisible = style.display !== 'none' && style.visibility !== 'hidden';
+    
+    if (isMajorVisible) {
+      majorItemCount = majorItems.length;
     }
-  });
-
-  const result = visibleSectionCount < 4 ? 'hidden' : 'auto';
-  return result;
+  }
+  
+  // Check if not covered section has items
+  let notCoveredHasItems = false;
+  if (notCoveredSection) {
+    const notCoveredItems = notCoveredSection.querySelectorAll('.coverage-item');
+    const style = window.getComputedStyle(notCoveredSection);
+    const isNotCoveredVisible = style.display !== 'none' && style.visibility !== 'hidden';
+    
+    if (isNotCoveredVisible && notCoveredItems.length > 0) {
+      notCoveredHasItems = true;
+    }
+  }
+  
+  // Return true if major section has 5+ items AND not covered section has items
+  return (majorItemCount >= 5 && notCoveredHasItems);
 }
+
 
 function makeTabActive()
 {
@@ -2896,7 +2967,7 @@ function makeTabActive()
   tabs.forEach(tab =>
   {
     tab.classList.remove("active-tab");
-    tab.style.opacity = .4;
+    tab.style.opacity = .5;
     const span = tab.querySelector("span");
     const icon = tab.querySelector("i");
     if (span)
@@ -3350,8 +3421,7 @@ function initializeTab1()
     <span class="remaining-text">remaining</span>
     </div>
     </div>
-    <p class='summary-benefits-info'>Your benefits cover a fixed portion of your dental work until they are all used up.<br>Your fixed portions are shown in <b>Coverage</b>.</p>
-    `;
+    <p class='summary-benefits-info'> Your insurance pays a set percentage of your dental costs until your benefits run out.<br> Your percentages are shown in <b>Coverage</b>. </p>`;
 
     element.innerHTML = infographicHTML;
 
@@ -3559,7 +3629,7 @@ function initializeTab2()
 {
   waitForElement(".coverage-item", () =>
   {
-    processNotCoveredProcedures();
+    processTab2Items();
     updateProcedureCosts();
   });
   createProcedurePopup(); // Create the popup if it doesn't exist
@@ -3568,7 +3638,7 @@ function initializeTab2()
 }
 
 // Process and move procedures marked as "Not Covered" in the variables array - and move around ext or root to major if necessary
-function processNotCoveredProcedures()
+function processTab2Items()
 {
   const allSections = document.querySelectorAll(".coverage-section");
   allSections.forEach(section =>
@@ -3910,7 +3980,8 @@ function processNotCoveredProcedures()
   const majorSection = coverageSections[2]; // Major section (index 2)
   const notCoveredSection2 = coverageSections[3]; // Not Covered section (index 3)
   
-  if (majorSection) {
+  if (majorSection) 
+  {
     const majorGrid = majorSection.querySelector(".coverage-grid");
     const majorItemCount = majorGrid ? majorGrid.querySelectorAll(".coverage-item").length : 0;
     
@@ -3929,9 +4000,32 @@ function processNotCoveredProcedures()
     }
   }
 
+
+  // delete empty sections
+  allSections.forEach((section, index) => {
+    const grid = section.querySelector('.coverage-grid');
+    const items = grid ? grid.querySelectorAll('.coverage-item') : [];
+
+  // If section has no items, hide it
+  if (items.length === 0) {
+    section.style.display = 'none';
+    section.classList.add('empty-section');
+    const headingText = section.querySelector('.coverage-heading')?.textContent || `Section ${index}`;
+  } else {
+    // Make sure visible sections are displayed
+    section.style.display = '';
+    section.classList.remove('empty-section');
+  }
+});
+
+
+
   // Modify showProcedurePopup function to handle not-covered items
   updateShowProcedurePopupFunction();
 }
+
+
+
 
 
 
@@ -4019,6 +4113,8 @@ function updateShowProcedurePopupFunction()
   };
 }
 
+var firstClick = true;
+
 function setupPopupInfoTooltip()
 {
   // Remove existing event listeners first
@@ -4027,46 +4123,37 @@ function setupPopupInfoTooltip()
 
   if (oldInfoIcon && oldTooltip)
   {
-    // Clean up any existing state
     oldInfoIcon.replaceWith(oldInfoIcon.cloneNode(true));
   }
-
-  // Get fresh references to the elements
   const infoIcon = document.querySelector('.info-tooltip-icon');
   const tooltip = document.querySelector('.info-tooltip');
-
   if (!infoIcon || !tooltip) return;
 
-  let timeout;
-
-  // Ensure tooltip is hidden initially and remove any existing show class
   tooltip.classList.remove('show-tooltip');
+  tooltip.classList.remove('hide-tooltip');
   infoIcon.style.opacity = "0.8";
 
-  // Function to hide tooltip
   function hideTooltip()
   {
     tooltip.classList.remove('show-tooltip');
+    tooltip.classList.add('hide-tooltip');
     infoIcon.style.opacity = "0.8";
-    if (timeout)
-    {
-      clearTimeout(timeout);
-    }
   }
 
-  // Function to show tooltip for 7.5 seconds
   function showTooltip()
   {
-    hideTooltip(); // Clear any existing state
-
+    hideTooltip();
+    tooltip.classList.remove('hide-tooltip');
     tooltip.classList.add('show-tooltip');
     infoIcon.style.opacity = "1";
+  }
 
-    // Auto-hide after 7.5 seconds
-    timeout = setTimeout(() =>
-    {
-      hideTooltip();
-    }, 7500);
+  if (firstClick)
+  {
+    firstClick = false;
+    setTimeout (() => {
+      showTooltip();
+    }, 250);
   }
 
   // Click on info icon to toggle
@@ -4087,7 +4174,7 @@ function setupPopupInfoTooltip()
   // Click anywhere else to hide
   document.addEventListener('click', (e) =>
   {
-    if (!infoIcon.contains(e.target) && !tooltip.contains(e.target))
+    if (!infoIcon.contains(e.target) && !tooltip.contains(e.target) && tooltip.classList.contains('show-tooltip'))
     {
       hideTooltip();
     }
@@ -4261,140 +4348,218 @@ function setupTabEventListeners()
   }
 }
 
-function addPulseAnimationAfterDelay()
+
+function addPulseAnimationAfterDelay() 
 {
-  /*
-  // If animation has already run during this page session, don't run again
-  if (window.pulseAnimationHasRun) 
+  if (window.tooltipDismissed) 
   {
     return;
   }
-  if (!document.getElementById('pulse-animation-style')) 
+  if (!document.getElementById('click-tooltip-style')) 
   {
     const style = document.createElement('style');
-    style.id = 'pulse-animation-style';
+    style.id = 'click-tooltip-style';
     style.textContent = `
-      @keyframes pulseHint {
-        0% { transform: scale(1); box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2); }
-        50% { transform: scale(1.1); box-shadow: 0 0 0 4px rgba(41, 128, 185, 0.5), 0 6px 15px rgba(0, 0, 0, 0.3); }
-        100% { transform: scale(1); box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2); }
+    .click-hint-tooltip 
+    {
+      position: absolute;
+      background: #f1f8f3;
+      padding: 6px 12px;
+      color: #888;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: "Montserrat", sans-serif;
+      white-space: nowrap;
+      z-index: 1000;
+      box-shadow: 
+      0 8px 32px rgba(49, 117, 104, 0.2),
+      0 4px 16px rgba(49, 117, 104, 0.15),
+      0 2px 8px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+      transition: none; /* Disable during entrance */
+      pointer-events: none;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
+    }
+    .click-hint-tooltip::after 
+    {
+      content: '';
+      opacity: .9;
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 6px solid #f1f8f3;
+    }
+
+
+    .click-hint-tooltip.loading 
+    {
+      animation: tooltipEntrance 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    .click-hint-tooltip.floating 
+    {
+
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      animation: tooltipFloatEnhanced 2s ease-in-out infinite;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .click-hint-tooltip.exiting 
+    {
+      animation: tooltipExit 0.3s ease-out forwards;
+    }
+
+    @keyframes tooltipEntrance 
+    {
+      0% {
+        opacity: 1;
+        transform: translateY(-1px) scale(0);
       }
-      .coverage-item.pulse-hint {
-        animation: pulseHint 1.5s ease-in-out 4 !important;
+      100% {
+        opacity: 1;
+        transform: translateY(-1px) scale(1);
       }
-      .coverage-item.pulse-hint .coverage-icon {
-        animation: wiggle 1.5s ease-in-out 4 !important;
+    }
+    @keyframes tooltipFloatEnhanced 
+    {
+      0%, 100% { 
+        transform: translateY(-1px);
       }
-      @keyframes wiggle {
-        0%, 100% { transform: rotate(0); }
-        25% { transform: rotate(-5deg); }
-        75% { transform: rotate(5deg); }
+      50% { 
+        transform: translateY(-2px);
       }
+    }
+    @keyframes tooltipExit 
+    {
+      0% {
+        opacity: 1;
+        transform: translateY(-1px) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(10px) scale(1);
+      }
+    }
     `;
     document.head.appendChild(style);
   }
-  
-  window.coverageItemClicked = window.coverageItemClicked || false;
-  window.isInCoverageTab = (tabNumber === 2);
-  if (!window.coverageItemsListenerAdded) {
+
+  // Wait for coverage items to be loaded, then show tooltip
+  setTimeout(() => 
+  {
+    showClickTooltip();
+  }, 600);
+
+  // Set up click listener to dismiss tooltip
+  if (!window.tooltipClickListenerAdded) {
     document.addEventListener('click', function(e) {
       let target = e.target;
       while (target && target !== document) {
         if (target.classList && target.classList.contains('coverage-item')) {
-          window.coverageItemClicked = true;
-          // Remove pulse animation from all items
-          document.querySelectorAll('.coverage-item').forEach(item => {
-            item.classList.remove('pulse-hint');
-          });
-          window.pulseAnimationHasRun = true;
+          removeClickTooltip(1);
+          window.tooltipDismissed = true;
           break;
         }
         target = target.parentNode;
       }
     });
-    window.coverageItemsListenerAdded = true;
+    window.tooltipClickListenerAdded = true;
   }
-  clearTimers();
-  startPulseTimer(); 
-  // Add tab change listeners (only once)
-  if (!window.tabChangeListenersAdded) {
-    const tabs = document.querySelectorAll(".tab");
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', function() {
-        setTimeout(() => {
-          const newTabNumber = index + 1;
-          const wasInCoverageTab = window.isInCoverageTab;
-          
-          // Update current tab tracking
-          window.isInCoverageTab = (newTabNumber === 2);
-          
-          // Handle tab change logic
-          if (window.isInCoverageTab && !wasInCoverageTab && !window.pulseAnimationHasRun && !window.coverageItemClicked) {
-            clearTimers();
-            removePulseAnimations();
-            startPulseTimer();
-          } else if (!window.isInCoverageTab && wasInCoverageTab) {
-            clearTimers();
-            removePulseAnimations();
-          }
-        }, 50);
-      }, { passive: true });
-    });
-    window.tabChangeListenersAdded = true;
-  }
-  // Add visibility change handler (only once)
-  if (!window.visibilityChangeListenerAdded) {
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        clearTimers();
-        removePulseAnimations();
-      } else if (window.isInCoverageTab && !window.pulseAnimationHasRun && !window.coverageItemClicked) {
-        clearTimers();
-        startPulseTimer();
-      }
-    });
-    window.visibilityChangeListenerAdded = true;
-  }
-  // Helper function to clear timers
-  function clearTimers() {
-    if (window.pulseMainTimeout) {
-      clearTimeout(window.pulseMainTimeout);
-      window.pulseMainTimeout = null;
-    }
-    if (window.pulseCleanupTimeout) {
-      clearTimeout(window.pulseCleanupTimeout);
-      window.pulseCleanupTimeout = null;
-    }
-  }
-  // Helper function to remove pulse animations
-  function removePulseAnimations() {
-    document.querySelectorAll('.coverage-item').forEach(item => {
-      item.classList.remove('pulse-hint');
-    });
-  }
-  // Helper function to start the pulse timer
-  function startPulseTimer() {
-    window.pulseMainTimeout = setTimeout(() => {
-      if (!window.coverageItemClicked && window.isInCoverageTab) {
-        const firstItem = document.querySelector('.coverage-section:not(:nth-child(4)) .coverage-item');
-        if (firstItem) {
-          const originalAnimation = firstItem.style.animation;
-          firstItem.classList.add('pulse-hint');
-          
-          // Remove pulse after animation completes (4 pulses × 1.5s = 6s)
-          window.pulseCleanupTimeout = setTimeout(() => {
-            firstItem.classList.remove('pulse-hint');
-            if (originalAnimation) {
-              firstItem.style.animation = originalAnimation;
-            }
-            window.pulseAnimationHasRun = true;
-          }, 6000);
-        }
-      }
-    }, 15000); // 10 second delay
-  }
-  */
 }
+
+function showClickTooltip() {
+  // Only show if we're on coverage tab and tooltip hasn't been dismissed
+  if (tabNumber !== 2 || window.tooltipDismissed) {
+    return;
+  }
+
+  // Find the cleaning item (first item in first section)
+  const firstSection = document.querySelector('.coverage-section:first-child');
+  if (!firstSection) return;
+
+  const cleaningItem = firstSection.querySelector('.coverage-item');
+  if (!cleaningItem) return;
+
+  // Remove any existing tooltip
+  removeClickTooltip(2);
+
+  // Create tooltip with enhanced styling
+  const tooltip = document.createElement('div');
+  tooltip.className = 'click-hint-tooltip';
+  tooltip.textContent = 'Click for details';
+  tooltip.id = 'coverage-click-tooltip';
+
+  // Add tooltip to body (not section) to escape stacking context issues
+  document.body.appendChild(tooltip);
+
+  // Get the section's position on the page
+  const sectionRect = firstSection.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  // Calculate vertical position relative to the section but positioned from page top
+  const relativeTop = cleaningItem.offsetTop + cleaningItem.offsetHeight + 10;
+  const absoluteTop = sectionRect.top + scrollTop + relativeTop;
+
+  // Keep original horizontal centering exactly as it was
+  tooltip.style.left = '50%';
+  tooltip.style.marginLeft = '-' + (tooltip.offsetWidth / 2) + 'px';
+  
+  // Use absolute positioning from page top
+  tooltip.style.top = absoluteTop + 'px';
+  tooltip.style.position = 'absolute';
+  tooltip.style.zIndex = '999999999';
+
+  // Start with loading animation
+  requestAnimationFrame(() => {
+    tooltip.classList.add('loading');
+  });
+
+  // After loading animation completes, switch to floating
+  setTimeout(() => {
+    tooltip.classList.remove('loading');
+    tooltip.classList.add('floating');
+  }, 600);
+}
+
+
+function removeClickTooltip(type) {
+  const tooltip = document.getElementById('coverage-click-tooltip');
+  var wait = 0;
+  if (type==1)
+  {
+    wait=300;
+  }
+  if (tooltip) {
+    // Use smooth exit animation
+    tooltip.classList.remove('loading', 'floating');
+    tooltip.classList.add('exiting');
+    
+    setTimeout(() => {
+      if (tooltip.parentNode) {
+        tooltip.parentNode.removeChild(tooltip);
+      }
+    }, wait); // Match exit animation duration
+  }
+}
+
+// Enhanced tab switching with better cleanup
+document.addEventListener('DOMContentLoaded', function() {
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', function() 
+    {
+      removeClickTooltip(2);
+    });
+  });
+});
+
+
+
 
 function createProcedurePopup()
 {
@@ -4433,7 +4598,7 @@ function createProcedurePopup()
   <div class="copay-label">
   Your Estimated Copay
   <i class="fas fa-info-circle info-tooltip-icon"></i>
-  <div class="info-tooltip">This is a rough estimate that does not factor in your benefits remaining.\nPress <span style="font-weight:700">Add To Estimate</span> for a more accurate copay.</div>
+  <div class="info-tooltip">Press <span style="font-weight:700">Add To Calculator</span><br>for a copay that factors in remaining benefits and combines multiple procedures.</div>
   </div>
   <div class="copay-amount">$0</div>
   <div class="insurance-pays">Benefits used: $0</div>
@@ -4445,7 +4610,7 @@ function createProcedurePopup()
   <div class="quantity-value">1</div>
   <div class="quantity-btn increase">+</div>
   </div>
-  <button class="add-to-estimate-btn">Add to Estimate</button>
+  <button class="add-to-estimate-btn">Add to Calculator</button>
   </div>
   </div>
   </div>
@@ -4501,15 +4666,6 @@ function createProcedurePopup()
         popup.style.display = "none";
         popupContent.classList.remove('popup-closing');
       }, 500);
-    }
-  });
-
-  document.getElementById('popup-close').addEventListener('click', function()
-  {
-    const tooltip = document.querySelector('.info-tooltip');
-    if (tooltip && tooltip.classList.contains('show-tooltip'))
-    {
-      tooltip.classList.remove('show-tooltip');
     }
   });
 }
@@ -4974,16 +5130,11 @@ document.addEventListener('click', function(event)
     const tooltip = document.querySelector('.info-tooltip');
     const secondContent = document.getElementsByClassName("second-content")[0];
     const header = document.getElementsByClassName("header-container")[0];
-    document.body.style.overflow = testTab2Overflow();
+    document.body.style.overflow = "auto";
     document.body.style.touchAction = 'auto';
 
     event.stopPropagation();
 
-    // Remove any active tooltip
-    if (tooltip)
-    {
-      tooltip.classList.remove('show-tooltip');
-    }
     // More dramatic downward closing animation
     if (popupContent)
     {
@@ -5141,7 +5292,7 @@ function enhancePopupWithCalculator()
     // Add the button to add to estimate
     const addButton = document.createElement('button');
     addButton.className = 'add-to-estimate-btn';
-    addButton.textContent = 'Add to Estimate';
+    addButton.textContent = 'Add to Calculator';
 
     // Create container for controls
     const bottomControls = document.createElement('div');
@@ -5207,7 +5358,7 @@ function enhancePopupWithCalculator()
       if (Object.keys(calculatorItems).length === 0) { //if calculator not set up yet
         scrollTopAndLock();
       }
-      document.body.overflow = testTab2Overflow();
+      document.body.style.overflow = "hidden";
 
       // Get current procedure details
       const titleElement = document.getElementById('popup-title');
@@ -5308,9 +5459,6 @@ function enhancePopupWithCalculator()
 
   // Add styles for calculator
   addCalculatorStyles();
-  setTimeout(() => {
-    checkCalculatorItemCollisions();
-  }, 1200); // Wait for animation to complete
 }
 
 function resetNotCoveredItemStyle(item)
@@ -5521,43 +5669,6 @@ function setupCoverageItemsClickHandler()
 }
 
 
-/* See if user should scroll for calculator section - dyanmic solution! */
-function checkCalculatorItemCollisions() {
-  if (tabNumber !== 2 || Object.keys(calculatorItems).length === 0) {
-    return;
-  }
-
-  const tabsDiv = document.getElementById('tabs-div');
-  if (!tabsDiv) return;
-
-  const tabsRect = tabsDiv.getBoundingClientRect();
-  const items = document.querySelectorAll('.coverage-item');
-  let hasCollision = false;
-
-  items.forEach(item => {
-    const itemRect = item.getBoundingClientRect();
-    
-    // Check if item overlaps with tabs area (no buffer, exact collision)
-    if (itemRect.bottom > tabsRect.top && 
-      itemRect.top < tabsRect.bottom &&
-      itemRect.right > tabsRect.left && 
-      itemRect.left < tabsRect.right) {
-      hasCollision = true;
-  }
-});
-
-  if (hasCollision) {
-    // Enable scrolling when collision detected - don't auto-scroll
-    document.body.style.overflow = 'auto';
-    document.body.style.touchAction = 'auto';
-  } else {
-    // Re-disable scrolling if no collision
-    document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
-  }
-}
-
-
 
 // Update the calculator display with current items and animate changes
 function updateCalculatorDisplay()
@@ -5609,7 +5720,9 @@ function updateCalculatorDisplay()
       <h1 id='estimated-copay'><span class="dollar-sign">$</span><span class="amount">0</span></h1>
       <h2 id='benefits-r'>Benefits Remaining: <span id="benefits-remaining">${maximumRemaining}</span> 
       <i class="fas fa-info-circle info-icon" id="benefits-info-icon"></i>
-      <div class="benefits-info-tooltip">Once your insurance benefits are completely used up, you must pay for all work out of pocket until they renew. <br> In this case, you can try to spread out some procedures over two years to save money.</div>
+      <div class="benefits-info-tooltip">
+      If your benefits run out, you'll need to pay out of pocket for any additional treatment until your plan renews. <br> In this case, consider splitting procedures across two years.
+      </div>
       </h2>
       `;
       secondContent.appendChild(calculatorHeading);
@@ -5799,17 +5912,20 @@ function updateCalculatorDisplay()
       const visibleSectionsCount = 4 - emptySections.length;
 
       var spacing = 77; /* higher is closer */
+      var topSpacing = 100;
       if (visibleSectionsCount === 4 || rootCanalMajor || extMajor)
       {
-        spacing = 86;
-      }
+        spacing = 81;
+        topSpacing = 90;
 
-      //change spacing if between 5-7 items in not covered
+      }
+      //change spacing if between 5-7 items in not covered, making it equivalent to having 4 sections
       const notCoveredItemCount = notCoveredSection ?
       notCoveredSection.querySelectorAll('.coverage-item').length : 0;
       if (notCoveredItemCount >= 5 && notCoveredItemCount < 8)
       {
-        spacing = 86;
+        spacing = 81;
+        topSpacing = 90;
       }
 
 
@@ -5847,6 +5963,23 @@ function updateCalculatorDisplay()
           return adjustment;
         };
 
+        if (!window.storedOverflowOffset && testTab2Overflow()) 
+        {
+          const majorSection = document.querySelectorAll('.coverage-section')[2];
+          const notCoveredSection = document.querySelectorAll('.coverage-section')[3];
+          if (majorSection && notCoveredSection) {
+            const majorItems = majorSection.querySelectorAll('.coverage-item');
+            const notCoveredItems = notCoveredSection.querySelectorAll('.coverage-item');
+            if (majorItems.length > 0 && notCoveredItems.length > 0) {
+              const lastMajorItem = majorItems[majorItems.length - 1];
+              const firstNotCoveredItem = notCoveredItems[0];
+              const majorY = lastMajorItem.getBoundingClientRect().top;
+              const notCoveredY = firstNotCoveredItem.getBoundingClientRect().top;
+              window.storedOverflowOffset = notCoveredY - majorY;
+            }
+          }
+        }
+
         // Apply transformed positions with adjustments
         sections.forEach((section, sectionIndex) =>
         {
@@ -5875,8 +6008,14 @@ function updateCalculatorDisplay()
 
             // Apply position based on adjusted section index
             const adjustedIndex = sectionIndex - adjustment;
-            const position = 100 - (spacing * adjustedIndex);
+            var position = topSpacing - (spacing * adjustedIndex);
 
+
+            // Then in your positioning logic:
+            if (testTab2Overflow() && sectionIndex === 3) 
+            {
+                position = topSpacing - (spacing * (sectionIndex - (adjustment + 1))) - window.storedOverflowOffset;
+            }
             // Set the transform
             item.style.transform = `translateY(${position}px)`;
           });
@@ -5906,7 +6045,7 @@ function updateCalculatorDisplay()
     if (calculatorHeading)
     {
       calculatorHeading.classList.add('calculator-exit');
-      document.body.style.overflow = testTab2Overflow();
+      document.body.style.overflow = "auto";
       document.body.style.touchAction = 'auto';
 
       // Remove from DOM after animation completes
@@ -5987,10 +6126,8 @@ function updateCalculatorDisplay()
       });
     }
   }
-  setTimeout(() => {
-    checkCalculatorItemCollisions();
-}, 1100); // Wait for transform animations to complete
 }
+
 
 function setupBenefitsInfoTooltip()
 {
@@ -6005,6 +6142,7 @@ function setupBenefitsInfoTooltip()
   function hideTooltip()
   {
     tooltip.classList.remove('show-tooltip');
+    tooltip.classList.add('hide-tooltip');
     infoIcon.style.opacity = "0.8";
     if (timeout)
     {
@@ -6012,19 +6150,12 @@ function setupBenefitsInfoTooltip()
     }
   }
 
-  // Function to show tooltip for 7.5 seconds
   function showTooltip()
   {
     hideTooltip(); // Clear any existing state
 
     tooltip.classList.add('show-tooltip');
     infoIcon.style.opacity = "1";
-
-    // Auto-hide after 7.5 seconds
-    timeout = setTimeout(() =>
-    {
-      hideTooltip();
-    }, 15000);
   }
 
   // Click on info icon to toggle
@@ -6050,8 +6181,6 @@ function setupBenefitsInfoTooltip()
       hideTooltip();
     }
   });
-
-  // Start with initial 7.5 second display
   showTooltip();
 }
 
@@ -6221,16 +6350,20 @@ function addCalculatorStyles()
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 750;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
     flex-grow: 1;
     margin-left: 18px;
+    letter-spacing: .75px
+
   }
 
   .add-to-estimate-btn:active {
     transform: translateY(0);
+    transform: scale(0.95); /* Scale down slightly when pressed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add some depth */
   }
 
   .add-to-estimate-btn.remove {
@@ -6476,14 +6609,13 @@ function addCalculatorStyles()
   .benefits-info-tooltip {
     position: absolute;
     top: 0%;
-    left: 215px; /* Position it right after the icon with a small gap */
     transform: translateY(-50%) scale(0.8);
-    width: 140px; /* Reduced from 160px */
+    width: 140px; 
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 8px 12px; /* Reduced padding */
-    border-radius: 6px; /* Slightly smaller border radius */
-    font-size: 11px; /* Increased from 8px for better readability */
+    border-radius: 10px; /* Slightly smaller border radius */
+    font-size: 11px; 
     line-height: 1.4;
     text-align: center;
     z-index: 1000;
@@ -6491,7 +6623,9 @@ function addCalculatorStyles()
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    font-weight: 400;
+    font-weight: 500;
+    background-color: #FEFEFE;
+    color: #555;
   }
 
   .benefits-info-tooltip::after {
@@ -6502,21 +6636,16 @@ function addCalculatorStyles()
     transform: translateY(-50%);
     border-width: 6px 6px 6px 0; /* Arrow pointing left */
     border-style: solid;
-    border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent;
+    border-color: transparent #FEFEFE transparent transparent;
   }
 
   .benefits-info-tooltip.show-tooltip {
     opacity: 1;
     transform: translateY(-50%) scale(1);
     pointer-events: auto;
-    animation: tooltip-pulse 2.5s ease-in-out infinite;
   }
 
-  @keyframes tooltip-pulse {
-    0% { transform: translateY(-50%) scale(1); }
-    50% { transform: translateY(-50%) scale(1.015); }
-    100% { transform: translateY(-50%) scale(1); }
-  }
+
 
   /* Value change animations */
   @keyframes greenGlow {
@@ -6739,7 +6868,7 @@ document.addEventListener('click', function(event)
         else if (addButton)
         {
           // Item is not in calculator
-          addButton.textContent = 'Add to Estimate';
+          addButton.textContent = 'Add to Calculator';
           addButton.classList.remove('remove');
 
           // Reset quantity
@@ -6951,8 +7080,7 @@ function preloadTabContent()
       <span class="remaining-text">remaining</span>
       </div>
       </div>
-      <p class='summary-benefits-info'>Your benefits cover a fixed portion of your dental work until they are all used up.<br>Your fixed portions are shown in <b>Coverage</b>.</p>`;
-
+      <p class='summary-benefits-info'> Your insurance pays a set percentage of your dental costs until your benefits run out.<br> Your percentages are shown in <b>Coverage</b>. </p>`;
       benefitsCard.innerHTML = infographicHTML;
     }
 
@@ -7212,3 +7340,5 @@ document.getElementById("tab3").addEventListener("click", function()
     }
   }, 300);
 });
+
+
