@@ -1968,7 +1968,7 @@ friendlyStyle.textContent = `
   padding-bottom: 4.5px;
   opacity: 0;
   transform: translateY(7.5px);
-  transition: opacity 0.5s ease-out, transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   z-index: 10;
   pointer-events: none;
 }
