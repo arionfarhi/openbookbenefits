@@ -575,7 +575,7 @@ input:-webkit-autofill:focus {
 	-ms-user-select: none;
 	cursor: pointer;
 	isolation: isolate;
-	animation: fadeIn .8s ease;
+	animation: fadeInSubmit .8s ease;
 	animation-delay: 0.7s;
 	opacity: 0;
 	animation-fill-mode: forwards;
@@ -669,6 +669,12 @@ body:has(.insurance-dropdown[style*="display: block"]) #submit
 {
 	from { opacity: 0; transform: translateY(30px); }
 	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInSubmit 
+{
+	from { opacity: 0; transform: translateY(30px) scale(.98); }
+	to { opacity: 1; transform: translateY(0) scale(.98); }
 }
 
 @keyframes fadeIn2 
