@@ -673,8 +673,8 @@ body:has(.insurance-dropdown[style*="display: block"]) #submit
 
 @keyframes fadeInSubmit 
 {
-	from { opacity: 0; transform: translateY(30px) scale(.98); }
-	to { opacity: 1; transform: translateY(0) scale(.98); }
+	from { opacity: 0; transform: translateY(30px) scale(.9); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes fadeIn2 

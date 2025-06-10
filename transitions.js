@@ -2330,14 +2330,16 @@ incompleteStyle.textContent = `
 #submit.incomplete 
 {
   background-color: rgba(41, 128, 185, .32);
+  box-shadow: none;
 }
 #submit 
 {
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #submit:not(.incomplete) 
 {
   transform: scale(1) !important;
+  box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
 }
 `;
 document.head.appendChild(incompleteStyle);
@@ -2366,13 +2368,13 @@ const originalShowFriendlyMessage = showFriendlyMessage;
 showFriendlyMessage = function(input, message, emojiClass) 
 {
   originalShowFriendlyMessage(input, message, emojiClass);
-  setTimeout(checkSuccessMessages, 120);
+  setTimeout(checkSuccessMessages, 20);
 };
 
 // Also check when messages are removed (when user starts typing)
 document.addEventListener('input', function() 
 {
-  setTimeout(checkSuccessMessages, 120);
+  setTimeout(checkSuccessMessages, 20);
 });
 
 
