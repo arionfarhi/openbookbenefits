@@ -1362,16 +1362,15 @@ document.addEventListener('DOMContentLoaded', function()
   {
     insuranceInput.value = company;
     hideDropdown();
-    checkSuccessMessages();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile)
     {
 
       setTimeout(() =>
       {
-        insuranceInput.blur();
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
         checkSuccessMessages();
+        insuranceInput.blur();
       }, 100); 
     }
   }
