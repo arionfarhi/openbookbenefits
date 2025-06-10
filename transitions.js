@@ -1371,6 +1371,7 @@ document.addEventListener('DOMContentLoaded', function()
       {
         insuranceInput.blur();
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
+        checkSuccessMessages();
       }, 100); 
     }
   }
