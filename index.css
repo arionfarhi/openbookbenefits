@@ -4,9 +4,9 @@
 
 /*
 COLORS:
-DARK BLUE rgba(41, 128, 185) aka #2980b9
-MAIN BLUE rgba(41, 128, 185, 0.64)
-DARK GRAY #555 (most text)
+DARK BLUE rgba(41, 128, 185, .9) aka #2980b9e6 
+MAIN BLUE rgba(41, 128, 185, 0.64) aka #76aed2
+DARK GRAY #555 (most text) (occasionally .75 opacity)
 LIGHT GRAY #9F9F9F (tabs)
 VERY LIGHT GRAY #aaa or rgba(170, 170, 170)
 */
@@ -162,7 +162,7 @@ body
 	width: 75%;
 	color: #666;
 	transition: right 0.6s cubic-bezier(0.05, 0.7, 0.1, 1.0);
-	overflow-y: auto;
+	overflow-y: hidden;
 	flex-direction: column;
 	height: 100vh;
 	padding-top: 0px;
@@ -401,7 +401,7 @@ input {
 	border-radius: 0px;
 	box-sizing: border-box;
 	outline: none;
-	transition: border-color 0.5s ease, 
+	transition: border-color .5s ease, 
 	background-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
 	box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
 	transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -450,7 +450,8 @@ input::placeholder {
 }
 
 input:focus::placeholder {
-	font-weight: 600;
+	color: rgba(170, 170, 170, 1);
+	font-weight: 700;
 	font-size: 12px;
 	transform: translateY(-18.5px);
 	transition: all .3s ease-in-out;
@@ -458,24 +459,31 @@ input:focus::placeholder {
 
 input:focus
 {
-	border-color: #777 !important;
+	border-color: #666 !important;
+	border-top-width: 2.5px !important;
+	border-left-width: 2.5px !important;
+	border-right-width: 2.5px !important;
 }
 .input-container:has(input:focus) + .input-container input 
 {
-  border-top-color: #777 !important;
+	border-top-color: #666 !important;
+	border-top-width: 2.5px !important;
 }
 .input-container input:focus ~ .input-container input,
 .input-container:focus-within + .input-container input 
 {
-  border-top-color: #777 !important;
+	border-top-color: #666 !important;
+	border-top-width: 2.5px !important;
 }
 .input-container:nth-child(4):has(input:focus) input 
 {
-  border-bottom-color: #777 !important;
+	border-bottom-color: #666 !important;
+	border-bottom-width: 2.5px !important;
 }
 .input-container:nth-child(4) input:focus 
 {
-  border-bottom-color: #777 !important;
+	border-bottom-color: #666 !important;
+	border-bottom-width: 2.5px !important;
 }
 
 
@@ -585,8 +593,8 @@ input:-webkit-autofill:focus {
 /* make submit go beneath dropdown */
 body:has(.insurance-dropdown[style*="display: block"]) #submit 
 {
-  pointer-events: none !important;
-  z-index: -1 !important;
+	pointer-events: none !important;
+	z-index: -1 !important;
 }
 
 

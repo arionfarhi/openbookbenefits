@@ -194,7 +194,6 @@ function openNativeCamera() {
 }
 
 function processCardImage(file) {
-    console.log('📸 Original file size:', file.size, 'bytes');
     
     // Clear any existing form data and notifications
     clearPreviousDataAndNotifications();
@@ -219,7 +218,6 @@ function processCardImage(file) {
     // Compress image before processing (especially important on mobile)
     compressImageForOCR(file)
         .then(compressedFile => {
-            console.log('📷 Compressed file size:', compressedFile.size, 'bytes');
             return extractTextFromImage(compressedFile);
         })
         .then(extractedData => {
@@ -233,7 +231,6 @@ function processCardImage(file) {
 }
 
 function clearPreviousDataAndNotifications() {
-    console.log('🧹 Clearing previous data and notifications...');
     
     // Remove ALL existing notifications (more comprehensive)
     const allNotifications = document.querySelectorAll('div');
@@ -398,9 +395,6 @@ function checkMobileCapabilities() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (isMobile) {
-        console.log('📱 Mobile device detected');
-        console.log('Memory:', navigator.deviceMemory || 'unknown');
-        console.log('Hardware concurrency:', navigator.hardwareConcurrency || 'unknown');
     }
 }
 
@@ -1455,28 +1449,22 @@ function hideProcessingOverlay() {
 
 function loadTesseractJS() {
     if (window.Tesseract) {
-        console.log('✅ Tesseract already loaded');
         return;
     }
     
-    console.log('📦 Loading Tesseract.js...');
     
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/tesseract.js@4/dist/tesseract.min.js';
     
     script.onload = () => {
-        console.log('✅ Tesseract.js loaded successfully');
         
         // Mobile memory check
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
-            console.log('📱 Mobile device - OCR ready with optimizations');
         }
     };
     
     script.onerror = () => {
-        console.error('❌ Failed to load Tesseract.js');
-        console.error('OCR functionality will not be available');
     };
     
     document.head.appendChild(script);
@@ -1484,11 +1472,7 @@ function loadTesseractJS() {
 
 function checkMemoryUsage() {
     if (performance.memory) {
-        console.log('Memory usage:', {
-            used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) + 'MB',
-            total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024) + 'MB',
-            limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024) + 'MB'
-        });
+     
     }
 }
 

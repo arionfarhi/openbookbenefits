@@ -1,7 +1,7 @@
 const variables = [
-  ["First Name", "John"], //ignored for now
-  ["Last Name", "Smith"], //ignored for now
-  ["Insurance Name", "Delta Dental"], //I find this based on their selection, then shortened
+["First Name", ""], 
+["Last Name", ""], 
+  ["Insurance Name", ""], //I find this based on their selection, then shortened
   ["Is Active", ""],
   ["Renewal Date", "01/01/2026"],
   ["Termination Date", ""],
@@ -11,60 +11,322 @@ const variables = [
   ["Deductible Used", ""], //ignored for now
   ["Prev %", ""],
   ["Basic %", ""],
-  ["Major %", ""], //please make sure that anything covered at 0% shows up as Not Covered as opposed to 0% - it makes more sense
-  ["Not Covered:", ], //make sure if there is "Not Covered", do not even put [] or else there is a glitch. Also, I add two items like this: ["Crown"], ["Extraction"]
-  ["Frequencies:", //the cleaning and exams & xrays will always be there. Also note formatting in popup (can say "once per five years" as well).
+  ["Major %", ""], //if anything is covered at 0% then it shows up as Not Covered as opposed to 0% - it makes more sense
+  ["Not Covered:", ], 
+  ["Frequencies:", //the cleaning and exams & xrays will always be there
   ["Cleaning: twice per year"],
-  ["Exams & X-Rray: twice per year"] /*,["Crown: once per 5 years"]*/
+  ["Exams & X-Rray: twice per year"] 
   ],
-  ["Active Waiting Periods:", /*["Basic: 06/01/2025"]*/ ] //Inputs: Prev, Basic, Major -- will have to parse myself to see if active
+  ["Active Waiting Periods:", /*["Basic: 06/01/2025"]*/ ], //Inputs: Prev, Basic, Major 
+  ["Ortho Lifetime Maximum", "no info"],
+  ["Insurance Phone Number", "their customer service number"]
   ];
+
   /* global variables needed */
-  var rootCanalMajor = false; //records if root canal is basic or major
-  var extMajor = false; //records if extraction is basic or major
-  let procedureCoverages = //records if these procedures are not covered
-  {
-    rootCanal: null,
-    extraction: null,
-    bridges: null,
-    dentures: null,
-    crowns: null,
-    implants: null,
-    deepCleaning: null
-  };
+var rootCanalMajor = false; //records if root canal is basic or major
+var extMajor = false; //records if extraction is basic or major
+var userIsPremium = false;
+var DOB = ""; //global variable - to use for sending email
+let procedureCoverages = //records if these procedures are not covered
+{
+  rootCanal: null,
+  extraction: null,
+  bridges: null,
+  dentures: null,
+  crowns: null,
+  implants: null,
+  deepCleaning: null
+};
+let procedureFrequencies = {
+  rootCanals: null,
+  extractions: null,
+  bridges: null,
+  dentures: null,
+  crowns: null,
+  implants: null,
+  deepCleanings: null
+};
+let waitingPeriods = {
+  preventive: null,
+  basic: null,
+  major: null
+};
 
 
 
-  /*FOR TESTING!*/
-  document.addEventListener('DOMContentLoaded', function()
-  {
-    /*
-    document.getElementsByClassName("content")[0].style.opacity = "0";
-    document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
-    document.getElementById("submit").style.opacity = "0";
-    document.getElementById("main-form").style.pointerEvents = "none";
-    document.getElementById("submit").style.pointerEvents = "none";
-    document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
-    document.getElementById("tabs-div").style.pointerEvents = "auto";
-    document.getElementById("tabs-div").style.zIndex = "9999";
-    document.getElementsByClassName("content")[0].style.zIndex = "-999";
-    document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
-    document.getElementsByClassName("second-content")[0].style.zIndex = "999";
-    showNext();
-    maximumRemaining = "$300";
-    variables[10][1] = "100%";
-    variables[11][1] = "80%";
-    variables[12][1] = "50%";
-  */
-  });
+/*FOR TESTING!*/
+document.addEventListener('DOMContentLoaded', function()
+{
+  variables[0][1] = "Arion";
+  variables[1][1] = "Farhi";
+  DOB = "04/18/02"
+  variables[2][1] = "Delta Dental";
+  variables[6][1] = "$1000";
+  variables[7][1] = "$200";
+  maximumRemaining = "$800";
+  percentOfMaxUsed = "80%"
+  variables[10][1] = "100%";
+  variables[11][1] = "80%";
+  variables[12][1] = "50%";
+  userIsPremium = false;
+  //console.log(variables);
 
-  const insuranceCompanies = [
-  "Delta Dental of Michigan", "Delta Dental of Alabama", "Delta Dental of Florida", "Delta Dental of Georgia", "Delta Dental of Louisiana", "Delta Dental of Mississippi", "Delta Dental of Montana", "Delta Dental of Nevada", "Delta Dental of Texas", "Delta Dental of Utah", "Delta Dental of Minnesota", "Delta Dental of New Jersey", "Delta Dental of Connecticut", "Delta Dental of Illinois", "Delta Dental of Maryland", "Delta Dental of Pennsylvania", "Delta Dental of Oregon", "Delta Dental of Alaska", "Delta Dental of New York", "Delta Dental of Colorado", "Delta Dental of Arkansas", "Delta Dental of North Carolina", "Delta Dental of Northeast", "Delta Dental of Iowa - Dental Wellness Plan", "Delta Dental of District of Colombia", "Delta Dental of California", "Delta Dental of Washington", "Delta Dental of Massachusetts", "Delta Dental of Missouri", "Delta Dental of Virginia", "Delta Dental of Ohio", "Delta Dental of Kansas", "Delta Dental of Wisconsin", "Delta Dental of Tennessee", "Delta Dental of Kentucky", "Delta Dental of Idaho", "Delta Dental of Arizona", "Delta Dental of Indiana", "Delta Dental of Rhode Island", "Delta Dental of Iowa", "Delta Dental of New Mexico", "Delta Dental of Oklahoma", "Delta Dental of Nebraska", "Delta Dental of Delaware", "Delta Dental of Wyoming", "Delta Dental of South Carolina", "Delta Dental of West Virginia", "Delta Dental of Puerto Rico", "Delta Dental of South Dakota", "Metlife", "Aetna", "Cigna", "UnitedHealthCare", "DentaQuest", "Guardian", "Humana", "Ameritas", "United Concordia - Dental Plus", "United Concordia - Tricare Dental", "United Concordia Fee-for-Service ", "Blue Cross of Idaho", "Blue Cross Blue Shield of Texas", "Anthem Blue Cross Blue Shield of California", "Blue Cross Blue Shield of Illinois", "Horizon Blue Cross Blue Shield of New Jersey", "Blue Cross Blue Shield Massachusetts", "Anthem Blue Cross Blue Shield of New York", "Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "Anthem Blue Cross Blue Shield of Indiana", "Blue Cross Blue Shield of North Carolina", "Blue Cross Blue Shield of Michigan", "Independence Blue Cross Pennsylvania", "Premera Blue Cross of Washington", "Anthem Blue Cross Blue Shield of Virginia", "Blue Cross Blue Shield Of Alabama", "Anthem Blue Cross Blue Shield of Colorado", "Anthem Blue Cross Blue Shield of Georgia", "Anthem Blue Cross Blue Shield Ohio", "Blue Cross Blue Shield of South Carolina", "Blue Cross Blue Shield of Florida", "Anthem Blue Cross Blue Shield of Connecticut", "Anthem Blue Cross Blue Shield Dental", "Premera Blue Cross Alaska", "Anthem Blue Cross Blue Shield Missouri", "Capital Blue Cross of Pennsylvania", "CareFirst Blue Cross Blue Shield Maryland", "Blue Cross Blue Shield of Kansas City", "Anthem Blue Cross Blue Shield Nevada", "Blue Cross Blue Shield of Arkansas", "Blue Cross Blue Shield of Michigan/Medicare Advantage", "Anthem Blue Cross Blue Shield New Hampshire", "Anthem Blue Cross Blue Shield of Wisconsin", "Anthem Blue Cross Blue Shield of Maine", "Blue Cross Blue Shield of Wyoming", "Blue Cross Blue Shield of Nebraska", "Blue Cross Blue Shield of Vermont", "Blue Cross Blue Shield Rhode Island", "Blue Cross Blue Shield of Kansas", "Blue Cross Blue Shield of New Mexico", "Highmark Blue Cross Blue Shield of West Virginia", "Blue Cross Blue Shield of North Dakota", "Blue Cross Blue Shield of Montana", "Blue Cross Illinois Medicare Advantage", "Excellus Blue Cross Blue Shield New York Rochester Area", "Blue Cross Community Options", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield New Jersey", "Arizona Blue (Blue Cross Blue Shield Arizona)", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Excellus Blue Cross Blue Shield New York Central", "CareFirst BlueCross BlueShield District of Columbia (NCA)", "Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "Blue Cross Blue Shield Oklahoma", "Blue Cross Blue Shield of Tennessee", "Regence BlueCross BlueShield of Oregon", "Anthem BlueCross BlueShield Kentucky", "Blue Cross Blue Shield Louisiana Blue Advantage", "Highmark Blue Cross Blue Shield of Delaware", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Blue Cross Blue Shield Louisiana", "Blue Cross Blue Shield Mississippi", "Anthem Blue Cross of New York Dental", "Excellus Blue Cross Blue Shield New York Utica Watertown", "Blue Cross Blue Shield of Hawaii", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Blue Cross Blue Shield Anthem Vivity", "Blue Cross New York Northeastern", "Empire Blue Cross Blue Shield New York", "Blue Cross Blue Shield of Kentucky (FEP)", "Blue Cross Blue Shield of Ohio (FEP)", "Blue Cross Blue Shield Minnesota", "Blue Cross Blue Shield of Minnesota (FEP)", "Blue Cross Blue Shield of Washington DC", "CareFirst BlueCross BlueShield Community Health Plan Maryland", "BCBS Michigan and Blue Care Network", "Blue Cross Community Centennial", "Blue Cross Blue Shield Pennsylvania Northeast", "BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "HealthNow BlueCross BlueShield New York Northeastern", "Highmark Blue Cross Blue Shield Pennsylvania Institutional", "Blue Cross Blue Shield FEP BlueDental", "Excellus BlueCross BlueShield of New York", "Blue Cross Blue Shield Delaware", "BlueCross BlueShield of South Carolina Federal Employee Program", "Blue Cross Blue Shield of Connecticut- Family Plan", "Regence BlueCross BlueShield of Utah", "Blue Cross Blue Shield Pennsylvania Northwest", "Blue Cross Blue Shield South Carolina State Health Plan", "Blue Cross Blue Shield South Carolina Medicare Blue", "Mountain State Blue Cross Blue Shield West Virginia", "Delta Dental of North Dakota", "Delta Dental of Maine", "Delta Dental of New Hampshire", "Delta Dental of Vermont", "Principal Financial Group", "Sunlife", "Assurant Health", "Kaiser Permanente Northern California", "Kaiser Permanente Health Plan Hawaii", "Kaiser Permanente Georgia", "Ambetter", "HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "Maine Medicaid", "Humana - Healthy Horizons (Ohio Medicaid)", "Medicaid Washington", "Medicaid Massachusetts", "Indiana Medicaid", "Medicaid Oregon", "Medicaid Texas - CHIP", "North Carolina Medicaid", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Medicaid Illinois", "Medicaid Rhode Island", "Medicaid Idaho", "United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Centene Ohio Medicaid Managed Care Entity", "AmeriHealth Caritas Ohio Medicaid MCE", "Medicaid Louisiana", "Aetna OhioRise Medicaid Managed Care Entity", "Medicaid California Medi-Cal", "Medicaid New York", "Medicaid Texas - Acute", "West Virginia Medicaid", "CareSource Medicaid Ohio", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Medicaid Kentucky", "Medicaid South Carolina", "Medicaid New Hampshire", "Medicaid Alabama", "Molina Ohio Medicaid Managed Care Entity", "Medicaid Vermont", "Medicaid South Dakota", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Medicaid Missouri", "Medicaid Michigan", "Medicaid Ohio", "Medicaid Connecticut", "Medicaid Alaska", "Amerigroup-Medicaid", "Medicaid Arizona", "Medicaid Georgia", "Medicaid Maryland", "Medicaid Nevada", "Medicaid Pennsylvania", "Medicaid Oklahoma", "Medicaid Virginia", "Texas Children's Health Plan (Medicaid) CHIP", "Medicaid Montana", "Medicaid Tennessee", "Medicaid Florida", "Medicaid Iowa", "Medicaid of Virginia", "Medicaid Wisconsin", "Medicaid New Jersey", "Medicaid Tennessee BlueCare TennCare Select", "Aetna Medicaid Illinois", "McLaren Medicaid", "Medicaid Maryland Department of Health and Mental Hygiene", "Medicaid New Mexico", "CareSource Ohio Medicaid Managed Care Entity", "FirstCare Star Medicaid", "Medicaid North Dakota", "Medicaid Hawaii", "Medicaid Kansas", "Medicaid Arkansas", "Medicaid District of Columbia", "CareSource of Michigan Medicaid", "Medicaid Delaware", "Medicaid of Kentucky (Region 3 - Doral Dental)", "Christus Health Plan Medicaid", "Medicaid Wyoming", "Medicaid Louisiana Durable Medical Equipment Claims", "Medicaid Mississippi", "Blue Cross Blue Shield of Texas"
-  ];
+  document.getElementsByClassName("content")[0].style.opacity = "0";
+  document.getElementsByClassName("content-bottom")[0].style.opacity = "0";
+  document.getElementById("submit").style.opacity = "0";
+  document.getElementById("main-form").style.pointerEvents = "none";
+  document.getElementById("submit").style.pointerEvents = "none";
+  document.getElementsByClassName("second-content")[0].style.pointerEvents = "auto";
+  document.getElementById("tabs-div").style.pointerEvents = "auto";
+  document.getElementById("tabs-div").style.zIndex = "9999";
+  document.getElementsByClassName("content")[0].style.zIndex = "-999";
+  document.getElementsByClassName("content-bottom")[0].style.zIndex = "-999";
+  document.getElementsByClassName("second-content")[0].style.zIndex = "999";
+  showNext();
+});
 
-  const insuranceCompaniesWCodes = [
-  ["Delta Dental of Michigan", "DELTA"], ["Delta Dental of Alabama", "94276"], ["Delta Dental of Florida", "94276"], ["Delta Dental of Georgia", "94276"], ["Delta Dental of Louisiana", "94276"], ["Delta Dental of Mississippi", "94276"], ["Delta Dental of Montana", "94276"], ["Delta Dental of Nevada", "94276"], ["Delta Dental of Texas", "94276"], ["Delta Dental of Utah", "94276"], ["Delta Dental of Minnesota", "07000"], ["Delta Dental of New Jersey", "22189"], ["Delta Dental of Connecticut", "22189"], ["Delta Dental of Illinois", "05030"], ["Delta Dental of Maryland", "23166"], ["Delta Dental of Pennsylvania", "23166"], ["Delta Dental of Oregon", "CDOR1"], ["Delta Dental of Alaska", "CDOR1"], ["Delta Dental of New York", "11198"], ["Delta Dental of Colorado", "DDPCO"], ["Delta Dental of Arkansas", "CDAR1"], ["Delta Dental of North Carolina", "56101"], ["Delta Dental of Northeast", "02027"], ["Delta Dental of Iowa - Dental Wellness Plan", "CDIAM"], ["Delta Dental of District of Colombia", "52147"], ["Delta Dental of California", "77777"], ["Delta Dental of Washington", "91062"], ["Delta Dental of Massachusetts", "04614"], ["Delta Dental of Missouri", "43090"], ["Delta Dental of Virginia", "CDVA1"], ["Delta Dental of Ohio", "DELTO"], ["Delta Dental of Kansas", "CDKS1"], ["Delta Dental of Wisconsin", "39069"], ["Delta Dental of Tennessee", "DELTN"], ["Delta Dental of Kentucky", "CDKY1"], ["Delta Dental of Idaho", "82029"], ["Delta Dental of Arizona", "86027"], ["Delta Dental of Indiana", "DELTI"], ["Delta Dental of Rhode Island", "05029"], ["Delta Dental of Iowa", "CDIA1"], ["Delta Dental of New Mexico", "DELTM"], ["Delta Dental of Oklahoma", "DELTOK"], ["Delta Dental of Nebraska", "072027"], ["Delta Dental of Delaware", "51022"], ["Delta Dental of Wyoming", "CDWY1"], ["Delta Dental of South Carolina", "43091"], ["Delta Dental of West Virginia", "31096"], ["Delta Dental of Puerto Rico", "66043"], ["Delta Dental of South Dakota", "54097"], ["Metlife", "10134"], ["Aetna", "60054"], ["Cigna", "62308"], ["UnitedHealthCare", "87726"], ["DentaQuest", "CX014"], ["Guardian", "64246"], ["Humana", "61101"], ["Ameritas", "AMTAS00425"], ["United Concordia - Dental Plus", "CX013"], ["United Concordia - Tricare Dental", "CX002"], ["United Concordia Fee-for-Service ", "CX007"], ["Blue Cross of Idaho", "BLUEC"], ["Blue Cross Blue Shield of Texas", "G84980"], ["Anthem Blue Cross Blue Shield of California", "040"], ["Blue Cross Blue Shield of Illinois", "G00621"], ["Horizon Blue Cross Blue Shield of New Jersey", "22099"], ["Blue Cross Blue Shield Massachusetts", "SB700"], ["Anthem Blue Cross Blue Shield of New York", "803"], ["Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "88848"], ["Anthem Blue Cross Blue Shield of Indiana", "130"], ["Blue Cross Blue Shield of North Carolina", "BCSNC"], ["Blue Cross Blue Shield of Michigan", "00710"], ["Independence Blue Cross Pennsylvania", "100337"], ["Premera Blue Cross of Washington", "00430"], ["Anthem Blue Cross Blue Shield of Virginia", "423"], ["Blue Cross Blue Shield Of Alabama", "00510BC"], ["Anthem Blue Cross Blue Shield of Colorado", "050"], ["Anthem Blue Cross Blue Shield of Georgia", "00601"], ["Anthem Blue Cross Blue Shield Ohio", "00834"], ["Blue Cross Blue Shield of South Carolina", "00401"], ["Blue Cross Blue Shield of Florida", "BCBSF"], ["Anthem Blue Cross Blue Shield of Connecticut", "00060"], ["Anthem Blue Cross Blue Shield Dental", "84105"], ["Premera Blue Cross Alaska", "00934"], ["Anthem Blue Cross Blue Shield Missouri", "241"], ["Capital Blue Cross of Pennsylvania", "100952"], ["CareFirst Blue Cross Blue Shield Maryland", "00580"], ["Blue Cross Blue Shield of Kansas City", "47171"], ["Anthem Blue Cross Blue Shield Nevada", "00265"], ["Blue Cross Blue Shield of Arkansas", "00520"], ["Blue Cross Blue Shield of Michigan/Medicare Advantage", "BBMDQ"], ["Anthem Blue Cross Blue Shield New Hampshire", "00770"], ["Anthem Blue Cross Blue Shield of Wisconsin", "450"], ["Anthem Blue Cross Blue Shield of Maine", "180"], ["Blue Cross Blue Shield of Wyoming", "53767"], ["Blue Cross Blue Shield of Nebraska", "77780"], ["Blue Cross Blue Shield of Vermont", "BCBSVT"], ["Blue Cross Blue Shield Rhode Island", "SB870"], ["Blue Cross Blue Shield of Kansas", "47163"], ["Blue Cross Blue Shield of New Mexico", "00790"], ["Highmark Blue Cross Blue Shield of West Virginia", "54828"], ["Blue Cross Blue Shield of North Dakota", "55891"], ["Blue Cross Blue Shield of Montana", "G00751"], ["Blue Cross Illinois Medicare Advantage", "66006"], ["Excellus Blue Cross Blue Shield New York Rochester Area", "SB804"], ["Blue Cross Community Options", "MCDIL"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"], ["Blue Cross Blue Shield New Jersey", "100046"], ["Arizona Blue (Blue Cross Blue Shield Arizona)", "53589"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "BCBSCAIDWNY"], ["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"], ["Excellus Blue Cross Blue Shield New York Central", "SB805"], ["CareFirst BlueCross BlueShield District of Columbia (NCA)", "SB580"], ["Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "00720"], ["Blue Cross Blue Shield Oklahoma", "00840"], ["Blue Cross Blue Shield of Tennessee", "SB890"], ["Regence BlueCross BlueShield of Oregon", "00851"], ["Anthem BlueCross BlueShield Kentucky", "00660"], ["Blue Cross Blue Shield Louisiana Blue Advantage", "72107"], ["Highmark Blue Cross Blue Shield of Delaware", "00570"], ["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"], ["Blue Cross Blue Shield Louisiana", "53120"], ["Blue Cross Blue Shield Mississippi", "00230"], ["Anthem Blue Cross of New York Dental", "CBNY1"], ["Excellus Blue Cross Blue Shield New York Utica Watertown", "SB806"], ["Blue Cross Blue Shield of Hawaii", "100937"], ["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"], ["Blue Cross Blue Shield Anthem Vivity", "10993"], ["Blue Cross New York Northeastern", "100954"], ["Empire Blue Cross Blue Shield New York", "00803R"], ["Blue Cross Blue Shield of Kentucky (FEP)", "TLU90"], ["Blue Cross Blue Shield of Ohio (FEP)", "TLU91"], ["Blue Cross Blue Shield Minnesota", "220"], ["Blue Cross Blue Shield of Minnesota (FEP)", "TLU22"], ["Blue Cross Blue Shield of Washington DC", "TLY47"], ["CareFirst BlueCross BlueShield Community Health Plan Maryland", "45281"], ["BCBS Michigan and Blue Care Network", "00210"], ["Blue Cross Community Centennial", "GNMMD1"], ["Blue Cross Blue Shield Pennsylvania Northeast", "100900"], ["BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BCPRC"], ["BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "SB891"], ["HealthNow BlueCross BlueShield New York Northeastern", "SB800"], ["Highmark Blue Cross Blue Shield Pennsylvania Institutional", "54771I"], ["Blue Cross Blue Shield FEP BlueDental", "BCAFD"], ["Excellus BlueCross BlueShield of New York", "10323"], ["Blue Cross Blue Shield Delaware", "100026"], ["BlueCross BlueShield of South Carolina Federal Employee Program", "00402"], ["Blue Cross Blue Shield of Connecticut- Family Plan", "00700"], ["Regence BlueCross BlueShield of Utah", "00910"], ["Blue Cross Blue Shield Pennsylvania Northwest", "100338"], ["Blue Cross Blue Shield South Carolina State Health Plan", "400"], ["Blue Cross Blue Shield South Carolina Medicare Blue", "00C63"], ["Mountain State Blue Cross Blue Shield West Virginia", "MTNST"], ["Delta Dental of North Dakota", "07000"], ["Delta Dental of New Hampshire", "02027"], ["Delta Dental of Vermont", "02027"], ["Principal Financial Group", "00143MC"], ["Sunlife", "70408"], ["Assurant Health", "70408"], ["Kaiser Permanente Northern California", "KSRCN"], ["Kaiser Permanente Health Plan Hawaii", "94123"], ["Kaiser Permanente Georgia", "21313"], ["Ambetter", "68069"], ["HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "MIMCRCS1"], ["Maine Medicaid", "SKME0"], ["Humana - Healthy Horizons (Ohio Medicaid)", "61103"], ["Medicaid Washington", "A1DWA"], ["Medicaid Massachusetts", "100199"], ["Indiana Medicaid", "IHCP"], ["Medicaid Oregon", "AIDOR"], ["Medicaid Texas - CHIP", "10186"], ["North Carolina Medicaid", "NCMCD"], ["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"], ["Medicaid Illinois", "IL621"], ["Medicaid Rhode Island", "SKRI0"], ["Medicaid Idaho", "ID"], ["United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "88337"], ["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"], ["Centene Ohio Medicaid Managed Care Entity", "0004202"], ["AmeriHealth Caritas Ohio Medicaid MCE", "35374"], ["Medicaid Louisiana", "100193"], ["Aetna OhioRise Medicaid Managed Care Entity", "45221"], ["Medicaid California Medi-Cal", "100065"], ["Medicaid New York", "100231"], ["Medicaid Texas - Acute", "86916"], ["West Virginia Medicaid", "100305"], ["CareSource Medicaid Ohio", "31114"], ["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"], ["Medicaid Kentucky", "KYMEDICAID"], ["Medicaid South Carolina", "SCMED"], ["Medicaid New Hampshire", "100228"], ["Medicaid Alabama", "SKAL0"], ["Molina Ohio Medicaid Managed Care Entity", "0007316"], ["Medicaid Vermont", "100302"], ["Medicaid South Dakota", "SD"], ["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"], ["Medicaid Missouri", "100211"], ["Medicaid Michigan", "D00111"], ["Medicaid Ohio", "MMISODFS"], ["Medicaid Connecticut", "CTMCD"], ["Medicaid Alaska", "SKAK0"], ["Amerigroup-Medicaid", "AGPMEDICAID"], ["Medicaid Arizona", "AZ"], ["Medicaid Georgia", "GAMEDICAID"], ["Medicaid Maryland", "100198"], ["Medicaid Nevada", "NV"], ["Medicaid Pennsylvania", "236003113"], ["Medicaid Oklahoma", "SKOK0"], ["Medicaid Virginia", "10198"], ["Texas Children's Health Plan (Medicaid) CHIP", "76048"], ["Medicaid Montana", "MT"], ["Medicaid Tennessee", "TN"], ["Medicaid Florida", "77027"], ["Medicaid Iowa", "100171"], ["Medicaid of Virginia", "CKVA1"], ["Medicaid Wisconsin", "100306"], ["Medicaid New Jersey", "100229"], ["Medicaid Tennessee BlueCare TennCare Select", "MC390"], ["Aetna Medicaid Illinois", "26337"], ["McLaren Medicaid", "3833C"], ["Medicaid Maryland Department of Health and Mental Hygiene", "526002033"], ["Medicaid New Mexico", "77048"], ["CareSource Ohio Medicaid Managed Care Entity", "0003150"], ["FirstCare Star Medicaid", "94998"], ["Medicaid North Dakota", "NDDHS"], ["Medicaid Hawaii", "SKHI0"], ["Medicaid Kansas", "00005"], ["Medicaid Arkansas", "ARMCD"], ["Medicaid District of Columbia", "100121"], ["CareSource of Michigan Medicaid", "MIMCDCS1"], ["Medicaid Delaware", "SKDE0"], ["Medicaid of Kentucky (Region 3 - Doral Dental)", "CKKY3"], ["Christus Health Plan Medicaid", "45210"], ["Medicaid Wyoming", "77046"], ["Medicaid Louisiana Durable Medical Equipment Claims", "SKLA1"], ["Medicaid Mississippi", "100209"], ["Blue Cross Blue Shield of Texas", "G84980"]
-  ];
+const insuranceCompanies = [
+"Delta Dental of Michigan", "Delta Dental of Alabama", "Delta Dental of Florida", "Delta Dental of Georgia", "Delta Dental of Louisiana", "Delta Dental of Mississippi", "Delta Dental of Montana", "Delta Dental of Nevada", "Delta Dental of Texas", "Delta Dental of Utah", "Delta Dental of Minnesota", "Delta Dental of New Jersey", "Delta Dental of Connecticut", "Delta Dental of Illinois", "Delta Dental of Maryland", "Delta Dental of Pennsylvania", "Delta Dental of Oregon", "Delta Dental of Alaska", "Delta Dental of New York", "Delta Dental of Colorado", "Delta Dental of Arkansas", "Delta Dental of North Carolina", "Delta Dental of Northeast", "Delta Dental of Iowa - Dental Wellness Plan", "Delta Dental of District of Colombia", "Delta Dental of California", "Delta Dental of Washington", "Delta Dental of Massachusetts", "Delta Dental of Missouri", "Delta Dental of Virginia", "Delta Dental of Ohio", "Delta Dental of Kansas", "Delta Dental of Wisconsin", "Delta Dental of Tennessee", "Delta Dental of Kentucky", "Delta Dental of Idaho", "Delta Dental of Arizona", "Delta Dental of Indiana", "Delta Dental of Rhode Island", "Delta Dental of Iowa", "Delta Dental of New Mexico", "Delta Dental of Oklahoma", "Delta Dental of Nebraska", "Delta Dental of Delaware", "Delta Dental of Wyoming", "Delta Dental of South Carolina", "Delta Dental of West Virginia", "Delta Dental of Puerto Rico", "Delta Dental of South Dakota", "Metlife", "Aetna", "Cigna", "UnitedHealthCare", "DentaQuest", "Guardian", "Humana", "Ameritas", "United Concordia - Dental Plus", "United Concordia - Tricare Dental", "United Concordia Fee-for-Service ", "Blue Cross of Idaho", "Blue Cross Blue Shield of Texas", "Anthem Blue Cross Blue Shield of California", "Blue Cross Blue Shield of Illinois", "Horizon Blue Cross Blue Shield of New Jersey", "Blue Cross Blue Shield Massachusetts", "Anthem Blue Cross Blue Shield of New York", "Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "Anthem Blue Cross Blue Shield of Indiana", "Blue Cross Blue Shield of North Carolina", "Blue Cross Blue Shield of Michigan", "Independence Blue Cross Pennsylvania", "Premera Blue Cross of Washington", "Anthem Blue Cross Blue Shield of Virginia", "Blue Cross Blue Shield Of Alabama", "Anthem Blue Cross Blue Shield of Colorado", "Anthem Blue Cross Blue Shield of Georgia", "Anthem Blue Cross Blue Shield Ohio", "Blue Cross Blue Shield of South Carolina", "Blue Cross Blue Shield of Florida", "Anthem Blue Cross Blue Shield of Connecticut", "Anthem Blue Cross Blue Shield Dental", "Premera Blue Cross Alaska", "Anthem Blue Cross Blue Shield Missouri", "Capital Blue Cross of Pennsylvania", "CareFirst Blue Cross Blue Shield Maryland", "Blue Cross Blue Shield of Kansas City", "Anthem Blue Cross Blue Shield Nevada", "Blue Cross Blue Shield of Arkansas", "Blue Cross Blue Shield of Michigan/Medicare Advantage", "Anthem Blue Cross Blue Shield New Hampshire", "Anthem Blue Cross Blue Shield of Wisconsin", "Anthem Blue Cross Blue Shield of Maine", "Blue Cross Blue Shield of Wyoming", "Blue Cross Blue Shield of Nebraska", "Blue Cross Blue Shield of Vermont", "Blue Cross Blue Shield Rhode Island", "Blue Cross Blue Shield of Kansas", "Blue Cross Blue Shield of New Mexico", "Highmark Blue Cross Blue Shield of West Virginia", "Blue Cross Blue Shield of North Dakota", "Blue Cross Blue Shield of Montana", "Blue Cross Illinois Medicare Advantage", "Excellus Blue Cross Blue Shield New York Rochester Area", "Blue Cross Community Options", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield New Jersey", "Arizona Blue (Blue Cross Blue Shield Arizona)", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Excellus Blue Cross Blue Shield New York Central", "CareFirst BlueCross BlueShield District of Columbia (NCA)", "Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "Blue Cross Blue Shield Oklahoma", "Blue Cross Blue Shield of Tennessee", "Regence BlueCross BlueShield of Oregon", "Anthem BlueCross BlueShield Kentucky", "Blue Cross Blue Shield Louisiana Blue Advantage", "Highmark Blue Cross Blue Shield of Delaware", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Blue Cross Blue Shield Louisiana", "Blue Cross Blue Shield Mississippi", "Anthem Blue Cross of New York Dental", "Excellus Blue Cross Blue Shield New York Utica Watertown", "Blue Cross Blue Shield of Hawaii", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Blue Cross Blue Shield Anthem Vivity", "Blue Cross New York Northeastern", "Empire Blue Cross Blue Shield New York", "Blue Cross Blue Shield of Kentucky (FEP)", "Blue Cross Blue Shield of Ohio (FEP)", "Blue Cross Blue Shield Minnesota", "Blue Cross Blue Shield of Minnesota (FEP)", "Blue Cross Blue Shield of Washington DC", "CareFirst BlueCross BlueShield Community Health Plan Maryland", "BCBS Michigan and Blue Care Network", "Blue Cross Community Centennial", "Blue Cross Blue Shield Pennsylvania Northeast", "BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "HealthNow BlueCross BlueShield New York Northeastern", "Highmark Blue Cross Blue Shield Pennsylvania Institutional", "Blue Cross Blue Shield FEP BlueDental", "Excellus BlueCross BlueShield of New York", "Blue Cross Blue Shield Delaware", "BlueCross BlueShield of South Carolina Federal Employee Program", "Blue Cross Blue Shield of Connecticut- Family Plan", "Regence BlueCross BlueShield of Utah", "Blue Cross Blue Shield Pennsylvania Northwest", "Blue Cross Blue Shield South Carolina State Health Plan", "Blue Cross Blue Shield South Carolina Medicare Blue", "Mountain State Blue Cross Blue Shield West Virginia", "Delta Dental of North Dakota", "Delta Dental of Maine", "Delta Dental of New Hampshire", "Delta Dental of Vermont", "Principal Financial Group", "Sunlife", "Assurant Health", "Kaiser Permanente Northern California", "Kaiser Permanente Health Plan Hawaii", "Kaiser Permanente Georgia", "Ambetter", "HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "Maine Medicaid", "Humana - Healthy Horizons (Ohio Medicaid)", "Medicaid Washington", "Medicaid Massachusetts", "Indiana Medicaid", "Medicaid Oregon", "Medicaid Texas - CHIP", "North Carolina Medicaid", "Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "Medicaid Illinois", "Medicaid Rhode Island", "Medicaid Idaho", "United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "Blue Cross Blue Shield Texas Medicaid STAR CHIP", "Centene Ohio Medicaid Managed Care Entity", "AmeriHealth Caritas Ohio Medicaid MCE", "Medicaid Louisiana", "Aetna OhioRise Medicaid Managed Care Entity", "Medicaid California Medi-Cal", "Medicaid New York", "Medicaid Texas - Acute", "West Virginia Medicaid", "CareSource Medicaid Ohio", "Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "Medicaid Kentucky", "Medicaid South Carolina", "Medicaid New Hampshire", "Medicaid Alabama", "Molina Ohio Medicaid Managed Care Entity", "Medicaid Vermont", "Medicaid South Dakota", "Anthem Blue Cross Blue Shield (Ohio Medicaid)", "Medicaid Missouri", "Medicaid Michigan", "Medicaid Ohio", "Medicaid Connecticut", "Medicaid Alaska", "Amerigroup-Medicaid", "Medicaid Arizona", "Medicaid Georgia", "Medicaid Maryland", "Medicaid Nevada", "Medicaid Pennsylvania", "Medicaid Oklahoma", "Medicaid Virginia", "Texas Children's Health Plan (Medicaid) CHIP", "Medicaid Montana", "Medicaid Tennessee", "Medicaid Florida", "Medicaid Iowa", "Medicaid of Virginia", "Medicaid Wisconsin", "Medicaid New Jersey", "Medicaid Tennessee BlueCare TennCare Select", "Aetna Medicaid Illinois", "McLaren Medicaid", "Medicaid Maryland Department of Health and Mental Hygiene", "Medicaid New Mexico", "CareSource Ohio Medicaid Managed Care Entity", "FirstCare Star Medicaid", "Medicaid North Dakota", "Medicaid Hawaii", "Medicaid Kansas", "Medicaid Arkansas", "Medicaid District of Columbia", "CareSource of Michigan Medicaid", "Medicaid Delaware", "Medicaid of Kentucky (Region 3 - Doral Dental)", "Christus Health Plan Medicaid", "Medicaid Wyoming", "Medicaid Louisiana Durable Medical Equipment Claims", "Medicaid Mississippi", "Blue Cross Blue Shield of Texas"
+];
+
+const insuranceCompaniesWCodes = [
+["Delta Dental of Michigan", "DELTA"],
+["Delta Dental of Alabama", "94276"],
+["Delta Dental of Florida", "94276"],
+["Delta Dental of Georgia", "94276"],
+["Delta Dental of Louisiana", "94276"],
+["Delta Dental of Mississippi", "94276"],
+["Delta Dental of Montana", "94276"],
+["Delta Dental of Nevada", "94276"],
+["Delta Dental of Texas", "94276"],
+["Delta Dental of Utah", "94276"],
+["Delta Dental of Minnesota", "07000"],
+["Delta Dental of New Jersey", "22189"],
+["Delta Dental of Connecticut", "22189"],
+["Delta Dental of Illinois", "05030"],
+["Delta Dental of Maryland", "23166"],
+["Delta Dental of Pennsylvania", "23166"],
+["Delta Dental of Oregon", "CDOR1"],
+["Delta Dental of Alaska", "CDOR1"],
+["Delta Dental of New York", "11198"],
+["Delta Dental of Colorado", "DDPCO"],
+["Delta Dental of Arkansas", "CDAR1"],
+["Delta Dental of North Carolina", "56101"],
+["Delta Dental of Northeast", "02027"],
+["Delta Dental of Iowa - Dental Wellness Plan", "CDIAM"],
+["Delta Dental of District of Colombia", "52147"],
+["Delta Dental of California", "77777"],
+["Delta Dental of Washington", "91062"],
+["Delta Dental of Massachusetts", "04614"],
+["Delta Dental of Missouri", "43090"],
+["Delta Dental of Virginia", "CDVA1"],
+["Delta Dental of Ohio", "DELTO"],
+["Delta Dental of Kansas", "CDKS1"],
+["Delta Dental of Wisconsin", "39069"],
+["Delta Dental of Tennessee", "DELTN"],
+["Delta Dental of Kentucky", "CDKY1"],
+["Delta Dental of Idaho", "82029"],
+["Delta Dental of Arizona", "86027"],
+["Delta Dental of Indiana", "DELTI"],
+["Delta Dental of Rhode Island", "05029"],
+["Delta Dental of Iowa", "CDIA1"],
+["Delta Dental of New Mexico", "DELTM"],
+["Delta Dental of Oklahoma", "DELTOK"],
+["Delta Dental of Nebraska", "072027"],
+["Delta Dental of Delaware", "51022"],
+["Delta Dental of Wyoming", "CDWY1"],
+["Delta Dental of South Carolina", "43091"],
+["Delta Dental of West Virginia", "31096"],
+["Delta Dental of Puerto Rico", "66043"],
+["Delta Dental of South Dakota", "54097"],
+["Metlife", "10134"],
+["Aetna", "60054"],
+["Cigna", "62308"],
+["UnitedHealthCare", "87726"],
+["DentaQuest", "CX014"],
+["Guardian", "64246"],
+["Humana", "61101"],
+["Ameritas", "AMTAS00425"],
+["United Concordia - Dental Plus", "CX013"],
+["United Concordia - Tricare Dental", "CX002"],
+["United Concordia Fee-for-Service ", "CX007"],
+["Blue Cross of Idaho", "BLUEC"],
+["Blue Cross Blue Shield of Texas", "G84980"],
+["Anthem Blue Cross Blue Shield of California", "040"],
+["Blue Cross Blue Shield of Illinois", "G00621"],
+["Horizon Blue Cross Blue Shield of New Jersey", "22099"],
+["Blue Cross Blue Shield Massachusetts", "SB700"],
+["Anthem Blue Cross Blue Shield of New York", "803"],
+["Wellmark Blue Cross Blue Shield of Iowa and South Dakota", "88848"],
+["Anthem Blue Cross Blue Shield of Indiana", "130"],
+["Blue Cross Blue Shield of North Carolina", "BCSNC"],
+["Blue Cross Blue Shield of Michigan", "00710"],
+["Independence Blue Cross Pennsylvania", "100337"],
+["Premera Blue Cross of Washington", "00430"],
+["Anthem Blue Cross Blue Shield of Virginia", "423"],
+["Blue Cross Blue Shield Of Alabama", "00510BC"],
+["Anthem Blue Cross Blue Shield of Colorado", "050"],
+["Anthem Blue Cross Blue Shield of Georgia", "00601"],
+["Anthem Blue Cross Blue Shield Ohio", "00834"],
+["Blue Cross Blue Shield of South Carolina", "00401"],
+["Blue Cross Blue Shield of Florida", "BCBSF"],
+["Anthem Blue Cross Blue Shield of Connecticut", "00060"],
+["Anthem Blue Cross Blue Shield Dental", "84105"],
+["Premera Blue Cross Alaska", "00934"],
+["Anthem Blue Cross Blue Shield Missouri", "241"],
+["Capital Blue Cross of Pennsylvania", "100952"],
+["CareFirst Blue Cross Blue Shield Maryland", "00580"],
+["Blue Cross Blue Shield of Kansas City", "47171"],
+["Anthem Blue Cross Blue Shield Nevada", "00265"],
+["Blue Cross Blue Shield of Arkansas", "00520"],
+["Blue Cross Blue Shield of Michigan/Medicare Advantage", "BBMDQ"],
+["Anthem Blue Cross Blue Shield New Hampshire", "00770"],
+["Anthem Blue Cross Blue Shield of Wisconsin", "450"],
+["Anthem Blue Cross Blue Shield of Maine", "180"],
+["Blue Cross Blue Shield of Wyoming", "53767"],
+["Blue Cross Blue Shield of Nebraska", "77780"],
+["Blue Cross Blue Shield of Vermont", "BCBSVT"],
+["Blue Cross Blue Shield Rhode Island", "SB870"],
+["Blue Cross Blue Shield of Kansas", "47163"],
+["Blue Cross Blue Shield of New Mexico", "00790"],
+["Highmark Blue Cross Blue Shield of West Virginia", "54828"],
+["Blue Cross Blue Shield of North Dakota", "55891"],
+["Blue Cross Blue Shield of Montana", "G00751"],
+["Blue Cross Illinois Medicare Advantage", "66006"],
+["Excellus Blue Cross Blue Shield New York Rochester Area", "SB804"],
+["Blue Cross Community Options", "MCDIL"],
+["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"],
+["Blue Cross Blue Shield New Jersey", "100046"],
+["Arizona Blue (Blue Cross Blue Shield Arizona)", "53589"],
+["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "BCBSCAIDWNY"],
+["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"],
+["Excellus Blue Cross Blue Shield New York Central", "SB805"],
+["CareFirst BlueCross BlueShield District of Columbia (NCA)", "SB580"],
+["Blue Cross Blue Shield of Minnesota - Commercial and Medicare", "00720"],
+["Blue Cross Blue Shield Oklahoma", "00840"],
+["Blue Cross Blue Shield of Tennessee", "SB890"],
+["Regence BlueCross BlueShield of Oregon", "00851"],
+["Anthem BlueCross BlueShield Kentucky", "00660"],
+["Blue Cross Blue Shield Louisiana Blue Advantage", "72107"],
+["Highmark Blue Cross Blue Shield of Delaware", "00570"],
+["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"],
+["Blue Cross Blue Shield Louisiana", "53120"],
+["Blue Cross Blue Shield Mississippi", "00230"],
+["Anthem Blue Cross of New York Dental", "CBNY1"],
+["Excellus Blue Cross Blue Shield New York Utica Watertown", "SB806"],
+["Blue Cross Blue Shield of Hawaii", "100937"],
+["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"],
+["Blue Cross Blue Shield Anthem Vivity", "10993"],
+["Blue Cross New York Northeastern", "100954"],
+["Empire Blue Cross Blue Shield New York", "00803R"],
+["Blue Cross Blue Shield of Kentucky (FEP)", "TLU90"],
+["Blue Cross Blue Shield of Ohio (FEP)", "TLU91"],
+["Blue Cross Blue Shield Minnesota", "220"],
+["Blue Cross Blue Shield of Minnesota (FEP)", "TLU22"],
+["Blue Cross Blue Shield of Washington DC", "TLY47"],
+["CareFirst BlueCross BlueShield Community Health Plan Maryland", "45281"],
+["BCBS Michigan and Blue Care Network", "00210"],
+["Blue Cross Community Centennial", "GNMMD1"],
+["Blue Cross Blue Shield Pennsylvania Northeast", "100900"],
+["BlueCross BlueShield of Puerto Rico (Triple-S Salud)", "BCPRC"],
+["BlueCross BlueShield of Tennessee (Chattanooga HMO Plans)", "SB891"],
+["HealthNow BlueCross BlueShield New York Northeastern", "SB800"],
+["Highmark Blue Cross Blue Shield Pennsylvania Institutional", "54771I"],
+["Blue Cross Blue Shield FEP BlueDental", "BCAFD"],
+["Excellus BlueCross BlueShield of New York", "10323"],
+["Blue Cross Blue Shield Delaware", "100026"],
+["BlueCross BlueShield of South Carolina Federal Employee Program", "00402"],
+["Blue Cross Blue Shield of Connecticut- Family Plan", "00700"],
+["Regence BlueCross BlueShield of Utah", "00910"],
+["Blue Cross Blue Shield Pennsylvania Northwest", "100338"],
+["Blue Cross Blue Shield South Carolina State Health Plan", "400"],
+["Blue Cross Blue Shield South Carolina Medicare Blue", "00C63"],
+["Mountain State Blue Cross Blue Shield West Virginia", "MTNST"],
+["Delta Dental of North Dakota", "07000"],
+["Delta Dental of New Hampshire", "02027"],
+["Delta Dental of Vermont", "02027"],
+["Principal Financial Group", "00143MC"],
+["Sunlife", "70408"],
+["Assurant Health", "70408"],
+["Kaiser Permanente Northern California", "KSRCN"],
+["Kaiser Permanente Health Plan Hawaii", "94123"],
+["Kaiser Permanente Georgia", "21313"],
+["Ambetter", "68069"],
+["HAP CareSource MI Health Link (Medicare-Medicaid Plan)", "MIMCRCS1"],
+["Maine Medicaid", "SKME0"],
+["Humana - Healthy Horizons (Ohio Medicaid)", "61103"],
+["Medicaid Washington", "A1DWA"],
+["Medicaid Massachusetts", "100199"],
+["Indiana Medicaid", "IHCP"],
+["Medicaid Oregon", "AIDOR"],
+["Medicaid Texas - CHIP", "10186"],
+["North Carolina Medicaid", "NCMCD"],
+["Highmark Blue Cross Blue Shield (NY) - Medicaid and CHP", "246"],
+["Medicaid Illinois", "IL621"],
+["Medicaid Rhode Island", "SKRI0"],
+["Medicaid Idaho", "ID"],
+["United HealthCare Ohio Medicaid Managed Care Entity (MCE)", "88337"],
+["Blue Cross Blue Shield Texas Medicaid STAR CHIP", "HCSV2"],
+["Centene Ohio Medicaid Managed Care Entity", "0004202"],
+["AmeriHealth Caritas Ohio Medicaid MCE", "35374"],
+["Medicaid Louisiana", "100193"],
+["Aetna OhioRise Medicaid Managed Care Entity", "45221"],
+["Medicaid California Medi-Cal", "100065"],
+["Medicaid New York", "100231"],
+["Medicaid Texas - Acute", "86916"],
+["West Virginia Medicaid", "100305"],
+["CareSource Medicaid Ohio", "31114"],
+["Blue Cross Blue Shield of Minnesota Blue Plus Medicaid", "00726"],
+["Medicaid Kentucky", "KYMEDICAID"],
+["Medicaid South Carolina", "SCMED"],
+["Medicaid New Hampshire", "100228"],
+["Medicaid Alabama", "SKAL0"],
+["Molina Ohio Medicaid Managed Care Entity", "0007316"],
+["Medicaid Vermont", "100302"],
+["Medicaid South Dakota", "SD"],
+["Anthem Blue Cross Blue Shield (Ohio Medicaid)", "0002937"],
+["Medicaid Missouri", "100211"],
+["Medicaid Michigan", "D00111"],
+["Medicaid Ohio", "MMISODFS"],
+["Medicaid Connecticut", "CTMCD"],
+["Medicaid Alaska", "SKAK0"],
+["Amerigroup-Medicaid", "AGPMEDICAID"],
+["Medicaid Arizona", "AZ"],
+["Medicaid Georgia", "GAMEDICAID"],
+["Medicaid Maryland", "100198"],
+["Medicaid Nevada", "NV"],
+["Medicaid Pennsylvania", "236003113"],
+["Medicaid Oklahoma", "SKOK0"],
+["Medicaid Virginia", "10198"],
+["Texas Children's Health Plan (Medicaid) CHIP", "76048"],
+["Medicaid Montana", "MT"],
+["Medicaid Tennessee", "TN"],
+["Medicaid Florida", "77027"],
+["Medicaid Iowa", "100171"],
+["Medicaid of Virginia", "CKVA1"],
+["Medicaid Wisconsin", "100306"],
+["Medicaid New Jersey", "100229"],
+["Medicaid Tennessee BlueCare TennCare Select", "MC390"],
+["Aetna Medicaid Illinois", "26337"],
+["McLaren Medicaid", "3833C"],
+["Medicaid Maryland Department of Health and Mental Hygiene", "526002033"],
+["Medicaid New Mexico", "77048"],
+["CareSource Ohio Medicaid Managed Care Entity", "0003150"],
+["FirstCare Star Medicaid", "94998"],
+["Medicaid North Dakota", "NDDHS"],
+["Medicaid Hawaii", "SKHI0"],
+["Medicaid Kansas", "00005"],
+["Medicaid Arkansas", "ARMCD"],
+["Medicaid District of Columbia", "100121"],
+["CareSource of Michigan Medicaid", "MIMCDCS1"],
+["Medicaid Delaware", "SKDE0"],
+["Medicaid of Kentucky (Region 3 - Doral Dental)", "CKKY3"],
+["Christus Health Plan Medicaid", "45210"],
+["Medicaid Wyoming", "77046"],
+["Medicaid Louisiana Durable Medical Equipment Claims", "SKLA1"],
+["Medicaid Mississippi", "100209"],
+["Blue Cross Blue Shield of Texas", "G84980"]
+];
 
 function shortenNames(name) //keep adding on
 {
@@ -84,6 +346,10 @@ function shortenNames(name) //keep adding on
   {
     return "Medicaid";
   }
+  else if (name.toLowerCase().includes("united concordia"))
+  {
+    return "United Concordia";
+  }
   else
   {
     return name;
@@ -91,12 +357,13 @@ function shortenNames(name) //keep adding on
 }
 
 
-
 function runBackend()
 {
   const name = nameInput.value;
   const [firstName, lastName] = name.split(" ");
-  const DOB = document.getElementById("dob").value;
+  variables[0][1] = firstName || "";
+  variables[1][1] = lastName || "";
+  DOB = document.getElementById("dob").value;
   const memberID = document.getElementById("memberId").value;
   const insName = document.getElementById("insuranceName").value;
   const shortName = shortenNames(insName);
@@ -110,9 +377,7 @@ function runBackend()
     }
   }
 
-
-
-  //return fetch('http://localhost:3000/check-eligibility',  //for testing with backend.js!
+  //return fetch('http://localhost:3000/check-eligibility',  //for testing with backend.js (not in production)!
   return fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', //for production with API gateway and lambda!
   {
     method: 'POST',
@@ -161,6 +426,45 @@ function runBackend()
   {
     console.log(JSON.stringify(data, null, 2));
 
+    if (data.isPremium) 
+    {
+      userIsPremium = true;
+      showPremiumBanner();
+    } 
+    else if (data.fromCache)
+    {
+     showCacheBanner(data.cachedAt, variables[4][1]); // Only show cache banner for free users
+   }
+   else {}
+
+
+    // Handle cached data first - skip ALL API processing
+  if (data.fromCache && data.cachedVariables) 
+  {
+    console.log('Using cached variables, skipping all API processing');
+
+      // Restore cached variables
+      for (let i = 0; i < data.cachedVariables.length && i < variables.length; i++) {
+        variables[i] = [...data.cachedVariables[i]];
+      }
+      
+      // Recalculate the parsed values
+      maximumRemaining = parseInt(variables[6][1].replace("$", "")) - parseInt(variables[7][1].replace("$", ""));
+      maximumRemaining = `$${maximumRemaining}`;
+      percentOfMaxUsed = (maximumRemaining.replace("$", "") / parseInt(variables[6][1].replace("$", ""))) * 100 + "%";
+      if (percentOfMaxUsed == "0%") {
+        percentOfMaxUsed = "2%";
+      }
+      deductibleRemaining = parseInt(variables[8][1].replace("$", "")) - parseInt(variables[9][1].replace("$", ""));
+      deductibleRemaining = `$${deductibleRemaining}`;
+      if (decrementDate(variables[4][1]).split("/")[0] == "12" && decrementDate(variables[4][1]).split("/")[1] == "31") {
+        calendarYear = true;
+      }
+
+      return data; // Return early, skip everything below
+    }
+
+    // EXISTING CODE: Only runs for non-cached API responses
     const stringData = JSON.stringify(data, null, 2);
 
     if (stringData.includes("Patient Birth Date Does Not Match That for the Patient on the Database") || stringData.includes("the length of the value must be `>=") || stringData.includes("The payer or clearinghouse rejected the request with validation errors.") || stringData.includes("Please Correct and Resubmit") || stringData.includes("the value must match the pattern"))
@@ -171,9 +475,13 @@ function runBackend()
         variables[3][1] = "Active";
       }
     }
-    else if (stringData.includes("Rate limit exceeded: Maximum"))
+    else if (stringData.includes("Rate limit exceeded: Maximum") && stringData.includes("per hour"))
     {
       variables[3][1] = "Timeout";
+    }
+    else if (stringData.includes("Rate limit exceeded: Maximum") && stringData.includes("per day"))
+    {
+      variables[3][1] = "TimeoutDay";
     }
     else if (stringData.includes("Daily cost limit exceeded"))
     {
@@ -262,7 +570,7 @@ function runBackend()
             b.code === "F" &&
             b.name === "Limitations" &&
             b.coverageLevelCode === "IND" &&
-            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38") ||  b.serviceTypeCodes.includes("30")) &&
+            b.serviceTypeCodes && (b.serviceTypeCodes.includes("35") || b.serviceTypeCodes.includes("24") || b.serviceTypeCodes.includes("26") || b.serviceTypeCodes.includes("38") || b.serviceTypeCodes.includes("30")) &&
             b.timeQualifierCode === "29" //remaining benefit
             );
 
@@ -309,7 +617,50 @@ function runBackend()
             variables[9][1] = `$${used}`;
           }
 
+          //get ortho information
+          const orthodonticLifetime = benefits.find(b =>
+            b.code === "F" &&
+            b.name === "Limitations" &&
+            b.coverageLevelCode === "IND" &&
+            b.serviceTypeCodes && b.serviceTypeCodes.includes("38") &&
+            b.timeQualifierCode === "32" && // Lifetime
+            b.inPlanNetworkIndicatorCode === "Y"
+            );
 
+          if (orthodonticLifetime)
+          {
+            const amount = Math.round(parseFloat(orthodonticLifetime.benefitAmount));
+            variables[16][1] = `a $${amount} lifetime maximum`;
+          }
+
+          // Find customer service phone number
+          if (data.payer && data.payer.contactInformation && data.payer.contactInformation.contacts)
+          {
+            const phoneContact = data.payer.contactInformation.contacts.find(contact =>
+              contact.communicationMode === "Telephone"
+              );
+            if (phoneContact && phoneContact.communicationNumber)
+            {
+              let phoneNumber = phoneContact.communicationNumber;
+
+              // Remove all non-digit characters
+              const digitsOnly = phoneNumber.replace(/\D/g, '');
+
+              // Format as (XXX) XXX-XXXX if we have 10 digits
+              if (digitsOnly.length === 10)
+              {
+                phoneNumber = `(${digitsOnly.slice(0, 3)}) ${digitsOnly.slice(3, 6)}-${digitsOnly.slice(6)}`;
+              }
+              // Format as X-XXX-XXX-XXXX if we have 11 digits (with country code)
+              else if (digitsOnly.length === 11 && digitsOnly.startsWith('1'))
+              {
+                phoneNumber = `1-(${digitsOnly.slice(1, 4)}) ${digitsOnly.slice(4, 7)}-${digitsOnly.slice(7)}`;
+              }
+              // Otherwise, keep the original format
+
+              variables[17][1] = phoneNumber;
+            }
+          }
 
           // Extract coverage percentages from co-insurance data - only in network
           const coInsuranceData = benefits.filter(b => b.code === "A" && b.name === "Co-Insurance" && (b.inPlanNetworkIndicatorCode === "Y" || b.inPlanNetworkIndicatorCode === "W"));
@@ -321,6 +672,108 @@ function runBackend()
           let rootCanalCoverage = null;
           let extractionCoverage = null;
 
+          function extractFrequencyFromBenefit(benefit)
+          {
+            if (!benefit.benefitsServiceDelivery || benefit.benefitsServiceDelivery.length === 0)
+            {
+              return null;
+            }
+
+            const delivery = benefit.benefitsServiceDelivery[0];
+            const quantity = delivery.quantity;
+            const numPeriods = delivery.numOfPeriods;
+            const timePeriodQualifier = delivery.timePeriodQualifier;
+            const timePeriodQualifierCode = delivery.timePeriodQualifierCode;
+
+            if (!quantity) return null;
+
+            // Handle the case where we have numPeriods (like "24" months = "2 years")
+            if (numPeriods && timePeriodQualifier)
+            {
+              const periods = parseInt(numPeriods);
+              const timeUnit = timePeriodQualifier.toLowerCase();
+
+              if (quantity == 1)
+              {
+                // Convert months to years when appropriate
+                if (timeUnit === "month" || timeUnit === "months")
+                {
+                  if (periods === 12) return "once per year";
+                  if (periods === 24) return "once per 2 years";
+                  if (periods === 36) return "once per 3 years";
+                  if (periods === 60) return "once per 5 years";
+                  if (periods > 12 && periods % 12 === 0)
+                  {
+                    return `once per ${periods / 12} years`;
+                  }
+                  return `once per ${periods} months`;
+                }
+                return `once per ${periods} ${timeUnit}`;
+              }
+              else
+              {
+                return `${quantity} times per ${periods} ${timeUnit}`;
+              }
+            }
+
+            // Handle simple cases without numPeriods
+            if (timePeriodQualifier)
+            {
+              const period = timePeriodQualifier.toLowerCase();
+              if (quantity == 1)
+              {
+                return `once per ${period}`;
+              }
+              else
+              {
+                return `${quantity} times per ${period}`;
+              }
+            }
+
+            // Fallback for timePeriodQualifierCode
+            if (timePeriodQualifierCode)
+            {
+              const timePeriodMap = {
+                "32": "lifetime",
+                "34": "month",
+                "23": "year",
+                "22": "calendar year",
+                "25": "contract year"
+              };
+
+              const periodText = timePeriodMap[timePeriodQualifierCode] || "period";
+
+              if (quantity == 1)
+              {
+                return `once per ${periodText}`;
+              }
+              else
+              {
+                return `${quantity} times per ${periodText}`;
+              }
+            }
+
+            return null;
+          }
+
+          function extractWaitingPeriodFromDescription(description)
+          {
+            // Look for patterns like "6 months", "12 months", "18 months", etc.
+            const monthMatch = description.match(/(\d+)\s*months?/i);
+            if (monthMatch)
+            {
+              const months = parseInt(monthMatch[1]);
+              // Calculate the date when waiting period ends
+              const today = new Date();
+              const endDate = new Date(today.getFullYear(), today.getMonth() + months, today.getDate());
+              const month = String(endDate.getMonth() + 1).padStart(2, '0');
+              const day = String(endDate.getDate()).padStart(2, '0');
+              const year = endDate.getFullYear();
+              return `${month}/${day}/${year}`;
+            }
+
+            return null;
+          }
 
           for (const benefit of coInsuranceData)
           {
@@ -359,25 +812,34 @@ function runBackend()
                   basicHighest = insurancePercent;
                 }
               }
-              else if (majorCodes.includes(procedureCode) || serviceTypes.includes("prosthodontics") || serviceTypes.includes("crowns") ||serviceTypes.includes("bridges") || serviceTypes.includes("dentures"))
+              else if (majorCodes.includes(procedureCode) || serviceTypes.includes("prosthodontics") || serviceTypes.includes("crowns") || serviceTypes.includes("bridges") || serviceTypes.includes("dentures"))
               { //takes lowest non-zero value, unless there are none
-                if (!majorSet) {
+                if (!majorSet)
+                {
                   // First major service found - set it
                   variables[12][1] = `${insurancePercent}%`;
                   majorSet = true;
-                } else {
+                }
+                else
+                {
                   // Compare with existing value
                   const currentMajorPercent = parseInt(variables[12][1].replace('%', ''));
-                  
-                  if (currentMajorPercent === 0) {
+
+                  if (currentMajorPercent === 0)
+                  {
                     // Current is zero, take any non-zero value
-                    if (insurancePercent > 0) {
+                    if (insurancePercent > 0)
+                    {
                       variables[12][1] = `${insurancePercent}%`;
                     }
-                  } else if (insurancePercent > 0 && insurancePercent < currentMajorPercent) {
+                  }
+                  else if (insurancePercent > 0 && insurancePercent < currentMajorPercent)
+                  {
                     // Take the lower non-zero value
                     variables[12][1] = `${insurancePercent}%`;
-                  } else if (insurancePercent === 0 && currentMajorPercent > 0) {
+                  }
+                  else if (insurancePercent === 0 && currentMajorPercent > 0)
+                  {
                     // Keep the non-zero value, don't replace with zero
                     // Do nothing
                   }
@@ -386,61 +848,199 @@ function runBackend()
               if (basicCodes.includes(procedureCode)) //record highest out of all basic codes
               {
                 const currentBackupPercent = basicBackup ? parseInt(basicBackup.replace('%', '')) : 0;
-                if (insurancePercent > currentBackupPercent) {
+                if (insurancePercent > currentBackupPercent)
+                {
                   basicBackup = `${insurancePercent}%`;
                 }
               }
 
-              // Capture specific coverages for analysis - always find the highest number in case just one of the coes isn't covered!
-              if (serviceTypes.includes("endodontics") || procedureCode === "D3310" || procedureCode === "D3320" || procedureCode === "D3330") 
+              // Capture specific coverages to see if not covered or has frequency
+              //check for root canals
+              if (serviceTypes.includes("endodontics") || procedureCode === "D3310" || procedureCode === "D3320" || procedureCode === "D3330")
               {
-                if (rootCanalCoverage === null || insurancePercent > rootCanalCoverage) {
+                if (rootCanalCoverage === null || insurancePercent > rootCanalCoverage)
+                {
                   rootCanalCoverage = insurancePercent;
                 }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.rootCanals === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.rootCanals = frequency;
+                  }
+                }
               }
-              if (serviceTypes.includes("oral surgery") || procedureCode === "D7140") 
+              //check for extractions
+              if (serviceTypes.includes("oral surgery") || procedureCode === "D7140")
               {
-                if (extractionCoverage === null || insurancePercent > extractionCoverage) {
+                if (extractionCoverage === null || insurancePercent > extractionCoverage)
+                {
                   extractionCoverage = insurancePercent;
+                }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.extractions === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.extractions = frequency;
+                  }
                 }
               }
               // Check for bridges
-              if (serviceTypes.includes("prosthodontics") || serviceTypes.includes("bridges") || procedureCode.startsWith("D6") || procedureCode === "D6210" || procedureCode === "D6240" || procedureCode === "D6250") 
+              if (serviceTypes.includes("prosthodontics") || serviceTypes.includes("bridges") || procedureCode.startsWith("D6") || procedureCode === "D6210" || procedureCode === "D6240" || procedureCode === "D6250")
               {
-                if (procedureCoverages.bridges === null || insurancePercent > procedureCoverages.bridges) {
+                if (procedureCoverages.bridges === null || insurancePercent > procedureCoverages.bridges)
+                {
                   procedureCoverages.bridges = insurancePercent;
+                }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.bridges === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.bridges = frequency;
+                  }
                 }
               }
               // Check for dentures
-              if (serviceTypes.includes("dentures") || serviceTypes.includes("removable prosthodontics") || procedureCode.startsWith("D51") || procedureCode.startsWith("D52") || procedureCode.startsWith("D53") || procedureCode.startsWith("D54")) 
+              if (serviceTypes.includes("dentures") || serviceTypes.includes("removable prosthodontics") || procedureCode.startsWith("D51") || procedureCode.startsWith("D52") || procedureCode.startsWith("D53") || procedureCode.startsWith("D54"))
               {
-                if (procedureCoverages.dentures === null || insurancePercent > procedureCoverages.dentures) {
+                if (procedureCoverages.dentures === null || insurancePercent > procedureCoverages.dentures)
+                {
                   procedureCoverages.dentures = insurancePercent;
+                }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.dentures === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.dentures = frequency;
+                  }
                 }
               }
               // Check for crowns
-              if (serviceTypes.includes("crowns") || serviceTypes.includes("prosthodontics") || procedureCode === "D2740") {
-                if (procedureCoverages.crowns === null || insurancePercent > procedureCoverages.crowns) {
+              if (serviceTypes.includes("crowns") || serviceTypes.includes("prosthodontics") || procedureCode === "D2740")
+              {
+                if (procedureCoverages.crowns === null || insurancePercent > procedureCoverages.crowns)
+                {
                   procedureCoverages.crowns = insurancePercent;
+                }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.crowns === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.crowns = frequency;
+                  }
                 }
               }
               // Check for implants
-              if (serviceTypes.includes("implant") || procedureCode.startsWith("D60") || procedureCode.startsWith("D61")) {
-                if (procedureCoverages.implants === null || insurancePercent > procedureCoverages.implants) {
+              if (serviceTypes.includes("implant") || procedureCode.startsWith("D60") || procedureCode.startsWith("D61"))
+              {
+                if (procedureCoverages.implants === null || insurancePercent > procedureCoverages.implants)
+                {
                   procedureCoverages.implants = insurancePercent;
+                }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.implants === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.implants = frequency;
+                  }
                 }
               }
               // Check for deep cleanings
-              if (serviceTypes.includes("periodontics") || serviceTypes.includes("scaling") || serviceTypes.includes("deep cleaning") || procedureCode === "D4341" || procedureCode === "D4342" || procedureCode === "D4910") {
-                if (procedureCoverages.deepCleaning === null || insurancePercent > procedureCoverages.deepCleaning) {
+              if (serviceTypes.includes("periodontics") || serviceTypes.includes("scaling") || serviceTypes.includes("deep cleaning") || procedureCode === "D4341" || procedureCode === "D4342" || procedureCode === "D4910")
+              {
+                if (procedureCoverages.deepCleaning === null || insurancePercent > procedureCoverages.deepCleaning)
+                {
                   procedureCoverages.deepCleaning = insurancePercent;
                 }
+
+                // Check for frequency information
+                if (benefit.benefitsServiceDelivery && procedureFrequencies.deepCleanings === null)
+                {
+                  const frequency = extractFrequencyFromBenefit(benefit);
+                  if (frequency)
+                  {
+                    procedureFrequencies.deepCleanings = frequency;
+                  }
+                }
               }
+            }
+
+            // Check for waiting periods in additional information
+            if (benefit.additionalInformation)
+            {
+              benefit.additionalInformation.forEach(info =>
+              {
+                const description = info.description?.toLowerCase() || '';
+
+                if (description.includes('waiting period') || description.includes('waiting') || description.includes('wait'))
+                {
+                  // Determine category based on service types or procedure codes
+                  const serviceTypes = benefit.serviceTypes ? benefit.serviceTypes.join(", ").toLowerCase() : "";
+                  const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode || "";
+
+                  // Check if it's preventive
+                  if (serviceTypes.includes("preventive") || serviceTypes.includes("diagnostic") ||
+                    preventiveCodes.includes(procedureCode))
+                  {
+                    if (waitingPeriods.preventive === null)
+                    {
+                      const waitingInfo = extractWaitingPeriodFromDescription(description);
+                      if (waitingInfo)
+                      {
+                        waitingPeriods.preventive = waitingInfo;
+                      }
+                    }
+                  }
+                  // Check if it's basic
+                  else if (serviceTypes.includes("restorative") || serviceTypes.includes("endodontics") ||
+                    basicCodes.includes(procedureCode))
+                  {
+                    if (waitingPeriods.basic === null)
+                    {
+                      const waitingInfo = extractWaitingPeriodFromDescription(description);
+                      if (waitingInfo)
+                      {
+                        waitingPeriods.basic = waitingInfo;
+                      }
+                    }
+                  }
+                  // Check if it's major
+                  else if (serviceTypes.includes("prosthodontics") || majorCodes.includes(procedureCode))
+                  {
+                    if (waitingPeriods.major === null)
+                    {
+                      const waitingInfo = extractWaitingPeriodFromDescription(description);
+                      if (waitingInfo)
+                      {
+                        waitingPeriods.major = waitingInfo;
+                      }
+                    }
+                  }
+                }
+              });
             }
           }
 
           //if no basic percentage found, use backup by using procedureCode
-          if (variables[11][1] === "") 
+          if (variables[11][1] === "")
           {
             variables[11][1] = basicBackup;
           }
@@ -448,21 +1048,22 @@ function runBackend()
           //see if root canal are major or basic
           const majorPercentage = parseInt(variables[12][1].replace('%', '')) || 0;
           const basicPercentage = parseInt(variables[11][1].replace('%', '')) || 0;
-          if (majorPercentage !== basicPercentage)            // Only set boolean flags if major and basic percentages are different
+          if (majorPercentage !== basicPercentage) // Only set boolean flags if major and basic percentages are different
           {
-            if (rootCanalCoverage !== null && rootCanalCoverage === majorPercentage) 
+            if (rootCanalCoverage !== null && rootCanalCoverage === majorPercentage)
             {
               rootCanalMajor = true;
             }
-            if (extractionCoverage !== null && extractionCoverage === majorPercentage) 
+            if (extractionCoverage !== null && extractionCoverage === majorPercentage)
             {
               extMajor = true;
             }
           }
+
           //see if other procedures are not covered
           const procedureNames = {
             rootCanal: "Root Canals",
-            extraction: "Extractions", 
+            extraction: "Extractions",
             bridges: "Bridges",
             dentures: "Dentures",
             crowns: "Crowns",
@@ -475,191 +1076,277 @@ function runBackend()
 
             const procedureName = procedureNames[procedureKey];
 
-             // If coverage is exactly 0%, add to not covered list
-             if (coverage === 0) {
-               // Find the "Not Covered" array in variables
-               for (let i = 0; i < variables.length; i++) {
-                 if (variables[i][0] === "Not Covered:") {
-                   // Check if not already in the list
-                   const alreadyExists = variables[i].slice(1).some(item => {
-                     const itemName = Array.isArray(item) ? item[0] : item;
-                     return itemName === procedureName;
-                   });
-                   
-                   if (!alreadyExists) {
-                     variables[i].push([procedureName]);
-                   }
-                   break;
-                 }
-               }
-             }
-           });
-          //add all basic or major to not covered if 0% covered
-          if (basicPercentage === 0) 
-          {
-           const basicProcedures = ["Fillings", "Extractions", "Root Canals", "Deep Cleanings"];
-
-           basicProcedures.forEach(procedureName => {
-               // Find the "Not Covered" array in variables
-               for (let i = 0; i < variables.length; i++) {
-                 if (variables[i][0] === "Not Covered:") {
-                   // Check if not already in the list
-                   const alreadyExists = variables[i].slice(1).some(item => {
-                     const itemName = Array.isArray(item) ? item[0] : item;
-                     return itemName === procedureName;
-                   });
-                   
-                   if (!alreadyExists) {
-                     variables[i].push([procedureName]);
-                   }
-                   break;
-                 }
-               }
-             });
-         }
-
-            // If Major section is 0% covered, add all major procedures to not covered
-            if (majorPercentage === 0) {
-             const majorProcedures = ["Crowns", "Bridges", "Dentures", "Implants"];
-             
-             majorProcedures.forEach(procedureName => {
-               // Find the "Not Covered" array in variables
-               for (let i = 0; i < variables.length; i++) {
-                 if (variables[i][0] === "Not Covered:") {
-                   // Check if not already in the list
-                   const alreadyExists = variables[i].slice(1).some(item => {
-                     const itemName = Array.isArray(item) ? item[0] : item;
-                     return itemName === procedureName;
-                   });
-                   
-                   if (!alreadyExists) {
-                     variables[i].push([procedureName]);
-                   }
-                   break;
-                 }
-               }
-             });
-           }
-
-
-
-
-        //get frequencies 
-        const extractFrequenciesAndLimitations = (benefits) =>
-        {
-          const frequencies = new Set([
-            "Cleaning: twice per year",
-            "Exams & X-rays: twice per year"
-            ]);
-
-          const waitingPeriods = new Set();
-
-          benefits.forEach(benefit =>
-          {
-              // Extract actual frequency data from benefitsServiceDelivery
-              if (benefit.benefitsServiceDelivery)
+              // If coverage is exactly 0%, add to not covered list
+              if (coverage === 0)
               {
-                benefit.benefitsServiceDelivery.forEach(delivery =>
+                // Find the "Not Covered" array in variables
+                for (let i = 0; i < variables.length; i++)
                 {
-                  const quantity = delivery.quantity;
-                  const period = delivery.timePeriodQualifier;
-                  const numPeriods = delivery.numOfPeriods;
-                  const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode;
-
-                  if (quantity && period && procedureCode)
+                  if (variables[i][0] === "Not Covered:")
                   {
-                    const descriptions = {
-                      "D0210": "X-rays",
-                      "D0272": "Bitewing X-rays",
-                      "D4910": "Periodontal maintenance"
-                    };
-
-                    const description = descriptions[procedureCode] || `Procedure ${procedureCode}`;
-                    let frequencyText;
-
-                    if (quantity == 1 && numPeriods > 1)
+                    // Check if not already in the list
+                    const alreadyExists = variables[i].slice(1).some(item =>
                     {
-                      frequencyText = `${description}: once per ${numPeriods} ${period.toLowerCase()}`;
-                    }
-                    else
+                      const itemName = Array.isArray(item) ? item[0] : item;
+                      return itemName === procedureName;
+                    });
+
+                    if (!alreadyExists)
                     {
-                      frequencyText = `${description}: ${quantity} times per ${period.toLowerCase()}`;
+                      variables[i].push([procedureName]);
                     }
-
-                    frequencies.add(frequencyText);
+                    break;
                   }
-                });
-              }
-
-              // Extract waiting periods
-              if (benefit.additionalInformation)
-              {
-                benefit.additionalInformation.forEach(info =>
-                {
-                  if (info.description?.toLowerCase().includes("waiting"))
-                  {
-                    waitingPeriods.add(info.description);
-                  }
-                });
+                }
               }
             });
 
-          return {
-            frequencies: Array.from(frequencies),
-            waitingPeriods: Array.from(waitingPeriods)
-          };
-        };
-
-
-
-          //this prints out all not covered
-          /*
-          const notCoveredProcedures = [];
-          coInsuranceData.forEach(benefit =>
+          //If Basic section is 0% covered, add all basic procedures to not covered
+          if (basicPercentage === 0)
           {
-            if (parseFloat(benefit.benefitPercent || 0) === 1.0)
-            {
-              // This means 100% patient responsibility = not covered
-              if (benefit.compositeMedicalProcedureIdentifier)
-              {
-                notCoveredProcedures.push(benefit.compositeMedicalProcedureIdentifier.procedureCode);
-              }
-            }
-          });
+           const basicProcedures = ["Fillings", "Extractions", "Root Canals", "Deep Cleanings"];
 
-          if (notCoveredProcedures.length > 0)
-          {
-            variables[13] = ["Not Covered:", ...notCoveredProcedures.map(p => [p])];
-          }
-          */
-        }
-      }
+           basicProcedures.forEach(procedureName =>
+           {
+             // Find the "Not Covered" array in variables
+             for (let i = 0; i < variables.length; i++)
+             {
+               if (variables[i][0] === "Not Covered:")
+               {
+                 // Check if not already in the list
+                 const alreadyExists = variables[i].slice(1).some(item =>
+                 {
+                   const itemName = Array.isArray(item) ? item[0] : item;
+                   return itemName === procedureName;
+                 });
+
+                 if (!alreadyExists)
+                 {
+                   variables[i].push([procedureName]);
+                 }
+                 break;
+               }
+             }
+           });
+         }
+         // If Major section is 0% covered, add all major procedures to not covered
+         if (majorPercentage === 0)
+         {
+           const majorProcedures = ["Crowns", "Bridges", "Dentures", "Implants"];
+
+           majorProcedures.forEach(procedureName =>
+           {
+             // Find the "Not Covered" array in variables
+             for (let i = 0; i < variables.length; i++)
+             {
+               if (variables[i][0] === "Not Covered:")
+               {
+                 // Check if not already in the list
+                 const alreadyExists = variables[i].slice(1).some(item =>
+                 {
+                   const itemName = Array.isArray(item) ? item[0] : item;
+                   return itemName === procedureName;
+                 });
+
+                 if (!alreadyExists)
+                 {
+                   variables[i].push([procedureName]);
+                 }
+                 break;
+               }
+             }
+           });
+         }
 
 
-      //parse variables
-      console.log(variables);
+         //Check Frequency further 
+         benefits.forEach(benefit =>
+         {
+           const frequency = extractFrequencyFromBenefit(benefit);
+           if (!frequency) return;
+           const serviceTypes = benefit.serviceTypes ? benefit.serviceTypes.join(", ").toLowerCase() : "";
+           const procedureCode = benefit.compositeMedicalProcedureIdentifier?.procedureCode || "";
 
-      maximumRemaining = parseInt(variables[6][1].replace("$", "")) - parseInt(variables[7][1].replace("$", "")); //see how much $ is left
-      maximumRemaining = `$${maximumRemaining}`;
-      percentOfMaxUsed = (maximumRemaining.replace("$", "") / parseInt(variables[6][1].replace("$", ""))) * 100 + "%";
-      if (percentOfMaxUsed == "0%")
-      {
-        percentOfMaxUsed = "2%"; //styles a little better
-      }
-      deductibleRemaining = parseInt(variables[8][1].replace("$", "")) - parseInt(variables[9][1].replace("$", "")); //see how much $ is left
-      deductibleRemaining = `$${deductibleRemaining}`;
-      if (decrementDate(variables[4][1]).split("/")[0] == "12" && decrementDate(variables[4][1]).split("/")[1] == "31")
-      {
-        calendarYear = true;
-      }
+           // Check for root canals/endodontics
+           if (serviceTypes.includes("endodontics"))
+           {
+             if (procedureFrequencies.rootCanals === null)
+             {
+               procedureFrequencies.rootCanals = frequency;
+             }
+           }
+           // Check for extractions/oral surgery
+           if (serviceTypes.includes("oral surgery") || procedureCode === "D7140")
+           {
+             if (procedureFrequencies.extractions === null)
+             {
+               procedureFrequencies.extractions = frequency;
+             }
+           }
+           // Check for bridges
+           if (serviceTypes.includes("prosthodontics") || serviceTypes.includes("bridges") || procedureCode.startsWith("D6"))
+           {
+             if (procedureFrequencies.bridges === null)
+             {
+               procedureFrequencies.bridges = frequency;
+             }
+           }
+           // Check for dentures
+           if (serviceTypes.includes("dentures") || serviceTypes.includes("removable prosthodontics") ||
+             procedureCode.startsWith("D51") || procedureCode.startsWith("D52") ||
+             procedureCode.startsWith("D53") || procedureCode.startsWith("D54"))
+           {
+             if (procedureFrequencies.dentures === null)
+             {
+               procedureFrequencies.dentures = frequency;
+             }
+           }
+           // Check for crowns
+           if (serviceTypes.includes("crowns") || serviceTypes.includes("prosthodontics") || procedureCode === "D2740")
+           {
+             if (procedureFrequencies.crowns === null)
+             {
+               procedureFrequencies.crowns = frequency;
+             }
+           }
+           // Check for implants
+           if (serviceTypes.includes("implant") || procedureCode.startsWith("D60") || procedureCode.startsWith("D61"))
+           {
+             if (procedureFrequencies.implants === null)
+             {
+               procedureFrequencies.implants = frequency;
+             }
+           }
+           // Check for deep cleanings/periodontics
+           if (serviceTypes.includes("periodontics") || serviceTypes.includes("scaling") ||
+             serviceTypes.includes("deep cleaning"))
+           {
+             if (procedureFrequencies.deepCleanings === null)
+             {
+               procedureFrequencies.deepCleanings = frequency;
+             }
+           }
+         });
 
-      return data; // Return the data for further processing
-    })
+
+         // Add frequencies to the variables array
+         if (Object.values(procedureFrequencies).some(freq => freq !== null))
+         {
+           // Find the frequencies array in variables
+           for (let i = 2; i < variables.length; i++)
+           {
+             if (variables[i][0] === "Frequencies:")
+             {
+               // Add any found frequencies
+               Object.entries(procedureFrequencies).forEach(([procedure, frequency]) =>
+               {
+                 if (frequency)
+                 {
+                   let procedureName = procedure.charAt(0).toUpperCase() + procedure.slice(1);
+                   if (procedure === 'rootCanals') procedureName = 'Root Canals';
+                   if (procedure === 'deepCleanings') procedureName = 'Deep Cleanings';
+
+                   variables[i].push([`${procedureName}: ${frequency}`]);
+                 }
+               });
+               break;
+             }
+           }
+         }
+
+         // Add waiting periods to the variables array
+         if (Object.values(waitingPeriods).some(period => period !== null))
+         {
+           // Find the waiting periods array in variables
+           for (let i = 0; i < variables.length; i++)
+           {
+             if (variables[i][0] === "Active Waiting Periods:")
+             {
+               // Add any found waiting periods
+               Object.entries(waitingPeriods).forEach(([category, endDate]) =>
+               {
+                 if (endDate)
+                 {
+                   const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+                   variables[i].push([`${categoryName}: ${endDate}`]);
+                 }
+               });
+               break;
+             }
+           }
+         }
+
+
+         //this prints out all not covered
+         /*
+         const notCoveredProcedures = [];
+         coInsuranceData.forEach(benefit =>
+         {
+           if (parseFloat(benefit.benefitPercent || 0) === 1.0)
+           {
+             // This means 100% patient responsibility = not covered
+             if (benefit.compositeMedicalProcedureIdentifier)
+             {
+               notCoveredProcedures.push(benefit.compositeMedicalProcedureIdentifier.procedureCode);
+             }
+           }
+         });
+
+         if (notCoveredProcedures.length > 0)
+         {
+           variables[13] = ["Not Covered:", ...notCoveredProcedures.map(p => [p])];
+         }
+         */
+       }
+     }
+
+     //PARSE VARIABLES
+
+     console.log(variables);
+
+     maximumRemaining = parseInt(variables[6][1].replace("$", "")) - parseInt(variables[7][1].replace("$", "")); //see how much $ is left
+     maximumRemaining = `$${maximumRemaining}`;
+     percentOfMaxUsed = (maximumRemaining.replace("$", "") / parseInt(variables[6][1].replace("$", ""))) * 100 + "%";
+     if (percentOfMaxUsed == "0%")
+     {
+       percentOfMaxUsed = "2%"; //styles a little better
+     }
+     deductibleRemaining = parseInt(variables[8][1].replace("$", "")) - parseInt(variables[9][1].replace("$", "")); //see how much $ is left
+     deductibleRemaining = `$${deductibleRemaining}`;
+     if (decrementDate(variables[4][1]).split("/")[0] == "12" && decrementDate(variables[4][1]).split("/")[1] == "31")
+     {
+       calendarYear = true;
+     }
+
+     /* If successful and has renewal date, send the parsed variables back to cache */
+     if (variables[3][1] === "Active" && variables[4][1]) 
+     { 
+       fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/check-eligibility', 
+       {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({
+           firstName: firstName,
+           lastName: lastName,
+           memberId: memberID,
+           dateOfBirth: DOB,
+           variables: variables // Send the parsed variables array
+         })
+       }).catch(err => {
+         console.log('Cache storage failed:', err);
+         // Don't fail the user experience if caching fails
+       });
+     }
+
+     return data; // Return the data for further processing
+   })
 .catch(err =>
 {
-  console.log(err.message);
-  variables[2][1] = "Not Found";
-  throw err;
+ console.log(err.message);
+ variables[2][1] = "Not Found";
+ throw err;
 });
 }
 
@@ -697,44 +1384,52 @@ function showLoading()
   runBackend()
   .then(data =>
   {
-      // Backend is done, hide loading and proceed
+      // ALWAYS hide loading regardless of cache or API
+      if (loadingTimer) {
+        clearTimeout(loadingTimer);
+      }
       document.getElementsByClassName("loading-container")[0].style.opacity = "0";
       doneLoading = true;
 
       setTimeout(() =>
       {
         // Check if insurance is found based on the response
-        if (variables[3][1] == "Timeout")
-        {
-          showInsuranceError(3);
-        }
-        else if (variables[3][1] == "TimeoutAll")
-        {
-          showInsuranceError(4);
-        }
-        else if (variables[3][1] != "Active")
-        {
-          showInsuranceError(2);
-        }
-        else if ((variables[2][1] == "Not Found"))
-        {
-          showInsuranceError(1);
-        }
-        else
+        if (data.fromCache) 
         {
           showNext();
         }
-      }, 300); // Small delay for loading fade out
+        else if (variables[3][1] == "Timeout") {
+          showInsuranceError(3);
+        }
+        else if (variables[3][1] == "TimeoutDay") {
+          showInsuranceError(5);
+        }
+        else if (variables[3][1] == "TimeoutAll") {
+          showInsuranceError(4);
+        }
+        else if (variables[3][1] != "Active") {
+          showInsuranceError(2);
+        }
+        else if ((variables[2][1] == "Not Found")) {
+          showInsuranceError(1);
+        }
+        else {
+          showNext();
+        }
+      }, 300);
     })
   .catch(err =>
   {
-      // Handle error case
+      // ALWAYS hide loading on error too
+      if (loadingTimer) {
+        clearTimeout(loadingTimer);
+      }
       document.getElementsByClassName("loading-container")[0].style.opacity = "0";
       doneLoading = true;
 
       setTimeout(() =>
       {
-        showInsuranceError(1); // Show error - insurance not found
+        showInsuranceError(1);
       }, 300);
     });
 }
@@ -812,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', function()
 
     function typeLoop()
     {
-      const wordsToType = ["free.", "coverage.", "copays.", "tips."];
+      const wordsToType = ["free.", "tips.", "clarity.", "copays.", "providers.", "verification."];
       const currentWord = wordsToType[wordIndex];
 
       if (isDeleting)
@@ -841,7 +1536,7 @@ document.addEventListener('DOMContentLoaded', function()
       }
       else if (charIndex === currentWord.length)
       {
-        typingSpeed = 15000; // Pause before deleting
+        typingSpeed = 10000; // Pause before deleting
       }
       else
       {
@@ -1301,19 +1996,79 @@ document.addEventListener('DOMContentLoaded', function()
 {
   const insuranceInput = document.getElementById('insuranceName');
   if (!insuranceInput) return;
-  // Create dropdown container
+
+  insuranceInput.placeholder = 'Insurance Company Name';
+
   const dropdown = document.createElement('div');
   dropdown.id = 'insurance-dropdown';
   dropdown.className = 'insurance-dropdown';
-  // Insert dropdown after the input container
+
   const inputContainer = insuranceInput.closest('.input-container');
   if (inputContainer)
   {
     inputContainer.appendChild(dropdown);
+
+    const existingIcon = inputContainer.querySelector('.fas.fa-building');
+    if (existingIcon)
+    {
+      existingIcon.className = 'fas fa-search';
+    }
   }
+
   let isDropdownVisible = false;
   let selectedIndex = -1;
-  // Show dropdown with filtered results
+  let searchTimeout = null;
+
+  function highlightMatch(text, searchTerm)
+  {
+    if (!searchTerm || !text)
+    {
+      return text;
+    }
+
+    // Split search term into individual words
+    const searchWords = searchTerm.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+
+    if (searchWords.length === 0)
+    {
+      return text;
+    }
+
+    let result = text;
+
+    // Highlight each word separately
+    for (let i = 0; i < searchWords.length; i++)
+    {
+      const word = searchWords[i];
+      const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+      // Use negative lookahead to avoid highlighting inside existing tags
+      const regex = new RegExp('(?![^<]*>)(?![^<]*</span>)(' + escapedWord + ')(?![^<]*</span>)', 'gi');
+
+      result = result.replace(regex, function(match)
+      {
+        return '<span class="match-highlight">' + match + '</span>';
+      });
+    }
+
+    return result;
+  }
+
+  function showEmptyFieldState()
+  {
+    dropdown.innerHTML = '<div class="dropdown-item empty-field-item">Start typing to search insurance companies...</div>';
+    dropdown.style.display = 'block';
+    isDropdownVisible = true;
+    selectedIndex = -1;
+  }
+
+  function showLoadingState()
+  {
+    dropdown.innerHTML = '<div class="dropdown-item loading-item"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+    dropdown.style.display = 'block';
+    isDropdownVisible = true;
+  }
+
   function showDropdown(searchTerm = '')
   {
     if (searchTerm.length < 1)
@@ -1321,40 +2076,100 @@ document.addEventListener('DOMContentLoaded', function()
       hideDropdown();
       return;
     }
+
     const filtered = insuranceCompanies.filter(company =>
-      company.toLowerCase().includes(searchTerm.toLowerCase())
-    ).slice(0, 2); // Limit to 6 results
+    {
+      const companyLower = company.toLowerCase();
+      const searchLower = searchTerm.toLowerCase();
+      const searchWords = searchLower.split(/\s+/).filter(word => word.length > 0);
+      return searchWords.every(word => companyLower.includes(word));
+    }).sort((a, b) =>
+    {
+      const aLower = a.toLowerCase();
+      const bLower = b.toLowerCase();
+      const searchLower = searchTerm.toLowerCase();
+
+      if (aLower.startsWith(searchLower) && !bLower.startsWith(searchLower)) return -1;
+      if (!aLower.startsWith(searchLower) && bLower.startsWith(searchLower)) return 1;
+
+      const aIndex = aLower.indexOf(searchLower.split(' ')[0]);
+      const bIndex = bLower.indexOf(searchLower.split(' ')[0]);
+      return aIndex - bIndex;
+    }).slice(0, 2);
 
     if (filtered.length === 0)
     {
-      hideDropdown();
+      dropdown.innerHTML = '<div class="dropdown-item no-results">No insurance companies found</div>';
+      dropdown.style.display = 'block';
+      isDropdownVisible = true;
       return;
     }
+
     dropdown.innerHTML = '';
+
+    const totalMatches = insuranceCompanies.filter(company =>
+    {
+      const companyLower = company.toLowerCase();
+      const searchLower = searchTerm.toLowerCase();
+      const searchWords = searchLower.split(/\s+/).filter(word => word.length > 0);
+      return searchWords.every(word => companyLower.includes(word));
+    }).length;
+
     filtered.forEach((company, index) =>
     {
       const item = document.createElement('div');
       item.className = 'dropdown-item';
-      item.textContent = company;
-      item.addEventListener('click', function()
+
+      const highlightedText = highlightMatch(company, searchTerm);
+      item.innerHTML = highlightedText;
+      item.setAttribute('data-company-name', company);
+      item.setAttribute('data-index', index);
+
+      item.addEventListener('click', function(e)
       {
-        selectInsurance(company);
+        e.preventDefault();
+        e.stopPropagation();
+        isSelecting = true; // Set flag to prevent blur
+        const companyName = this.getAttribute('data-company-name');
+        selectInsurance(companyName);
+        setTimeout(() =>
+        {
+          isSelecting = false;
+        }, 200);
       });
+
       dropdown.appendChild(item);
     });
+
+    if (totalMatches > 2)
+    {
+      const moreItem = document.createElement('div');
+      moreItem.className = 'dropdown-footer';
+      moreItem.textContent = `+${totalMatches - 2} more companies...`;
+      dropdown.appendChild(moreItem);
+    }
 
     dropdown.style.display = 'block';
     isDropdownVisible = true;
     selectedIndex = -1;
   }
-  // Hide dropdown
+
   function hideDropdown()
   {
-    dropdown.style.display = 'none';
-    isDropdownVisible = false;
-    selectedIndex = -1;
+    if (!isDropdownVisible) return;
+
+    dropdown.classList.add('dropdown-hiding');
+    setTimeout(() =>
+    {
+      dropdown.style.display = 'none';
+      dropdown.classList.remove('dropdown-hiding');
+      isDropdownVisible = false;
+      selectedIndex = -1;
+    }, 200);
   }
-  // Select insurance company
+
+  let isSelecting = false;
+
   function selectInsurance(company)
   {
     insuranceInput.value = company;
@@ -1362,21 +2177,20 @@ document.addEventListener('DOMContentLoaded', function()
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (isMobile)
     {
-
       setTimeout(() =>
       {
         showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
         checkSuccessMessages();
         insuranceInput.blur();
-      }, 100); 
+      }, 100);
     }
   }
-  // Handle keyboard navigation
+
   function handleKeyNavigation(e)
   {
     if (!isDropdownVisible) return;
 
-    const items = dropdown.querySelectorAll('.dropdown-item');
+    const items = dropdown.querySelectorAll('.dropdown-item:not(.dropdown-header):not(.no-results):not(.empty-field-item):not(.dropdown-footer)');
 
     switch (e.key)
     {
@@ -1394,7 +2208,8 @@ document.addEventListener('DOMContentLoaded', function()
       e.preventDefault();
       if (selectedIndex >= 0 && items[selectedIndex])
       {
-        selectInsurance(items[selectedIndex].textContent);
+        const company = items[selectedIndex].getAttribute('data-company-name');
+        selectInsurance(company);
       }
       break;
       case 'Escape':
@@ -1402,7 +2217,7 @@ document.addEventListener('DOMContentLoaded', function()
       break;
     }
   }
-  // Update visual selection
+
   function updateSelection(items)
   {
     items.forEach((item, index) =>
@@ -1417,10 +2232,16 @@ document.addEventListener('DOMContentLoaded', function()
       }
     });
   }
-  // Event listeners
+
   insuranceInput.addEventListener('input', function(e)
   {
     const value = e.target.value.trim();
+
+    if (searchTimeout)
+    {
+      clearTimeout(searchTimeout);
+    }
+
     if (this.value.length > 0)
     {
       clearInputError(this);
@@ -1437,15 +2258,32 @@ document.addEventListener('DOMContentLoaded', function()
         }, 300);
       }
     }
-    showDropdown(value);
+
+    searchTimeout = setTimeout(() =>
+    {
+      showDropdown(value);
+    }, 150);
   });
 
   insuranceInput.addEventListener('focus', function(e)
   {
     const value = e.target.value.trim();
-    if (value.length >= 1)
+
+    const isValidInsurance = insuranceCompanies.some(company =>
+      company.toLowerCase() === value.toLowerCase()
+      );
+
+    if (value.length > 0 && !isValidInsurance)
     {
-      showDropdown(value);
+      showLoadingState();
+      setTimeout(() =>
+      {
+        showDropdown(value);
+      }, 200);
+    }
+    else if (value.length === 0)
+    {
+      showEmptyFieldState();
     }
   });
 
@@ -1453,19 +2291,22 @@ document.addEventListener('DOMContentLoaded', function()
   {
     setTimeout(() =>
     {
+      // Don't run if we're currently selecting an item
+      if (isSelecting) return;
+
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile && isDropdownVisible)
       {
-        const firstItem = dropdown.querySelector('.dropdown-item');
+        const firstItem = dropdown.querySelector('.dropdown-item:not(.dropdown-header):not(.no-results):not(.empty-field-item):not(.dropdown-footer)');
         if (firstItem)
         {
-          selectInsurance(firstItem.textContent);
+          const company = firstItem.getAttribute('data-company-name');
+          selectInsurance(company);
           showFriendlyMessage(insuranceInput, "Great choice! We work with this insurer.", 'friendly-insurance');
           return;
         }
       }
 
-      // Clear field if no valid selection was made
       if (insuranceInput.value.trim().length > 0)
       {
         const enteredValue = insuranceInput.value.trim();
@@ -1475,7 +2316,7 @@ document.addEventListener('DOMContentLoaded', function()
 
         if (!isValidInsurance)
         {
-          insuranceInput.value = ''; // Clear the field
+          insuranceInput.value = '';
           showInputError(insuranceInput, "Please select a valid insurance company from the dropdown");
         }
       }
@@ -1483,8 +2324,9 @@ document.addEventListener('DOMContentLoaded', function()
       hideDropdown();
     }, 150);
   });
+
   insuranceInput.addEventListener('keydown', handleKeyNavigation);
-  // Close dropdown when clicking outside
+
   document.addEventListener('click', function(e)
   {
     if (!inputContainer.contains(e.target))
@@ -1494,7 +2336,6 @@ document.addEventListener('DOMContentLoaded', function()
   });
 });
 
-// Add CSS styles for the dropdown
 const insuranceSearchStyles = document.createElement('style');
 insuranceSearchStyles.id = 'insurance-search-styles';
 insuranceSearchStyles.textContent = `
@@ -1504,15 +2345,28 @@ insuranceSearchStyles.textContent = `
   left: 0;
   right: 0;
   background: #FCFEFD;
-  border: 2px solid #777;
+  border: 2px solid #666;
   border-top: none;
   border-bottom-left-radius: 12.5px;
   border-bottom-right-radius: 12.5px;
-  max-height: 240px;
+  max-height: 320px;
   overflow-y: auto;
   z-index: 10001;
   display: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-header {
+  padding: 8px 15px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .dropdown-item {
@@ -1524,12 +2378,61 @@ insuranceSearchStyles.textContent = `
   color: rgba(0, 0, 0, 0.87);
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s ease, color 0.2s ease;
+  line-height: 1.4;
 }
 
-.dropdown-item:last-child {
-  border-bottom: none;
-  border-bottom-left-radius: 12.5px;
-  border-bottom-right-radius: 12.5px;
+.dropdown-item.empty-field-item {
+  color: #999;
+  font-style: italic;
+  cursor: default;
+  padding-left: 55px;
+  font-size: 15px;
+}
+
+.dropdown-item.empty-field-item:hover {
+  background-color: transparent;
+  color: #999;
+}
+
+.dropdown-footer {
+  padding: 8px 15px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+  font-style: italic;
+}
+
+.dropdown-item .match-highlight {
+  font-weight: 650;
+  color: inherit; 
+}
+
+.dropdown-item.loading-item {
+  padding-left: 45px;
+  color: #666;
+  font-style: italic;
+}
+
+.dropdown-item.loading-item i {
+  position: absolute;
+  left: 15px;
+  color: rgba(41, 128, 185, 0.7);
+}
+
+.dropdown-item.no-results {
+  color: #999;
+  font-style: italic;
+  cursor: default;
+  padding-left: 55px;
+}
+
+.dropdown-item.no-results:hover {
+  background-color: transparent;
+  color: #999;
 }
 
 .dropdown-item:hover,
@@ -1538,31 +2441,34 @@ insuranceSearchStyles.textContent = `
   color: rgba(41, 128, 185, 0.9);
 }
 
+
 .dropdown-item:active {
   background-color: rgba(41, 128, 185, 0.15);
 }
 
-/* Adjust the input container to accommodate dropdown */
+.dropdown-item:last-child {
+  border-bottom: none;
+  border-bottom-left-radius: 12.5px;
+  border-bottom-right-radius: 12.5px;
+}
+
 .input-container:nth-child(4) {
   position: relative;
   overflow: visible;
 }
 
-/* Ensure dropdown appears above other elements */
 .input-container:nth-child(4):has(.insurance-dropdown[style*="display: block"]) {
   z-index: 1001;
 }
 
-/* Adjust border radius when dropdown is open */
 .input-container:nth-child(4):has(.insurance-dropdown[style*="display: block"]) input {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
   border-bottom: none !important;
   padding-bottom: 2px;
+  box-shadow: 0 2px 8px rgba(41, 128, 185, 0.1);
 }
 
-
-/* Custom scrollbar for dropdown */
 .insurance-dropdown::-webkit-scrollbar {
   width: 6px;
 }
@@ -1580,9 +2486,44 @@ insuranceSearchStyles.textContent = `
 .insurance-dropdown::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
-`;
 
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropdownSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+}
+
+.insurance-dropdown[style*="display: block"] {
+  animation: dropdownSlideIn 0.3s ease-out;
+}
+
+.insurance-dropdown.dropdown-hiding {
+  animation: dropdownSlideOut 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.input-container:nth-child(4) input:focus {
+  border-color: rgba(41, 128, 185, 0.8);
+  box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.1);
+}
+`;
 document.head.appendChild(insuranceSearchStyles);
+
 
 
 
@@ -2331,45 +3272,48 @@ incompleteStyle.textContent = `
 }
 #submit 
 {
-  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.6s ease-in, box-shadow 0.6s ease-in;
 }
 #submit:not(.incomplete) 
 {
   transform: scale(1) !important;
-  box-shadow: 0 0 0 1.5px rgba(41, 128, 185, 0.32);
+  box-shadow: 0 0 0 1px rgba(41, 128, 185, 0.64);
 }
 `;
 document.head.appendChild(incompleteStyle);
 
 // Initialize button as incomplete
-document.addEventListener('DOMContentLoaded', function() 
+document.addEventListener('DOMContentLoaded', function()
 {
   document.getElementById('submit').classList.add('incomplete');
 });
 
 // Check if 4 success messages exist
-function checkSuccessMessages() 
+function checkSuccessMessages()
 {
   const successMessages = document.querySelectorAll('.friendly-message.show');
   const submitBtn = document.getElementById('submit');
-  
-  if (successMessages.length >= 4) {
+
+  if (successMessages.length >= 4)
+  {
     submitBtn.classList.remove('incomplete');
-  } else {
+  }
+  else
+  {
     submitBtn.classList.add('incomplete');
   }
 }
 
 // Check whenever a friendly message is shown
 const originalShowFriendlyMessage = showFriendlyMessage;
-showFriendlyMessage = function(input, message, emojiClass) 
+showFriendlyMessage = function(input, message, emojiClass)
 {
   originalShowFriendlyMessage(input, message, emojiClass);
   setTimeout(checkSuccessMessages, 20);
 };
 
 // Also check when messages are removed (when user starts typing)
-document.addEventListener('input', function() 
+document.addEventListener('input', function()
 {
   setTimeout(checkSuccessMessages, 20);
 });
@@ -2380,6 +3324,7 @@ var doneLoading = false;
 var loadingTimer = null;
 var completionTimer = null;
 var tabNumber = 1;
+var currentTab3Section = 1;
 
 // Modify the processTransition function to disable form clicks
 function processTransition()
@@ -2432,12 +3377,17 @@ function showInsuranceError(type)
   }
   if (type == 3)
   {
-    displayError("<span class='error-header'>Please slow down a bit!</span><br><br>To keep our insurance verification service free, we limit how often it can be used. You've reached your hourly limit.<br><br>Please try again in about an hour. Thanks for understanding!", true);
+    displayError("<span class='error-header'>Please slow down a bit!</span><br><br>To keep our insurance verification service affordable for everyone, we limit how often it can be used. You've reached your hourly limit.<br><br>Please try again in about an hour. Thanks for understanding!", true);
   }
   if (type == 4)
   {
-    displayError("<span class='error-header'>Please slow down a bit!</span><br><br>To keep our insurance verification service free, we limit how often it can be used. You've reached your hourly limit.<br><br>Please try again in about an hour. Thanks for understanding!", true);
+    displayError("<span class='error-header'>We have reached our global daily limit!</span><br><br>To keep our insurance verification service affordable for everyone, we have a daily spending limit across all users. We've reached that limit for today.<br><br>Please try again tomorrow. Thanks for understanding!", true);
   }
+  if (type == 5)
+  {
+    displayError("<span class='error-header'>Please slow down a bit!</span><br><br>To keep our insurance verification service affordable for everyone, we limit how often it can be used. You've reached your daily limit.<br><br>Please try again tomorrow. Thanks for understanding!", true);
+  }
+
 
   // Wait for the error to display before returning to main page
   setTimeout(() =>
@@ -2666,6 +3616,7 @@ function showNext()
 
   secondPage.style.opacity = 1;
   document.body.style.overflow = "auto";
+  document.body.style.touchAction = "auto"
   document.getElementById("tabs-div").style.opacity = 1;
   makeTabActive();
   runLoadingAnimation();
@@ -2700,13 +3651,14 @@ function showNext()
     <div id="summary-card-eligibility">
     <h3 class='summary-title'>Eligibility </h3>
     <span class='eligibility-status-row'><i class="fas fa-check-circle"></i><h4>Active</h4></span>
-    <br>Your insurance is <b>${variables[2][1]}</b>.
+    <p><i class="fas fa-id-card"></i> Your insurance <br>is <span style='font-weight:675'>${variables[2][1]}</span></p>
     </div> 
 
     <div id="summary-card-renewal" class="pop-in">
     <h3 class='summary-title' id='renewal-summary-title'> Renewal </h3>
     <span class='renewal-status-row'><i class="fas fa-clock"></i><h4>${formatDateString(variables[4][1])}</h4></span>
-    Your benefits will renew to <b>${variables[6][1]}.</b>
+    <p><i class="fas fa-sync-alt"></i> Your benefits will<br>renew <span style='font-weight:675'>to ${variables[6][1]}</span></p>
+
     </div>
 
     </div>
@@ -2725,7 +3677,7 @@ function showNext()
     secondPage.innerHTML = `
     <div id="coverage-div" class='loading-up'>
     <div class="coverage-section">
-    <h3 class="coverage-heading"><b>Routine - </b>${variables[10][1]} Covered</h3>
+    <h3 class="coverage-heading">Routine: <span class='coverage-heading-covered'>${variables[10][1]} Covered</span></h3>
     <div class="coverage-grid">
     <div class="coverage-item">
     <div class="coverage-icon"><i class="fas fa-tooth"></i></div>
@@ -2743,7 +3695,7 @@ function showNext()
     </div>
 
     <div class="coverage-section">
-    <h3 class="coverage-heading"><b>Basic - </b>${variables[11][1]} Covered</h3>
+    <h3 class="coverage-heading">Basic: <span class='coverage-heading-covered'>${variables[11][1]} Covered</span></h3>
     <div class="coverage-grid">
     <div class="coverage-item">
     <div class="coverage-icon"><i class="fas fa-fill-drip"></i></div>
@@ -2765,7 +3717,7 @@ function showNext()
     </div>
 
     <div class="coverage-section">
-    <h3 class="coverage-heading"><b>Major - </b>${variables[12][1]} Covered</h3>
+    <h3 class="coverage-heading">Major: <span class='coverage-heading-covered'>${variables[12][1]} Covered</span></h3>
     <div class="coverage-grid">
     <div class="coverage-item">
     <div class="coverage-icon"><i class="fas fa-crown"></i></div>
@@ -2787,7 +3739,7 @@ function showNext()
     </div>
 
     <div class="coverage-section" id='notCovered-section'>
-    <h3 class="coverage-heading"><b>Not Covered</b></h3>
+    <h3 class="coverage-heading">Not Covered</h3>
     <div class="coverage-grid">
     </div>
     </div>
@@ -2795,10 +3747,256 @@ function showNext()
     </div>
     `
   }
-  else
+  else if (tabNumber == 3)
+  {
+   if (currentTab3Section === 1 && !userIsPremium) 
+   {
+    secondPage.innerHTML = `
+    <div id="next-steps-div">
+    <!-- Section Toggle Header -->
+    <div class="tab3-section-toggle">
+    <button class="section-btn active" onclick="switchTab3Section(1)">
+    <i class="fas fa-route"></i> Next Steps
+    </button>
+    <button class="section-btn" onclick="switchTab3Section(2)">
+    <i class="fas fa-info-circle"></i> Learn More
+    </button>
+    </div>
+
+    <!-- One-Time Check Notice Section -->
+    <div class="info-section" id="one-time-check-section">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <span class="section-number">1</span>
+    </div>
+    </div>
+    <h3 class="info-heading">Important: Data Won't Update Until Renewal</h3>
+    <div class="info-content">
+    <p><span class='fun-text'><b>This data is a snapshot from your first check this year and will not update again until your plan renews on ${formatDateStringFull(variables[4][1])}.</b></span></p>
+    <p>Any changes to your coverage or benefits won't be shown here until renewal. But don’t worry — you can come back and view these saved results anytime.</p>
+    <p>We’ll notify you as soon as your new benefit data becomes available. Just enter your email below to get a reminder when your insurance renews:</p>
+    <div class="email-signup-form">
+    <div class="email-input-container">
+    <input type="email" id="email-signup" placeholder="Enter your email address" class="email-input">
+    <button class="email-submit-btn" id="email-submit-2" onclick="submitEmail()">
+    <i class="fas fa-paper-plane"></i> 
+    </button>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- Premium Service Section -->
+    <div class="info-section" id="premium-service-section">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <span class="section-number">2</span>
+    </div>
+    </div>
+    <h3 class="info-heading"><i class="fas fa-crown" style="color: #ffd700; position: relative; bottom: calc(var(--spacing-sm) * .35); font-size: calc(var(--spacing-md) * .7); background-color: #317568; padding: calc(var(--spacing-sm) * .7); border-radius: 50%;"></i> Premium: Unlimited Access To Real-Time Data </h3>
+    <div class="info-content">
+    <p><b>For just $1/month, always see the latest data, as frequently as you would like — no waiting for renewal.</b></p>
+    <ul class="benefit-list">
+    <li><i class="fas fa-check"></i> See up-to-date benefit data and verify coverage before every appointment</li>
+    <li><i class="fas fa-check"></i> Track your remaining benefits in real-time</li>
+    <li><i class="fas fa-check"></i> View updates after your visits</li>
+    <li><i class="fas fa-check"></i> No more surprises or outdated estimates</li>
+    </ul>
+    <button class="premium-upgrade-btn" onclick="upgradeToPremium()">
+    <i class="fas fa-info-circle"></i> Learn More
+    </button>
+    </div>
+    </div>
+
+
+    <!-- Share Section -->
+    <div class="info-section" id="share-section">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <span class="section-number">3</span>
+    </div>
+    </div>
+    <h3 class="info-heading">Know Someone Who Needs This?</h3>
+    <div class="info-content">
+    <p><span class='fun-text'><b>Help friends and family take control of their dental costs! Perfect for anyone who wants to:</b></span></p>
+    <ul class="benefit-list">
+    <li><i class="fas fa-check"></i> Understand Their Benefits </li>
+    <li><i class="fas fa-check"></i> Get Personalized Tips </li>
+    <li><i class="fas fa-check"></i> Become Aware of Costs </li>
+    <li><i class="fas fa-check"></i> Verify Coverage </li>
+    <li><i class="fas fa-check"></i> Find In-Network Providers </li>
+    </ul>
+
+    <div class="share-buttons">
+    <button class="share-btn text-btn" onclick="shareViaText()">
+    <i class="fas fa-sms"></i> Text a Friend
+    </button>
+    <button class="share-btn tweet-btn" onclick="shareViaX()">
+    <i class="fab fa-twitter"></i> Post on X
+    </button>
+    <button class="share-btn email-btn" onclick="shareViaEmail()">
+    <i class="fas fa-envelope"></i> Email
+    </button>
+    <button class="share-btn copy-btn" onclick="copyLink()">
+    <i class="fas fa-copy"></i> Copy Link
+    </button>
+    </div>
+    </div>
+    </div>
+
+    <!-- Provider Registration Section -->
+    <div class="info-section" id="provider-registration-section">
+    <div class="section-icon-container">
+    <div class="section-icon">
+    <span class="section-number">4</span>
+    </div>
+    </div>
+    <h3 class="info-heading">Are You a Dental Provider?</h3>
+    <div class="info-content">
+    <p><span class='fun-text'><b>Join our network directory and reach more patients!</b></span></p>
+    <p>Add your practice to our network and connect with patients seeking in-network dental care. Book a demo to get started.</i></p>
+
+    <button class="provider-learn-more-btn" onclick="showProviderModal()">
+    <i class="fas fa-info-circle"></i> Book a Demo
+    </button>
+    </div>
+    </div>
+    </div>
+    `;
+  }
+  else if (currentTab3Section === 1 && userIsPremium)
+  {
+   secondPage.innerHTML = `
+   <div id="next-steps-div">
+   <!-- Section Toggle Header -->
+   <div class="tab3-section-toggle">
+   <button class="section-btn active" onclick="switchTab3Section(1)">
+   <i class="fas fa-route"></i> Next Steps
+   </button>
+   <button class="section-btn" onclick="switchTab3Section(2)">
+   <i class="fas fa-info-circle"></i> Learn More
+   </button>
+   </div>
+
+   <!-- Premium Status Section -->
+   <div class="info-section" id="premium-status-section" style="background: linear-gradient(135deg, #BCE2C5 0%, #BCE2C5 100%); outline: calc(var(--spacing-xs) * 0.6) solid #317568; outline-offset: calc(var(--spacing-xs) * -0.6);">
+   <div class="section-icon-container">
+   <div class="section-icon" style="background-color: #317568;">
+   <i class="fas fa-crown" style="color: #ffd700; font-size: calc(var(--spacing-md) * 1.25);"></i>
+   </div>
+   </div>
+   <h3 class="info-heading" style="color: #317568;">Your Premium Membership is Active!</h3>
+   <div class="info-content">
+   <p><span class='fun-text'><b>You get unlimited access to real time data! Benefits include:</b></span></p>
+   <ul class="benefit-list">
+   <li><i class="fas fa-check"></i> Seeing up-to-date benefit data and verifying coverage before every appointment</li>
+   <li><i class="fas fa-check"></i> Tracking your remaining benefits in real-time</li>
+   <li><i class="fas fa-check"></i> Viewing updates after your visits</li>
+   <li><i class="fas fa-check"></i> No more surprises or outdated estimates</li>
+   </ul>
+   <div style="margin-top: calc(var(--spacing-md) * 1.5); display: flex; flex-direction: row; gap: calc(var(--spacing-sm) * 0.8);">
+   <button class="email-submit-btn" onclick="window.open('mailto:contact@openbookbenefits.com', '_blank')" style="background: #2980b9e6; opacity: .8; padding: calc(var(--spacing-sm) * 0.8) calc(var(--spacing-md) * 1); font-size: calc(var(--font-base) * 0.85); flex: 1; display: flex; justify-content: center; align-items: center;">
+   <i class="fas fa-headset"></i> Support
+   </button>
+   <button class="email-submit-btn" onclick="cancelPremium()" style="background: #dc2626; opacity: .7; padding: calc(var(--spacing-sm) * 0.8) calc(var(--spacing-md) * 1); font-size: calc(var(--font-base) * 0.85); flex: 1; display: flex; justify-content: center; align-items: center;">
+   <i class="fas fa-times-circle"></i> Cancel
+   </button>
+   </div>
+   <p style="margin-top: calc(var(--spacing-sm) * 0.8); font-size: calc(var(--font-base) * 0.73); color: #64748b; text-align: center; font-style: italic;">
+   You can upgrade again anytime. No recurring charges.
+   </p>
+   </div>
+   </div>
+
+   <!-- One-Time Check Notice Section -->
+   <div class="info-section" id="one-time-check-section">
+   <div class="section-icon-container">
+   <div class="section-icon">
+   <span class="section-number">1</span>
+   </div>
+   </div>
+   <h3 class="info-heading">Stay Updated on Your Benefits</h3>
+   <div class="info-content">
+   <p><span class='fun-text'><b>Your data is always fresh with Premium, but insurance plans can still change at renewal.</b></span></p>
+   <p>Get notified when your plan renews on ${formatDateStringFull(variables[4][1])} to see if there are any benefit changes or updates.</p>
+   <div class="email-signup-form">
+   <div class="email-input-container">
+   <input type="email" id="email-signup" placeholder="Enter your email address" class="email-input">
+   <button class="email-submit-btn" id="email-submit-2" onclick="submitEmail()">
+   <i class="fas fa-paper-plane"></i> 
+   </button>
+   </div>
+   </div>
+   </div>
+   </div>
+
+   <!-- Share Section -->
+   <div class="info-section" id="share-section" style="background: #D4E8F2; outline: calc(var(--spacing-xs) * 0.6) solid #2980b9e6; outline-offset: calc(var(--spacing-xs) * -0.6);">
+   <div class="section-icon-container">
+   <div class="section-icon" style="background-color: #2980b9e6;">
+   <span class="section-number">2</span>
+   </div>
+   </div>
+   <h3 class="info-heading" style="color: #2980b9e6;">Know Someone Who Needs This?</h3>
+   <div class="info-content">
+   <p><span class='fun-text'><b>Help friends and family take control of their dental costs! Perfect for anyone who wants to:</b></span></p>
+   <ul class="benefit-list">
+   <li><i class="fas fa-check"></i> Understand Their Benefits </li>
+   <li><i class="fas fa-check"></i> Get Personalized Tips </li>
+   <li><i class="fas fa-check"></i> Become Aware of Costs </li>
+   <li><i class="fas fa-check"></i> Verify Coverage </li>
+   <li><i class="fas fa-check"></i> Find In-Network Providers </li>
+   </ul>
+   <div class="share-buttons">
+   <button class="share-btn text-btn" onclick="shareViaText()">
+   <i class="fas fa-sms"></i> Text a Friend
+   </button>
+   <button class="share-btn tweet-btn" onclick="shareViaX()">
+   <i class="fab fa-twitter"></i> Post on X
+   </button>
+   <button class="share-btn email-btn" onclick="shareViaEmail()">
+   <i class="fas fa-envelope"></i> Email
+   </button>
+   <button class="share-btn copy-btn" onclick="copyLink()">
+   <i class="fas fa-copy"></i> Copy Link
+   </button>
+   </div>
+   </div>
+   </div>
+
+   <!-- Provider Registration Section -->
+   <div class="info-section" id="provider-registration-section" style="background: #f3e8ff; outline: calc(var(--spacing-xs) * 0.6) solid #8b5cf6; outline-offset: calc(var(--spacing-xs) * -0.6);">
+   <div class="section-icon-container">
+   <div class="section-icon" style="background-color: #8b5cf6;">
+   <span class="section-number">3</span>
+   </div>
+   </div>
+   <h3 class="info-heading" style="color: #8b5cf6;">Are You a Dental Provider?</h3>
+   <div class="info-content">
+   <p><span class='fun-text'><b>Join our network directory and reach more patients!</b></span></p>
+   <p>Add your practice to our network and connect with patients seeking in-network dental care. Book a demo to get started.</i></p>
+   <button class="provider-learn-more-btn" onclick="showProviderModal()">
+   <i class="fas fa-info-circle"></i> Book a Demo
+   </button>
+   </div>
+   </div>
+   </div>
+   `;
+ }
+  else //tab 3 section 2 
   {
     secondPage.innerHTML = `
     <div id="info-div">
+    <!-- Section Toggle Header -->
+    <div class="tab3-section-toggle">
+    <button class="section-btn" onclick="switchTab3Section(1)">
+    <i class="fas fa-route"></i> Next Steps
+    </button>
+    <button class="section-btn active" onclick="switchTab3Section(2)">
+    <i class="fas fa-info-circle"></i> Learn More
+    </button>
+    </div>
+
     <div class="info-section" id="insurance-info">
     <div class="section-icon-container">
     <div class="section-icon">
@@ -2855,30 +4053,147 @@ function showNext()
     </div>
     </div>
 
-    <div class="info-section" id="timing-info">
-    <div class="section-icon-container">
-    <div class="section-icon">
-    <i class="fas fa-clock"></i>
-    </div>
-    </div>
-    <h3 class="info-heading">A Note on Timing</h3>
-    <div class="info-content">
-    <p><span class='fun-text'>In the world of insurance, a given "year" starts on your plan renewal date, <i>which in your case would be <u>${formatDateStringFull(variables[4][1])}.</u></i></span></p>
-    <p> Remember this fact especially when we are referencing the frequency of procedures, or how you can split work over two years. On the subject of frequency, note that just because it's not specified, doesn't mean there isn't one. Insurances hide information.</p>  
-    <p>Strategic timing tips:</p>
-    <ul class="info-list">
-    <li><i class="fas fa-calendar-check"></i> If you have multiple procedures to get done that will cause you to run out of benefits, consider waiting for your insurance to renew to save money.</li>
-    <li><i class="fas fa-hourglass-half"></i> For non-urgent procedures, wait until your insurance renews if you are out of benefits.</li>
-    </ul>
-    </div>
-    </div>
-
-
     <div class="disclaimer">
     <p><i class="fas fa-info-circle"></i> This information is provided for educational purposes only and is not a guarantee of insurance coverage or costs. Always verify coverage with your insurance provider before undergoing any dental procedure.</p>
     </div>
-    `
+    </div>
+    `;
   }
+}
+else if (tabNumber == 4)
+{
+  secondPage.innerHTML = `
+  <div id="insights-div">
+
+  <!-- Row 1: Orthodontic Coverage (Large) -->
+  <div id="insights-row-1" class="pop-in">
+  <div id="insights-card-orthodontics" class="full-width-card">
+  <h3 class='insights-title'><i class="fas fa-magic"></i> Personalized Tip 1</h3>
+  <h4 class='insight-subtitle'>Your Orthodontic Coverage <i class="fas fa-teeth"></i></h4>
+  <p>Many plans include additional ortho benefits for treatment like braces.<br><br><b>We found <u>${variables[16][1]}</u> in regards to your ortho benefits</b>.<br>However, this often has caveats, so we would reccomend calling your insurance to ensure coverage.</p>
+  </div>
+  </div>
+
+  <!-- Row 2: Call Insurance (Large) -->
+  <div id="insights-row-2" class="pop-in">
+  <div id="insights-card-contact" class="full-width-card">
+  <h3 class='insights-title'><i class="fas fa-magic"></i> Personalized Tip 2</h3>
+  <h4 class='insight-subtitle'>Call With Questions <i class="fas fa-phone"></i></h4>
+  <p>Contact ${variables[2][1]} <b>at ${variables[17][1]}</b> to confirm orthodontic eligibility, pre-authorization requirements, and any other questions you may have.</p>
+  </div>
+  </div>
+
+  <!-- Row 3: Two Tips Side by Side -->
+  <div id="insights-row-3" class="pop-in">
+
+  <div id="insights-card-cleaning">
+  <h3 class='insights-title'><i class="fas fa-magic"></i> Pers. Tip 3</h3>
+  <h4 class='insight-subtitle'>Prevention Pays<i class="fas fa-piggy-bank"></i></h4>
+  <p>Your cleanings are covered at <b>${variables[10][1]} twice per year.</b> Use these benefits to prevent expensive problems later.</p>
+  </div>
+
+  <div id="insights-card-verification">
+  <h3 class='insights-title'><i class="fas fa-magic"></i> Pers. Tip 4</h3>
+  <h4 class='insight-subtitle'>Verify Coverage<i class="fas fa-check-circle"></i></h4>
+  <p>Your insurance is <b>currently active!</b><br>Verify coverage with openbook before every visit to avoid surprise bills.</p>
+  </div>
+
+  </div>
+
+  <!-- Row 5: Time Your Benefits (Large) -->
+  <div id="insights-row-5" class="pop-in">
+  <div id="insights-card-renewal-full" class="full-width-card">
+  <h3 class='insights-title'><i class="fas fa-magic"></i> Personalized Tip 5</h3>
+  <h4 class='insight-subtitle'>Time Your Benefits <i class="fas fa-calendar-alt"></i></h4>
+  <p>You currently have <b>${maximumRemaining}</b> in benefits remaining. This will <b>renew to ${variables[6][1]} on ${formatDateStringFull(variables[4][1])}</b>.<br><br>To get the most out of your coverage, aim to use your full benefit amount without going over. If you need multiple procedures that would exceed your limit, consider splitting them across two benefit periods. </p>
+  </div>
+  </div>
+
+  <!-- Row 6: Always Go In Network (Large) -->
+  <div id="insights-row-6" class="pop-in">
+  <div id="insights-card-timing-full" class="full-width-card">
+  <h3 class='insights-title'><i class="fas fa-magic"></i> Personalized Tip 6</h3>
+  <h4 class='insight-subtitle'>Always Go In-Network <i class="fas fa-network-wired"></i></h4>
+  <p> Find a dental provider that is in-network with ${variables[2][1]}. In-network dentists are contractually obligated to offer lower prices. The best way to make sure your dental provider is in-network is to call and ask:<br><br>"Are you guys <b>in-network</b> with ${variables[2][1]}?" </p>
+  </div>
+  </div>
+
+  </div>
+  `;
+}
+else
+{
+  secondPage.innerHTML = `
+  <div id="network-div">
+  <!-- Search Section -->
+  <div class="network-search-section">
+  <div class="network-info-header">
+  <i class="fas fa-search"></i>
+  <h3>Find ${variables[2][1]} Dentists</h3>
+  </div>
+  <p class="network-info-subtitle">Save money by choosing dentists in your <b>${variables[2][1]}</b> network. Out-of-network providers may cost significantly more.</p>
+
+  <div class="search-input-container">
+  <input type="text" class="search-input" id="location-search" placeholder="Enter ZIP code, city, or neighborhood">
+  <i class="fas fa-map-marker-alt search-input-icon"></i>
+  </div>
+
+  <div class="search-filters">
+  <select class="filter-select" id="specialty-filter">
+  <option value="">All Specialties</option>
+  <option value="general">General Dentistry</option>
+  <option value="orthodontics">Orthodontics</option>
+  <option value="oral-surgery">Oral Surgery</option>
+  <option value="endodontics">Endodontics</option>
+  <option value="periodontics">Periodontics</option>
+  <option value="pediatric">Pediatric Dentistry</option>
+  <option value="cosmetic">Cosmetic Dentistry</option>
+  </select>
+
+  <select class="filter-select" id="distance-filter">
+  <option value="25">Within 25 miles</option>
+  <option value="5">Within 5 miles</option>
+  <option value="10">Within 10 miles</option>
+  <option value="50">Within 50 miles</option>
+  </select>
+  </div>
+
+  <button class="search-button" id="search-providers">
+  <i class="fas fa-search"></i>Search Providers
+  </button>
+  </div>
+
+  <!-- Results Section -->
+  <div class="network-results-section" id="results-section" style="display: none;">
+  <div class="results-header">
+  <div class="results-count" id="results-count">0 providers found</div>
+  <select class="sort-dropdown" id="sort-results">
+  <option value="distance">Sort by Distance</option>
+  <option value="rating">Sort by Rating</option>
+  <option value="name">Sort by Name</option>
+  </select>
+  </div>
+
+  <div id="providers-container">
+  <!-- Provider cards will be dynamically inserted here -->
+  </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-results" id="loading-state" style="display: none;">
+  <div class="loading-spinner"></div>
+  <p>Searching for in-network providers...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-results" id="empty-state" style="display: none;">
+  <i class="fas fa-search"></i>
+  <h4>No providers found</h4>
+  <p>Try expanding your search area or removing filters to see more results.</p>
+  </div>
+  </div>
+  `;
+}
 }
 
 /* MAKE TAB APPEAR AS ACTIVE */
@@ -2893,10 +4208,22 @@ document.getElementById("tab2").addEventListener("click", function()
   scrollTop();
   showNext();
 });
-document.getElementById("tab3").addEventListener("click", function()
+document.getElementById("tab3").addEventListener("click", function() 
 {
   tabNumber = 3;
-  scrollTopSmallDistance();
+  scrollTop();
+  showNext();
+});
+document.getElementById("tab4").addEventListener("click", function()
+{
+  tabNumber = 4;
+  scrollTop();
+  showNext();
+});
+document.getElementById("tab5").addEventListener("click", function()
+{
+  tabNumber = 5;
+  scrollTop();
   showNext();
 });
 /* COOL FADE IN ANIMATION */
@@ -2928,35 +4255,39 @@ function testTab2Overflow() //returns true if 5+ majors AND not covered has item
 {
   // Get all coverage sections in Tab 2
   const sections = document.querySelectorAll('.coverage-section');
-  
+
   // Get the major section (index 2) and not covered section (index 3)
   const majorSection = sections[2]; // Major section
   const notCoveredSection = sections[3]; // Not covered section
-  
+
   // Count major section items
   let majorItemCount = 0;
-  if (majorSection) {
+  if (majorSection)
+  {
     const majorItems = majorSection.querySelectorAll('.coverage-item');
     const style = window.getComputedStyle(majorSection);
     const isMajorVisible = style.display !== 'none' && style.visibility !== 'hidden';
-    
-    if (isMajorVisible) {
+
+    if (isMajorVisible)
+    {
       majorItemCount = majorItems.length;
     }
   }
-  
+
   // Check if not covered section has items
   let notCoveredHasItems = false;
-  if (notCoveredSection) {
+  if (notCoveredSection)
+  {
     const notCoveredItems = notCoveredSection.querySelectorAll('.coverage-item');
     const style = window.getComputedStyle(notCoveredSection);
     const isNotCoveredVisible = style.display !== 'none' && style.visibility !== 'hidden';
-    
-    if (isNotCoveredVisible && notCoveredItems.length > 0) {
+
+    if (isNotCoveredVisible && notCoveredItems.length > 0)
+    {
       notCoveredHasItems = true;
     }
   }
-  
+
   // Return true if major section has 5+ items AND not covered section has items
   return (majorItemCount >= 5 && notCoveredHasItems);
 }
@@ -2971,17 +4302,18 @@ function makeTabActive()
   tabs.forEach(tab =>
   {
     tab.classList.remove("active-tab");
-    tab.style.opacity = .5;
+    tab.style.opacity = .7;
     const span = tab.querySelector("span");
     const icon = tab.querySelector("i");
     if (span)
     {
-      span.style.fontWeight = "600";
+      span.style.fontWeight = "400";
       span.style.color = "#9F9F9F";
       span.style.transform = "scale(1)";
     }
     if (icon)
     {
+      icon.style.fontWeight = "400";
       icon.style.color = "#9F9F9F";
       icon.style.transform = "translateY(0)";
     }
@@ -2995,31 +4327,17 @@ function makeTabActive()
   const activeIcon = activeTab.querySelector("i");
   if (activeSpan)
   {
-    activeSpan.style.fontWeight = "700";
+    activeSpan.style.fontWeight = "600";
     activeSpan.style.color = "#2980b9";
     activeSpan.style.opacity = ".9";
-    // Add nice bounce animation
-    activeSpan.style.display = "inline-block";
-    activeSpan.style.transformOrigin = "center bottom";
-    void activeSpan.offsetHeight; // Force reflow
     activeSpan.style.transition = "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease";
-    activeSpan.style.transform = "scale(1.08)";
-    setTimeout(() =>
-    {
-      activeSpan.style.transform = "scale(1)";
-    }, 300);
   }
   if (activeIcon)
   {
+    activeIcon.style.fontWeight = "600";
     activeIcon.style.color = "#2980b9";
-    activeIcon.style.opacity = ".9";
+    activeSpan.style.opacity = ".9";
     activeIcon.style.transition = "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease";
-    activeIcon.style.transform = "translateY(-4px) scale(1.15)";
-
-    setTimeout(() =>
-    {
-      activeIcon.style.transform = "translateY(0) scale(1.1)";
-    }, 300);
   }
 }
 
@@ -3043,7 +4361,7 @@ function waitForElement(selector, callback)
   });
 }
 
-function runLoadingAnimation()
+function runLoadingAnimation() //where I have how it for tab 1
 {
   waitForElement(".pop-in", () =>
   {
@@ -3102,7 +4420,7 @@ function runLoadingAnimation()
       @keyframes popIn {
         0% {
           opacity: 0;
-          transform: scale(0.9);
+          transform: scale(0.85);
         }
         70% {
           opacity: 1;
@@ -3117,7 +4435,7 @@ function runLoadingAnimation()
       @keyframes itemHopIn {
         0% { 
           opacity: 0; 
-          transform: translateY(9px) scale(0.9);
+          transform: translateY(9px) scale(0.85);
         }
         60% { 
           opacity: .9; 
@@ -3298,59 +4616,59 @@ function runLoadingAnimation()
         animStyle.id = 'date-entrance-animation';
         animStyle.textContent = `
         @keyframes date-slide-up {
-          0% {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-          70% {
-            transform: translateY(-3px);
-            opacity: 1;
-          }
-          85% {
-            transform: translateY(1px);
-          }
-          100% {
-            transform: translateY(0);
-            opacity: 1;
-          }
+         0% {
+          transform: scale(0.3);
+          opacity: 0;
         }
-
-        @keyframes clock-spin-in {
-          0% {
-            transform: rotate(45deg) scale(0.3);
-            opacity: 0;
-          }
-          65% {
-            transform: rotate(-10deg) scale(1.2);
-            opacity: 1;
-          }
-          85% {
-            transform: rotate(5deg) scale(0.95);
-          }
-          100% {
-            transform: rotate(0deg) scale(1);
-            opacity: 1;
-          }
+        60% {
+          transform: scale(1.02);
+          opacity: 1;
         }
-        `;
-        document.head.appendChild(animStyle);
+        80% {
+          transform: scale(0.95);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
-      setTimeout(() =>
-      {
-        dateText.style.opacity = "";
-        dateText.style.transform = "";
-        dateText.style.animation = "date-slide-up .85s ease-out forwards";
 
-        if (icon)
-        {
-          icon.style.opacity = "";
-          icon.style.transform = "";
-          icon.style.animation = "clock-spin-in .85s ease-out forwards";
-          icon.style.transformOrigin = "center";
+      @keyframes clock-spin-in {
+        0% {
+          transform: rotate(45deg) scale(0.3);
+          opacity: 0;
         }
-      }, 450);
+        65% {
+          transform: rotate(-10deg) scale(1.2);
+          opacity: 1;
+        }
+        85% {
+          transform: rotate(5deg) scale(0.95);
+        }
+        100% {
+          transform: rotate(0deg) scale(1);
+          opacity: 1;
+        }
+      }
+      `;
+      document.head.appendChild(animStyle);
     }
-  });
+    setTimeout(() =>
+    {
+      dateText.style.opacity = "";
+      dateText.style.transform = "";
+      dateText.style.animation = "date-slide-up .85s ease-out forwards";
+
+      if (icon)
+      {
+        icon.style.opacity = "";
+        icon.style.transform = "";
+        icon.style.animation = "clock-spin-in .85s ease-out forwards";
+        icon.style.transformOrigin = "center";
+      }
+    }, 450);
+  }
+});
 
   if (tabNumber == 1)
   {
@@ -3365,8 +4683,131 @@ function runLoadingAnimation()
     initializeTab3();
   }
   if (tabNumber == 4)
-  {}
+  {
+    initializeTab4();
+  }
+  if (tabNumber == 5)
+  {
+    initializeTab5();
+  }
 }
+
+
+function showCacheBanner(cachedAt, renewalDate) 
+{
+  // Remove any existing banner
+  const existingBanner = document.getElementById('cache-banner');
+  if (existingBanner) {
+    existingBanner.remove();
+  }
+
+  // Format the cached date
+  let cachedDateFormatted = 'recently';
+  if (cachedAt) {
+    try {
+      const date = new Date(cachedAt);
+      cachedDateFormatted = date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      cachedDateFormatted = 'recently';
+    }
+  }
+
+  // Create banner
+  const banner = document.createElement('div');
+  banner.id = 'cache-banner';
+  banner.innerHTML = `
+  <div class="cache-banner-content">
+  <div class="cache-banner-main">
+  <span class="cache-banner-text">
+  This data is from ${cachedDateFormatted} and will not update until your renewal date.
+  Get real-time updates with <span onclick=showPremiumModal() class='premium-link'>Premium.</span>
+  </span>
+  </div>
+  <button class="cache-banner-close">&times;</button>
+  </div>
+  `;
+
+  // Insert at the top of the page
+  document.body.insertBefore(banner, document.body.firstChild);
+
+  // Set initial state (completely hidden)
+  banner.style.opacity = '0';
+  banner.style.transform = 'translateY(-100%)';
+  banner.style.animation = 'none';
+
+  // First delay - start the slide down
+  setTimeout(() => {
+    banner.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease';
+    banner.style.opacity = '1';
+    banner.style.transform = 'translateY(0)';
+  }, 800); // 800ms delay
+
+
+  // Close button functionality
+  banner.querySelector('.cache-banner-close').addEventListener('click', function() {
+    banner.style.animation = 'cacheBannerSlideUp 0.3s ease-out forwards';
+    setTimeout(() => {
+      if (banner.parentNode) {
+        banner.parentNode.removeChild(banner);
+      }
+    }, 300);
+  });
+}
+
+function showPremiumBanner() 
+{
+  const existingBanner = document.getElementById('cache-banner');
+  if (existingBanner) {
+    existingBanner.remove();
+  }
+  const banner = document.createElement('div');
+  banner.id = 'cache-banner';
+  banner.innerHTML = `
+  <div class="cache-banner-content">
+  <div class="cache-banner-main">
+  <span class="cache-banner-text">
+  Your insurance data <b>is in real-time.</b><br>
+  Thank you for being a premium member!</span>
+  </span>
+  </div>
+  <button class="cache-banner-close">&times;</button>
+  </div>
+  `;
+  
+  document.body.insertBefore(banner, document.body.firstChild);
+
+  // Set initial state (completely hidden)
+  banner.style.opacity = '0';
+  banner.style.transform = 'translateY(-100%)';
+  banner.style.animation = 'none';
+
+  // First delay - start the slide down
+  setTimeout(() => {
+    banner.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease';
+    banner.style.opacity = '1';
+    banner.style.transform = 'translateY(0)';
+  }, 800); // 800ms delay
+
+
+  // Close button functionality
+  banner.querySelector('.cache-banner-close').addEventListener('click', function() {
+    banner.style.animation = 'cacheBannerSlideUp 0.3s ease-out forwards';
+    setTimeout(() => {
+      if (banner.parentNode) {
+        banner.parentNode.removeChild(banner);
+      }
+    }, 300);
+  });
+}
+
+
+
+
 
 function initializeTab1()
 {
@@ -3425,7 +4866,11 @@ function initializeTab1()
     <span class="remaining-text">remaining</span>
     </div>
     </div>
-    <p class='summary-benefits-info'> Your insurance pays a set percentage of your dental costs until your benefits run out.<br> Your percentages are shown in <b>Coverage</b>. </p>`;
+    <div id='summary-ps'>
+    <p class='summary-benefits-info'><i class="fas fa-info-circle" id='first-benefit-i'></i>Your insurance pays a set percentage of your dental costs until your benefits run out</p>
+    <p class='summary-benefits-info' id='info2'>For more information, visit the <span style='font-weight:675'>Coverage</span> tab</p>
+    </div>`
+
 
     element.innerHTML = infographicHTML;
 
@@ -3535,23 +4980,76 @@ function initializeTab1()
   });
 }
 
-function initializeTab3()
-{
-  waitForElement(".info-section", () =>
-  {
+function initializeTab3() {
+  waitForElement(".info-section", () => {
     const sections = document.querySelectorAll('.info-section');
-    sections.forEach((section, index) =>
-    {
-      setTimeout(() =>
-      {
-        section.classList.add('shown');
-      }, 250 * index); // Staggered delay
+
+    // DISABLE CSS transitions before starting JS animations
+    sections.forEach(section => {
+      section.style.transition = 'none';
     });
-    detectVisibleElements();
-    document.body.style.overflow = "auto"; //allow scrolling
+
+    // Force a reflow to ensure transitions are disabled
+    void document.body.offsetHeight;
+
+    // Add pop-in animation style if it doesn't exist yet
+    if (!document.getElementById('info-pop-in-style')) {
+      const popInStyle = document.createElement('style');
+      popInStyle.id = 'info-pop-in-style';
+      popInStyle.textContent = `
+      @keyframes infoPopInAnimation {
+        0% {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        70% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      `;
+      document.head.appendChild(popInStyle);
+    }
+
+    // Apply animation to each section with a slight delay between them
+    sections.forEach((section, index) => {
+      // Set initial state
+      section.style.opacity = "0";
+      section.style.transform = "scale(0.85)";
+      section.style.transformOrigin = "center";
+      void section.offsetWidth;
+
+      // Apply animation with increasing delay based on index
+      section.style.animation = `infoPopInAnimation 0.65s forwards ease-out`;
+      section.style.animationDelay = `${0.15 * index}s`;
+
+      // Apply final state after animation completes
+      const animationDuration = 650 + (150 * index);
+      setTimeout(() => {
+        section.style.opacity = "1";
+        section.style.transform = "scale(1)";
+        section.classList.add('shown');
+
+        // RE-ENABLE CSS transitions after JS animation completes
+        section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      }, animationDuration);
+    });
+
+    // Initialize scroll-based animations for elements that need it
+    if (currentTab3Section === 2) {
+      detectVisibleElements();
+    }
+    
+    document.body.style.overflow = "auto";
     document.body.style.touchAction = 'auto';
   });
 }
+
+
 
 function detectVisibleElements()
 {
@@ -3628,6 +5126,686 @@ function detectVisibleElements()
   // Run immediately
   checkAllElements();
 }
+
+
+
+
+function switchTab3Section(sectionNumber) 
+{
+  currentTab3Section = sectionNumber;
+  showNext(); // Refresh the content
+}
+function submitEmail() {
+  const emailInput = document.getElementById('email-signup');
+  const email = emailInput.value.trim();
+  const button = document.querySelector('#email-submit-2');
+
+  button.style.transform = 'scale(0.9)';
+  button.style.transition = 'all 0.2s ease';
+  button.disabled = true;
+  
+  // Comprehensive email validation first - should really never go to errors so it looks bettter
+  if (!email || email.length < 5 || email.length > 254 || !email.includes('@') || !email.includes('.') || email.indexOf('@') === 0 || email.indexOf('@') === email.length - 1 || email.indexOf('.') === 0 || email.indexOf('.') === email.length - 1 || email.indexOf('@') > email.lastIndexOf('.') || email.split('@').length !== 2 || email.includes('..') || email.includes('@.') || email.includes('.@') || email.includes(' ') || email.split('@')[0].length === 0 || email.split('@')[1].length === 0 || email.split('@')[1].split('.').some(part => part.length === 0) || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) 
+  {
+    button.innerHTML = '<i class="fas fa-times"></i>';
+    
+    emailInput.style.animation = 'shake2 0.4s ease-in-out';
+    setTimeout(() => {
+      emailInput.style.animation = '';
+      button.style.transform = 'scale(1)';
+      button.innerHTML = '<i class="fas fa-paper-plane"></i>';
+      button.disabled = false;
+    }, 400);
+    return;
+  }
+
+  
+  setTimeout(() => {
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  }, 0);
+  
+  // Get user data from variables array and global DOB
+  const firstName = variables[0][1]; // First Name
+  const lastName = variables[1][1];  // Last Name  
+  const renewalDate = variables[4][1]; // Renewal Date
+  
+  // Call the new email reminder API
+  fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/email-reminder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      renewalDate: renewalDate,
+      dateOfBirth: DOB
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Show success animation
+      button.style.transformOrigin = 'center';
+      button.style.transform = 'scale(0.9)';
+      
+      setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check"</i>';
+        button.style.transform = 'scale(1)';
+        showEmailSuccessPopup();
+        
+        // Reset button after success
+        setTimeout(() => {
+          button.innerHTML = '<i class="fas fa-paper-plane"></i>';
+          button.disabled = false;
+        }, 3500);
+      }, 400);
+    } else {
+      // Handle API error - back to airplane (should be very rare)
+      button.innerHTML = '<i class="fas fa-times-circle"></i>';
+      
+      emailInput.style.animation = 'shake2 0.4s ease-in-out';
+      setTimeout(() => {
+        emailInput.style.animation = '';
+        button.style.transform = 'scale(1)';
+        button.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        button.disabled = false;
+      }, 400);
+    }
+  })
+  .catch(error => {
+    // Handle any error - back to airplane (should be very rare)
+    button.innerHTML = '<i class="fas fa-times"></i>';
+    
+    emailInput.style.animation = 'shake2 0.4s ease-in-out';
+    setTimeout(() => {
+      emailInput.style.animation = '';
+      button.style.transform = 'scale(1)';
+      button.innerHTML = '<i class="fas fa-paper-plane"></i>';
+      button.disabled = false;
+    }, 400);
+  });
+}
+function showEmailSuccessPopup() 
+{
+  // Remove any existing popup
+  const existingPopup = document.querySelector('.email-success-popup');
+  if (existingPopup) {
+    existingPopup.remove();
+  }
+
+  // Create popup element
+  const popup = document.createElement('div');
+  popup.className = 'email-success-popup';
+  popup.innerHTML = `
+  <div class="email-popup-content">
+  <div class="email-popup-icon">
+  <i class="fas fa-check"></i>
+  </div>
+  <div class="email-popup-text">
+  <h4>Success!</h4>
+  <p>Email submitted successfully. We'll notify you when your benefits renew.</p>
+  </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  // Force reflow before adding show class
+  void popup.offsetHeight;
+
+  // Add show class to trigger entrance animation
+  popup.classList.add('show');
+
+  // Auto-hide the popup after delay
+  setTimeout(() => {
+    popup.classList.remove('show');
+    popup.classList.add('hide');
+    
+    setTimeout(() => {
+      if (document.body.contains(popup)) {
+        document.body.removeChild(popup);
+      }
+    }, 500);
+  }, 3500);
+}
+
+
+function providerLearnMore() 
+{
+  window.open('provider-portal.html', '_blank', 'noopener,noreferrer');
+}
+
+
+function upgradeToPremium() 
+{
+  showPremiumModal();
+}
+function showPremiumModal() 
+{
+  const modalHTML = `
+  <div class="premium-modal-overlay" id="premium-modal">
+  <div class="premium-modal">
+  <button class="premium-modal-close" onclick="closePremiumModal()">&times;</button>
+
+  <div class="premium-container">
+  <!-- Hero Section -->
+  <section class="fade-in" style="text-align: center; padding: calc(var(--spacing-lg) * 0.8) var(--spacing-md); background: linear-gradient(135deg, #317568 0%, #2d6a5e 100%); border-radius: var(--spacing-md); margin: var(--spacing-md) 0; position: relative; overflow: hidden; box-shadow: 0 calc(var(--spacing-md) * 1) calc(var(--spacing-lg) * 0.5) rgba(0,0,0,0.1);">
+  <div style="position: relative; z-index: 2; margin-bottom: var(--spacing-md);">
+  <div style="width: calc(var(--spacing-lg) * 1.6); height: calc(var(--spacing-lg) * 1.6); background: #317568; backdrop-filter: blur(10px); border: calc(var(--scale-factor) * 2px) solid rgba(255, 255, 255, 0.3); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+  <i class="fas fa-crown" style="font-size: calc(var(--font-base) * 2.2); color: #ffd700;"></i>
+  </div>
+  </div>
+  <h1 style="font-size: calc(var(--font-large) * 1.1); font-weight: 800; color: white; margin-bottom: calc(var(--spacing-md) * 0.6); position: relative; z-index: 2;">openbook Premium</h1>
+  <p style="font-size: calc(var(--font-base) * 1.1); color: rgba(255, 255, 255, 0.9); font-weight: 500; margin-bottom: calc(var(--spacing-lg) * 0.6); position: relative; z-index: 2; line-height: 1.4;">Never wait for insurance updates again</p>
+
+  <div class="price-highlight" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: var(--spacing-md); padding: var(--spacing-md); position: relative; z-index: 2; box-shadow: 0 calc(var(--spacing-sm) * 1) calc(var(--spacing-md) * 1.5) rgba(0,0,0,0.1); cursor: pointer;">
+  <div style="display: flex; align-items: baseline; justify-content: center; gap: calc(var(--spacing-sm) * 0.8); margin-bottom: calc(var(--spacing-sm) * 0.8);">
+  <span style="font-size: calc(var(--font-large) * 1.65); font-weight: 900; color: #317568;">$1</span>
+  <span style="font-size: calc(var(--font-base) * 1.2); color: #64748b; font-weight: 600;">/month</span>
+  </div>
+  <p style="font-size: calc(var(--font-base) * 0.85); color: #64748b; font-weight: 500;">Billed yearly • Cancel anytime</p>
+  </div>
+  </section>
+
+  <!-- Problem-Solution Section -->
+  <section class="fade-in" style="background: white; border-radius: var(--spacing-md); padding: calc(var(--spacing-md) * 1.5); margin: var(--spacing-md) 0; box-shadow: 0 calc(var(--spacing-xs) * 0.8) calc(var(--spacing-md) * 1.2) rgba(0,0,0,0.1); border: calc(var(--scale-factor) * 1px) solid #e5e7eb; text-align: center;">
+  <h2 style="font-size: calc(var(--font-base) * 1.45); font-weight: 700; color: #1e293b; margin-bottom: calc(var(--spacing-md) * 0.8);">Why Upgrade to Premium?</h2>
+  <p style="font-size: calc(var(--font-base) * 1.05); color: #64748b; font-weight: 500; margin-bottom: calc(var(--spacing-md) * 1.2); line-height: 1.6;">The difference is simple: with free, your benefit data updates just once per year. With Premium, get unlimited real-time updates whenever you need them.</p>
+
+  <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: calc(var(--spacing-md) * 0.8); padding: calc(var(--spacing-md) * 1.2); border: calc(var(--scale-factor) * 1px) solid #e2e8f0;">
+  <p style="font-size: calc(var(--font-base) * 0.95); line-height: 1.6; color: #1e293b; margin-bottom: var(--spacing-md);">
+  Right now, you're seeing <span style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 0; border-radius: calc(var(--spacing-sm) * 0.6); font-weight: 600; color: #92400e;">old data</span> that won't refresh until your insurance renews. Miss important coverage changes, never know your real remaining benefits, and risk surprises at appointments.
+  </p>
+  <p style="font-size: calc(var(--font-base) * 0.95); line-height: 1.6; color: #1e293b;">
+  With Premium, you get <span style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 0; border-radius: calc(var(--spacing-sm) * 0.6); font-weight: 600; color: #065f46;">unlimited real-time updates</span> so you always see current benefit information, track usage throughout the year, and never get caught off guard by coverage changes.
+  </p>
+  </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="fade-in" style="margin: calc(var(--spacing-lg) * 0.6) 0;">
+  <h2 style="font-size: calc(var(--font-base) * 1.45); font-weight: 700; color: #1e293b; text-align: center; margin-bottom: var(--spacing-md);">Free vs Premium</h2>
+  <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-md);">
+  <div style="background: white; border-radius: var(--spacing-md); padding: var(--spacing-md); text-align: center; position: relative; box-shadow: 0 calc(var(--spacing-xs) * 0.8) calc(var(--spacing-md) * 1.2) rgba(0,0,0,0.1); border: calc(var(--scale-factor) * 2px) solid #e5e7eb;">
+  <h3 style="font-size: calc(var(--font-base) * 1.1); font-weight: 700; margin-bottom: var(--spacing-md); color: #1e293b;">Free</h3>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: calc(var(--spacing-md) * 0.6) 0; border-bottom: calc(var(--scale-factor) * 1px) solid #f1f5f9; font-size: calc(var(--font-base) * 0.85);">
+  <span style="font-weight: 600; color: #1e293b;">Data Updates</span>
+  <span style="font-weight: 700; color: #ef4444;">Once/Year</span>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: calc(var(--spacing-md) * 0.6) 0; border-bottom: calc(var(--scale-factor) * 1px) solid #f1f5f9; font-size: calc(var(--font-base) * 0.85);">
+  <span style="font-weight: 600; color: #1e293b;">Real-Time Benefits</span>
+  <span style="font-weight: 700; color: #ef4444;">✗</span>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: calc(var(--spacing-md) * 0.6) 0; font-size: calc(var(--font-base) * 0.85);">
+  <span style="font-weight: 600; color: #1e293b;">Renewal Alerts</span>
+  <span style="font-weight: 700; color: #10b981;">✓</span>
+  </div>
+  </div>
+
+  <div style="background: linear-gradient(135deg, white 0%, #f0fdf4 100%); border-radius: var(--spacing-md); padding: var(--spacing-md); text-align: center; position: relative; box-shadow: 0 calc(var(--spacing-xs) * 0.8) calc(var(--spacing-md) * 1.2) rgba(0,0,0,0.1); border: calc(var(--scale-factor) * 2px) solid #317568;">
+  <div style="position: absolute; top: calc(var(--spacing-sm) * -1); left: 50%; transform: translateX(-50%); background: #317568; color: white; padding: calc(var(--spacing-xs) * 0.8) calc(var(--spacing-md) * 0.6); border-radius: calc(var(--spacing-md) * 0.6); font-size: calc(var(--font-base) * 0.73); font-weight: 700;">NEW</div>
+  <h3 style="font-size: calc(var(--font-base) * 1.1); font-weight: 700; margin-bottom: var(--spacing-md); color: #317568;">Premium</h3>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: calc(var(--spacing-md) * 0.6) 0; border-bottom: calc(var(--scale-factor) * 1px) solid #f1f5f9; font-size: calc(var(--font-base) * 0.85);">
+  <span style="font-weight: 600; color: #1e293b;">Data Updates</span>
+  <span style="font-weight: 700; color: #10b981;">Unlimited</span>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: calc(var(--spacing-md) * 0.6) 0; border-bottom: calc(var(--scale-factor) * 1px) solid #f1f5f9; font-size: calc(var(--font-base) * 0.85);">
+  <span style="font-weight: 600; color: #1e293b;">Real-Time Benefits</span>
+  <span style="font-weight: 700; color: #10b981;">✓</span>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: calc(var(--spacing-md) * 0.6) 0; font-size: calc(var(--font-base) * 0.85);">
+  <span style="font-weight: 600; color: #1e293b;">Renewal Alerts</span>
+  <span style="font-weight: 700; color: #10b981;">✓</span>
+  </div>
+  </div>
+  </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section fade-in" style="text-align: center; padding: calc(var(--spacing-lg) * 0.8) var(--spacing-md); background: white; border-radius: calc(var(--spacing-md) * 1); margin: calc(var(--spacing-lg) * 0.6) 0; box-shadow: 0 calc(var(--spacing-sm) * 2) calc(var(--spacing-lg) * 0.75) rgba(0,0,0,0.1);">
+  <h2 style="font-size: calc(var(--font-large) * 0.97); font-weight: 800; color: #1e293b; margin-bottom: calc(var(--spacing-md) * 0.6);">Ready to Upgrade?</h2>
+  <p style="font-size: calc(var(--font-base) * 1.1); color: #64748b; margin-bottom: calc(var(--spacing-lg) * 0.6); line-height: 1.4;">Join thousands who never worry about outdated dental benefits</p>
+
+  <button id="upgrade-btn" onclick="handlePremiumUpgrade()" style="background: linear-gradient(135deg, #317568 0%, #2d6a5e 100%); color: white; padding: var(--spacing-md) calc(var(--spacing-lg) * 0.64); border: none; border-radius: calc(var(--spacing-md) * 0.6); font-size: calc(var(--font-base) * 1.1); font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: calc(var(--spacing-sm) * 1); text-decoration: none; font-family: inherit; position: relative; overflow: hidden; box-shadow: 0 calc(var(--spacing-xs) * 0.8) calc(var(--spacing-md) * 1.2) rgba(0,0,0,0.15); transition: all 0.3s ease;">
+  <i class="fas fa-crown" style="font-size: calc(var(--font-base) * 1.2);"></i>
+  Upgrade to Premium
+  </button>
+
+  <div style="text-align: center; margin-top: calc(var(--spacing-md) * 1.5); padding: var(--spacing-xs); background: rgba(16, 185, 129, 0.1); border-radius: calc(var(--spacing-md) * 0.6); border: calc(var(--scale-factor) * 1px) solid rgba(16, 185, 129, 0.2);">
+  <p style="font-size: calc(var(--font-base) * 0.75); color: #10b981; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: calc(var(--spacing-sm) * 0.8);">
+  <i class="fas fa-piggy-bank"></i>
+  Save hundreds for $1 a month
+  </p>
+  </div>
+  </section>
+  </div>
+  </div>
+  </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  const modal = document.getElementById('premium-modal');
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    modal.classList.add('show');
+  }, 10);
+
+  setTimeout(() => {
+    runModalFunctions();
+  }, 10);
+}
+function runModalFunctions()
+{
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+
+    // Observe all fade-in elements
+    document.querySelectorAll('.fade-in').forEach((element) => {
+      observer.observe(element);
+    });
+    
+
+    /* Scrolls to the bottom if you click price highligh */
+    const priceHighlight = document.querySelector('.price-highlight');
+    const ctaSection = document.querySelector('.cta-section');
+
+    priceHighlight.addEventListener('click', () => {
+      ctaSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      });
+    });
+  }
+  function closePremiumModal() 
+  {
+    const modal = document.getElementById('premium-modal');
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+    setTimeout(() => {
+      modal.remove();
+    }, 400);
+  }
+
+
+
+
+
+
+
+
+
+  async function handlePremiumUpgrade() {
+    const upgradeButton = document.getElementById('upgrade-btn');
+    const originalContent = upgradeButton.innerHTML;
+
+  // Check if user already has premium
+  if (userIsPremium) {
+    alert('Upgrade failed: You already own premium!');
+    return;
+  }
+  
+  // Get user data
+  const firstName = variables?.[0]?.[1];
+  const lastName = variables?.[1]?.[1];
+  const dateOfBirth = DOB;
+  
+  // Check if we have required data
+  if (!firstName || !lastName || !dateOfBirth) {
+    alert('Upgrade failed: Please first log into your insurance benefits to buy premium');
+    return;
+  }
+
+  // Show processing state
+  upgradeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  upgradeButton.disabled = true;
+
+  try {
+    // Create renewal date
+    const nextYear = new Date();
+    nextYear.setFullYear(nextYear.getFullYear() + 1);
+    const renewalDate = `${String(nextYear.getMonth() + 1).padStart(2, '0')}/${String(nextYear.getDate()).padStart(2, '0')}/${nextYear.getFullYear()}`;
+
+    // Call Lambda to create checkout session
+    const response = await fetch('https://u4dksufwtwaxeivrmhrqqur6x40ggnsk.lambda-url.us-east-1.on.aws/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+        dateOfBirth: dateOfBirth,
+        renewalDate: renewalDate
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const sessionData = await response.json();
+    
+    // Open Stripe checkout in new tab
+    window.open(sessionData.checkoutUrl, '_blank');
+    
+    
+    // Reset button immediately
+    upgradeButton.innerHTML = originalContent;
+    upgradeButton.disabled = false;
+
+  } catch (error) {
+    console.error('Payment error:', error);
+    
+    // Reset button
+    upgradeButton.innerHTML = originalContent;
+    upgradeButton.disabled = false;
+    
+    alert('Payment failed: ' + error.message + '. Please try again.');
+  }
+}
+
+
+
+
+
+function checkPaymentStatus() 
+{
+  const urlParams = new URLSearchParams(window.location.search);
+  const status = urlParams.get('status');
+  if (status === 'success') 
+  {
+    // Show success banner
+    const banner = document.createElement('div');
+    banner.id = 'cache-banner';
+    banner.innerHTML = `
+    <div class="cache-banner-content">
+    <div class="cache-banner-main">
+    <span class="cache-banner-text">
+    Your insurance data <b>is in real-time.</b><br>
+    Thank you for being a premium member!</span>
+    </span>
+    </div>
+    <button class="cache-banner-close">&times;</button>
+    </div>
+    `;
+
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    // Set initial state (completely hidden)
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(-100%)';
+    banner.style.animation = 'none';
+
+    // First delay - start the slide down
+    setTimeout(() => {
+      banner.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease';
+      banner.style.opacity = '1';
+      banner.style.transform = 'translateY(0)';
+    }, 800); // 800ms delay
+
+
+    // Close button functionality
+    banner.querySelector('.cache-banner-close').addEventListener('click', function() {
+      banner.style.animation = 'cacheBannerSlideUp 0.3s ease-out forwards';
+      setTimeout(() => {
+        if (banner.parentNode) {
+          banner.parentNode.removeChild(banner);
+        }
+      }, 300);
+    });
+  }
+  else if (status === 'cancelled') 
+  {
+    // Show cancelled message
+    const banner = document.createElement('div');
+    banner.style.cssText = `
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    background: #EF4444; 
+    color: white; 
+    text-align: center; 
+    padding: 15px; 
+    z-index: 99999;
+    font-weight: bold;
+    `;
+    banner.innerHTML = '❌ Payment was cancelled. You can try upgrading again anytime.';
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 8000);
+  }
+  if (status) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
+window.addEventListener('load', checkPaymentStatus);
+if (document.readyState === 'complete') {
+  checkPaymentStatus();
+}
+
+
+
+/*
+async function handlePremiumUpgrade() 
+{
+  const upgradeButton = document.getElementById('upgrade-btn');
+  const originalContent = upgradeButton.innerHTML;
+  
+  // Check if user data exists
+  const firstName = variables?.[0]?.[1];
+  const lastName = variables?.[1]?.[1];
+  const dateOfBirth = DOB;
+  const renewalDate = variables?.[4]?.[1];
+  
+  // Processing animation
+  upgradeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  upgradeButton.disabled = true;
+  upgradeButton.style.opacity = '0.7';
+  
+  try {
+    console.log('Attempting premium upgrade for:', firstName, lastName);
+    
+    // Make the API call directly here
+    const response = await fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/email-reminder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+        dateOfBirth: dateOfBirth,
+        renewalDate: renewalDate,
+        upgradeToPremium: true
+      })
+    });
+
+    console.log('Response status:', response.status);
+    const data = await response.json();
+    console.log('Response data:', data);
+
+    if (userIsPremium)
+    {
+      alert(`Upgrade failed: You already own premium!`);
+      upgradeButton.innerHTML = '<i class="fas fa-check"></i> Premium Activated!';
+      upgradeButton.style.backgroundColor = '#10b981';
+      setTimeout(() =>{
+        showPremiumBanner();
+          //tabNumber = 3; //go to tab 3 to confirm it is active
+          showNext();
+          scrollTop();
+          closePremiumModal();
+        }, 1600);
+    }
+    else if (data.success) {
+      // Success animation
+      upgradeButton.innerHTML = '<i class="fas fa-check"></i> Premium Activated!';
+      upgradeButton.style.backgroundColor = '#10b981';
+      
+      // Close modal after success
+      setTimeout(() => {
+        userIsPremium = true; 
+        const existingBanner = document.getElementById('cache-banner');
+        if (existingBanner) {
+          existingBanner.remove();
+        }
+        showPremiumBanner();
+        //tabNumber = 3; //go to tab 3 to confirm it is active
+        showNext();
+        scrollTop();
+        closePremiumModal();
+      }, 1600);
+      
+    } 
+    else 
+    {
+      // Error handling
+      upgradeButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Upgrade Failed';
+      upgradeButton.style.backgroundColor = '#ef4444';
+      
+      alert(`Upgrade failed: Please first log into your insurance benefits to buy premium`);
+      setTimeout(() => {
+        closePremiumModal();
+      }, 400);
+      
+      // Reset after delay
+      setTimeout(() => {
+        upgradeButton.innerHTML = originalContent;
+        upgradeButton.style.backgroundColor = '';
+        upgradeButton.disabled = false;
+        upgradeButton.style.opacity = '';
+      }, 3000);
+    }
+    
+  } 
+  catch (error) 
+  {
+    console.error('Premium upgrade error:', error);
+    
+    // Error animation
+    upgradeButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+    upgradeButton.style.backgroundColor = '#ef4444';
+    
+    alert('An error occurred during the upgrade process. Please try again.');
+    
+    // Reset after delay
+    setTimeout(() => {
+      upgradeButton.innerHTML = originalContent;
+      upgradeButton.style.backgroundColor = '';
+      upgradeButton.disabled = false;
+      upgradeButton.style.opacity = '';
+    }, 3000);
+  }
+}
+*/
+
+async function cancelPremium() 
+{
+  if (!confirm('Are you sure you want to cancel Premium?\n\n• You\'ll lose real-time data updates\n• Data will only refresh on your renewal date\n\nYou can upgrade again anytime.')) {
+    return;
+  }
+  const button = event.target;
+  const originalContent = button.innerHTML;
+  try {
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    button.disabled = true;
+    
+    const response = await fetch('https://gutqn1nstl.execute-api.us-east-1.amazonaws.com/prod/email-reminder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: variables[0][1],
+        lastName: variables[1][1],
+        dateOfBirth: DOB,
+        renewalDate: variables[4][1], 
+        downgradePremium: true
+      })
+    });
+    const data = await response.json();
+    if (data.success) {
+      // Success state
+      button.innerHTML = '<i class="fas fa-check"></i> Cancelled!';
+      button.style.backgroundColor = '#10b981';
+      
+      // Update global state and refresh
+      setTimeout(() => {
+        userIsPremium = false;
+        showNext();
+        scrollTop();
+        const existingBanner = document.getElementById('cache-banner');
+        if (existingBanner) {
+          existingBanner.remove();
+        }
+        showCacheBanner();
+        //do other stuff linke banner management and such
+      }, 1500);
+      
+    } else {
+      throw new Error(data.error || 'Cancellation failed');
+    }
+  } catch (error) {
+    console.error('Cancellation error:', error);
+    button.innerHTML = originalContent;
+    button.disabled = false;
+    alert('Cancellation failed. Please try again or contact support.');
+  }
+}
+
+
+
+
+
+
+function shareViaText() 
+{
+  message = "";
+  const url = window.location.href;
+  window.open(`sms:?body=${encodeURIComponent(message + ' ' + url)}`);
+}
+function shareViaX() 
+{
+  message = "";
+  const url = window.location.href;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(url)}`);
+}
+function shareViaEmail() 
+{
+  message = "";
+  const subject = "Check out this dental insurance tool";
+  const body = "I found this helpful tool that explains dental insurance benefits and helps avoid surprise bills. Thought you might find it useful!\n\n" + window.location.href;
+  window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+}
+function copyLink() 
+{
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const button = document.querySelector('.copy-btn');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    button.style.backgroundColor = '#27ae60';
+
+    setTimeout(() => {
+      button.innerHTML = originalText;
+      button.style.backgroundColor = '';
+    }, 2000);
+  });
+}
+
+
+
+// Cal.com integration
+function showProviderModal() {
+  window.open('https://cal.com/arion-7dq23t/30min?overlayCalendar=true', '_blank', 'width=800,height=600');
+}
+
 
 function initializeTab2()
 {
@@ -3782,24 +5960,31 @@ function processTab2Items()
 
   // NEW: Move root canals and extractions from basic to major if their booleans are true
   const coverageSections = document.querySelectorAll(".coverage-section");
-  if (coverageSections.length >= 3) {
+  if (coverageSections.length >= 3)
+  {
     const basicSection = coverageSections[1]; // Basic section (index 1)
     const majorSection = coverageSections[2]; // Major section (index 2)
-    
-    if (basicSection && majorSection) {
+
+    if (basicSection && majorSection)
+    {
       const basicItems = basicSection.querySelectorAll(".coverage-item");
       const majorGrid = majorSection.querySelector(".coverage-grid");
-      
-      if (majorGrid) {
-        basicItems.forEach(item => {
+
+      if (majorGrid)
+      {
+        basicItems.forEach(item =>
+        {
           const nameElement = item.querySelector(".coverage-name");
-          if (nameElement) {
+          if (nameElement)
+          {
             const procedureName = nameElement.textContent.toLowerCase();
-            
+
             // Check if this is a root canal and should be moved to major
-            if (rootCanalMajor && procedureName.includes("root canal")) {
+            if (rootCanalMajor && procedureName.includes("root canal"))
+            {
               // Remove from basic section
-              if (item.parentNode) {
+              if (item.parentNode)
+              {
                 item.parentNode.removeChild(item);
               }
               // Add to major section
@@ -3808,11 +5993,13 @@ function processTab2Items()
               item.style.opacity = 0;
               item.style.animationDelay = `${0.1 * majorGrid.children.length}s`;
             }
-            
+
             // Check if this is an extraction and should be moved to major
-            if (extMajor && (procedureName.includes("extract") || procedureName.includes("extrac-"))) {
+            if (extMajor && (procedureName.includes("extract") || procedureName.includes("extrac-")))
+            {
               // Remove from basic section
-              if (item.parentNode) {
+              if (item.parentNode)
+              {
                 item.parentNode.removeChild(item);
               }
               // Add to major section
@@ -3847,15 +6034,17 @@ function processTab2Items()
 
   // Handle not covered section display logic
   const notCoveredSection = coverageSections[3];
-  if (notCoveredSection) {
+  if (notCoveredSection)
+  {
     const notCoveredGrid = notCoveredSection.querySelector(".coverage-grid");
-    
+
     // If no items were found/moved to the not covered section, hide the section
     if (!notCoveredGrid || notCoveredGrid.children.length === 0)
     {
       notCoveredSection.style.display = 'none';
     }
-    else {
+    else
+    {
       // Handle multiple rows when more than 4 items
       const itemCount = notCoveredGrid.children.length;
 
@@ -3903,102 +6092,107 @@ function processTab2Items()
 
   for (let i = 0; i < coverageSections.length; i++)
   {
-  // Skip hidden sections
-  if (coverageSections[i].style.display === 'none')
-  {
-    continue;
-  }
+    // Skip hidden sections
+    if (coverageSections[i].style.display === 'none')
+    {
+      continue;
+    }
 
-  const section = coverageSections[i];
-  if (!section) continue;
+    const section = coverageSections[i];
+    if (!section) continue;
 
-  const grid = section.querySelector(".coverage-grid");
-  if (!grid) continue;
+    const grid = section.querySelector(".coverage-grid");
+    if (!grid) continue;
 
-  const items = grid.querySelectorAll(".coverage-item");
-  const itemCount = items.length;
+    const items = grid.querySelectorAll(".coverage-item");
+    const itemCount = items.length;
 
-  if (itemCount > 0)
-  {
-    // Special handling for major section (index 2) and not covered section (index 3)
-    if (i === 2 || i === 3) {
-      // Handle multiple rows when more than 4 items (same as not covered logic)
-      
-      // Set up grid properties
-      grid.style.display = "grid";
-      grid.style.rowGap = "10px";
-      grid.style.columnGap = "5px"; // Consistent with other sections
-
-      // Calculate columns and rows
-      const maxColumns = Math.min(itemCount, 4);
-      grid.style.gridTemplateColumns = `repeat(${maxColumns}, 1fr)`;
-
-      // If we have more than 4 items, explicitly set the rows
-      if (itemCount > 4)
+    if (itemCount > 0)
+    {
+      // Special handling for major section (index 2) and not covered section (index 3)
+      if (i === 2 || i === 3)
       {
-        const rowCount = Math.ceil(itemCount / 4);
-        grid.style.gridTemplateRows = `repeat(${rowCount}, auto)`;
-      }
+        // Handle multiple rows when more than 4 items (same as not covered logic)
 
-      // Calculate width for centering - USE CONSISTENT VALUES
-      const itemWidth = 91.5; // Width of each item in px (same as other sections)
-      const gap = 4; // Gap between items in px (same as other sections)
-      const newWidth = (maxColumns * itemWidth) + ((maxColumns - 1) * gap);
+        // Set up grid properties
+        grid.style.display = "grid";
+        grid.style.rowGap = "10px";
+        grid.style.columnGap = "5px"; // Consistent with other sections
 
-      // Apply the precise width to center perfectly
-      grid.style.maxWidth = `${newWidth}px`;
-      grid.style.margin = "0 auto";
+        // Calculate columns and rows
+        const maxColumns = Math.min(itemCount, 4);
+        grid.style.gridTemplateColumns = `repeat(${maxColumns}, 1fr)`;
 
-      // Remove the left offset for items when less than 4
-      if (itemCount < 4 && itemCount > 0)
-      {
-        Array.from(grid.children).forEach(child =>
+        // If we have more than 4 items, explicitly set the rows
+        if (itemCount > 4)
         {
-          child.style.left = ""; // Remove any left positioning
-        });
-      }
+          const rowCount = Math.ceil(itemCount / 4);
+          grid.style.gridTemplateRows = `repeat(${rowCount}, auto)`;
+        }
 
-      // Add more vertical spacing between sections if we have multiple rows
-      if (itemCount > 4)
+        // Calculate width for centering - USE CONSISTENT VALUES
+        const itemWidth = 91.5; // Width of each item in px (same as other sections)
+        const gap = 4; // Gap between items in px (same as other sections)
+        const newWidth = (maxColumns * itemWidth) + ((maxColumns - 1) * gap);
+
+        // Apply the precise width to center perfectly
+        grid.style.maxWidth = `${newWidth}px`;
+        grid.style.margin = "0 auto";
+
+        // Remove the left offset for items when less than 4
+        if (itemCount < 4 && itemCount > 0)
+        {
+          Array.from(grid.children).forEach(child =>
+          {
+            child.style.left = ""; // Remove any left positioning
+          });
+        }
+
+        // Add more vertical spacing between sections if we have multiple rows
+        if (itemCount > 4)
+        {
+          section.style.paddingBottom = "15px";
+        }
+      }
+      else
       {
-        section.style.paddingBottom = "15px";
+        // Original logic for preventive and basic sections (single row only)
+        // Set grid to match exact number of items
+        grid.style.gridTemplateColumns = `repeat(${itemCount}, 1fr)`;
+
+        // Calculate exact width needed - USE CONSISTENT VALUES
+        const itemWidth = 91.5; // Width of each item in px
+        const gap = 4; // Gap between items in px
+        const newWidth = (itemCount * itemWidth) + ((itemCount - 1) * gap);
+
+        // Apply the precise width to center perfectly
+        grid.style.maxWidth = `${newWidth}px`;
+        grid.style.margin = "0 auto";
       }
-    }
-    else {
-      // Original logic for preventive and basic sections (single row only)
-      // Set grid to match exact number of items
-      grid.style.gridTemplateColumns = `repeat(${itemCount}, 1fr)`;
-
-      // Calculate exact width needed - USE CONSISTENT VALUES
-      const itemWidth = 91.5; // Width of each item in px
-      const gap = 4; // Gap between items in px
-      const newWidth = (itemCount * itemWidth) + ((itemCount - 1) * gap);
-
-      // Apply the precise width to center perfectly
-      grid.style.maxWidth = `${newWidth}px`;
-      grid.style.margin = "0 auto";
     }
   }
-}
 
   const majorSection = coverageSections[2]; // Major section (index 2)
   const notCoveredSection2 = coverageSections[3]; // Not Covered section (index 3)
-  
-  if (majorSection) 
+
+  if (majorSection)
   {
     const majorGrid = majorSection.querySelector(".coverage-grid");
     const majorItemCount = majorGrid ? majorGrid.querySelectorAll(".coverage-item").length : 0;
-    
+
     // Check if Not Covered section is hidden or has no items
-    const notCoveredVisible = notCoveredSection2 && 
-    notCoveredSection2.style.display !== 'none' && 
+    const notCoveredVisible = notCoveredSection2 &&
+    notCoveredSection2.style.display !== 'none' &&
     notCoveredSection2.querySelector(".coverage-grid") &&
     notCoveredSection2.querySelector(".coverage-grid").children.length > 0;
-    
+
     // Add margin bottom if major has more than 4 items and no Not Covered section
-    if (majorItemCount > 4 && !notCoveredVisible) {
-      majorSection.style.marginBottom = "80px";
-    } else {
+    if (majorItemCount > 4 && !notCoveredVisible)
+    {
+      majorSection.style.marginBottom = "calc(var(--spacing-lg)*1.7)";
+    }
+    else
+    {
       // Reset margin if conditions aren't met
       majorSection.style.marginBottom = "";
     }
@@ -4006,30 +6200,31 @@ function processTab2Items()
 
 
   // delete empty sections
-  allSections.forEach((section, index) => {
+  allSections.forEach((section, index) =>
+  {
     const grid = section.querySelector('.coverage-grid');
     const items = grid ? grid.querySelectorAll('.coverage-item') : [];
 
-  // If section has no items, hide it
-  if (items.length === 0) {
-    section.style.display = 'none';
-    section.classList.add('empty-section');
-    const headingText = section.querySelector('.coverage-heading')?.textContent || `Section ${index}`;
-  } else {
-    // Make sure visible sections are displayed
-    section.style.display = '';
-    section.classList.remove('empty-section');
-  }
-});
+    // If section has no items, hide it
+    if (items.length === 0)
+    {
+      section.style.display = 'none';
+      section.classList.add('empty-section');
+      const headingText = section.querySelector('.coverage-heading')?.textContent || `Section ${index}`;
+    }
+    else
+    {
+      // Make sure visible sections are displayed
+      section.style.display = '';
+      section.classList.remove('empty-section');
+    }
+  });
 
 
 
   // Modify showProcedurePopup function to handle not-covered items
   updateShowProcedurePopupFunction();
 }
-
-
-
 
 
 
@@ -4155,7 +6350,8 @@ function setupPopupInfoTooltip()
   if (firstClick)
   {
     firstClick = false;
-    setTimeout (() => {
+    setTimeout(() =>
+    {
       showTooltip();
     }, 250);
   }
@@ -4353,51 +6549,51 @@ function setupTabEventListeners()
 }
 
 
-function addPulseAnimationAfterDelay() 
+function addPulseAnimationAfterDelay()
 {
-  if (window.tooltipDismissed) 
+  if (window.tooltipDismissed)
   {
     return;
   }
-  if (!document.getElementById('click-tooltip-style')) 
+  if (!document.getElementById('click-tooltip-style'))
   {
     const style = document.createElement('style');
     style.id = 'click-tooltip-style';
     style.textContent = `
-    .click-hint-tooltip 
-    {
+    .click-hint-tooltip {
       position: absolute;
-      background: #f1f8f3;
-      padding: 6px 12px;
-      color: #888;
-      border-radius: 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+      padding: 8px 14px;
+      border-radius: 8px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 600;
       font-family: "Montserrat", sans-serif;
       white-space: nowrap;
       z-index: 1000;
-      box-shadow: 
-      0 8px 32px rgba(49, 117, 104, 0.2),
-      0 4px 16px rgba(49, 117, 104, 0.15),
-      0 2px 8px rgba(0, 0, 0, 0.1);
       opacity: 0;
       transform: translateY(20px) scale(0.8);
-      transition: none; /* Disable during entrance */
+      transition: none;
       pointer-events: none;
-      letter-spacing: 0.3px;
-      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
+      letter-spacing: 0.4px;
+      box-shadow: 
+      0 8px 32px rgba(49, 117, 104, 0.25),
+      0 4px 16px rgba(49, 117, 104, 0.15),
+      0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 2px solid rgba(49, 117, 104, 0.2);
+      color: #888;
+      font-weight: 750;
     }
-    .click-hint-tooltip::after 
-    {
+
+    .click-hint-tooltip::after {
       content: '';
-      opacity: .9;
       position: absolute;
-      top: -6px;
+      top: -8px;
       left: 50%;
       transform: translateX(-50%);
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-bottom: 6px solid #f1f8f3;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid #ffffff;
+      filter: drop-shadow(0 -2px 4px rgba(49, 117, 104, 0.1));
     }
 
 
@@ -4454,17 +6650,21 @@ function addPulseAnimationAfterDelay()
   }
 
   // Wait for coverage items to be loaded, then show tooltip
-  setTimeout(() => 
+  setTimeout(() =>
   {
     showClickTooltip();
   }, 600);
 
   // Set up click listener to dismiss tooltip
-  if (!window.tooltipClickListenerAdded) {
-    document.addEventListener('click', function(e) {
+  if (!window.tooltipClickListenerAdded)
+  {
+    document.addEventListener('click', function(e)
+    {
       let target = e.target;
-      while (target && target !== document) {
-        if (target.classList && target.classList.contains('coverage-item')) {
+      while (target && target !== document)
+      {
+        if (target.classList && target.classList.contains('coverage-item'))
+        {
           removeClickTooltip(1);
           window.tooltipDismissed = true;
           break;
@@ -4476,9 +6676,11 @@ function addPulseAnimationAfterDelay()
   }
 }
 
-function showClickTooltip() {
+function showClickTooltip()
+{
   // Only show if we're on coverage tab and tooltip hasn't been dismissed
-  if (tabNumber !== 2 || window.tooltipDismissed) {
+  if (tabNumber !== 2 || window.tooltipDismissed)
+  {
     return;
   }
 
@@ -4504,7 +6706,7 @@ function showClickTooltip() {
   // Get the section's position on the page
   const sectionRect = firstSection.getBoundingClientRect();
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  
+
   // Calculate vertical position relative to the section but positioned from page top
   const relativeTop = cleaningItem.offsetTop + cleaningItem.offsetHeight + 10;
   const absoluteTop = sectionRect.top + scrollTop + relativeTop;
@@ -4512,39 +6714,45 @@ function showClickTooltip() {
   // Keep original horizontal centering exactly as it was
   tooltip.style.left = '50%';
   tooltip.style.marginLeft = '-' + (tooltip.offsetWidth / 2) + 'px';
-  
+
   // Use absolute positioning from page top
   tooltip.style.top = absoluteTop + 'px';
   tooltip.style.position = 'absolute';
-  tooltip.style.zIndex = '999999999';
+  tooltip.style.zIndex = '9999';
 
   // Start with loading animation
-  requestAnimationFrame(() => {
+  requestAnimationFrame(() =>
+  {
     tooltip.classList.add('loading');
   });
 
   // After loading animation completes, switch to floating
-  setTimeout(() => {
+  setTimeout(() =>
+  {
     tooltip.classList.remove('loading');
     tooltip.classList.add('floating');
   }, 600);
 }
 
 
-function removeClickTooltip(type) {
+function removeClickTooltip(type)
+{
   const tooltip = document.getElementById('coverage-click-tooltip');
   var wait = 0;
-  if (type==1)
+  if (type == 1)
   {
-    wait=300;
+    wait = 300;
   }
-  if (tooltip) {
+  if (tooltip)
+  {
     // Use smooth exit animation
     tooltip.classList.remove('loading', 'floating');
     tooltip.classList.add('exiting');
-    
-    setTimeout(() => {
-      if (tooltip.parentNode) {
+
+    setTimeout(() =>
+    {
+      if (tooltip.parentNode)
+      {
         tooltip.parentNode.removeChild(tooltip);
       }
     }, wait); // Match exit animation duration
@@ -4552,10 +6760,12 @@ function removeClickTooltip(type) {
 }
 
 // Enhanced tab switching with better cleanup
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function()
+{
   const tabs = document.querySelectorAll('.tab');
-  tabs.forEach((tab, index) => {
-    tab.addEventListener('click', function() 
+  tabs.forEach((tab, index) =>
+  {
+    tab.addEventListener('click', function()
     {
       removeClickTooltip(2);
     });
@@ -4639,7 +6849,7 @@ function createProcedurePopup()
   // Add touch feedback to close button
   closeBtn.addEventListener("touchstart", () =>
   {
-    closeBtn.style.color = "#2980b9";
+    closeBtn.style.color = "#2980b9e6";
     closeBtn.style.transform = "scale(0.9)";
   });
 
@@ -4964,7 +7174,32 @@ function showProcedurePopup(item)
   {
     if (frequencyText && frequencyText !== "No specified limits")
     {
-      frequencyInfo.innerHTML = "Your insurance will cover this procedure no more than <b>" + frequencyText + "</b>.";
+      // Add clarification for procedures that apply per tooth
+      let clarification = "";
+      const procedureName = titleElement.textContent;
+
+      if (procedureName === "Crowns" || procedureName === "Root Canals" || procedureName === "Fillings" || procedureName === "Extractions")
+      {
+        clarification = " per tooth";
+      }
+      else if (procedureName === "Bridges")
+      {
+        clarification = " per bridge";
+      }
+      else if (procedureName === "Dentures")
+      {
+        clarification = " per arch (upper or lower)";
+      }
+      else if (procedureName === "Implants")
+      {
+        clarification = " per implant";
+      }
+      else if (procedureName === "Deep Cleanings")
+      {
+        clarification = " per quadrant";
+      }
+
+      frequencyInfo.innerHTML = "Your insurance will cover this procedure no more than <b>" + frequencyText + clarification + "</b>.";
     }
     else
     {
@@ -5359,7 +7594,8 @@ function enhancePopupWithCalculator()
 
     newAddButton.addEventListener('click', function()
     {
-      if (Object.keys(calculatorItems).length === 0) { //if calculator not set up yet
+      if (Object.keys(calculatorItems).length === 0)
+      { //if calculator not set up yet
         scrollTopAndLock();
       }
       document.body.style.overflow = "hidden";
@@ -5915,11 +8151,13 @@ function updateCalculatorDisplay()
       }
       const visibleSectionsCount = 4 - emptySections.length;
 
-      var spacing = 77; /* higher is closer */
+      const scaleFactor = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scale-factor'));
+
+      var spacing = Math.round(77 * scaleFactor); /* higher is closer */
       var topSpacing = 100;
       if (visibleSectionsCount === 4 || rootCanalMajor || extMajor)
       {
-        spacing = 81;
+        spacing = Math.round(81 * scaleFactor);
         topSpacing = 90;
 
       }
@@ -5928,7 +8166,7 @@ function updateCalculatorDisplay()
       notCoveredSection.querySelectorAll('.coverage-item').length : 0;
       if (notCoveredItemCount >= 5 && notCoveredItemCount < 8)
       {
-        spacing = 81;
+        spacing = Math.round(81 * scaleFactor);
         topSpacing = 90;
       }
 
@@ -5967,14 +8205,16 @@ function updateCalculatorDisplay()
           return adjustment;
         };
 
-        if (!window.storedOverflowOffset && testTab2Overflow()) 
+        if (!window.storedOverflowOffset && testTab2Overflow())
         {
           const majorSection = document.querySelectorAll('.coverage-section')[2];
           const notCoveredSection = document.querySelectorAll('.coverage-section')[3];
-          if (majorSection && notCoveredSection) {
+          if (majorSection && notCoveredSection)
+          {
             const majorItems = majorSection.querySelectorAll('.coverage-item');
             const notCoveredItems = notCoveredSection.querySelectorAll('.coverage-item');
-            if (majorItems.length > 0 && notCoveredItems.length > 0) {
+            if (majorItems.length > 0 && notCoveredItems.length > 0)
+            {
               const lastMajorItem = majorItems[majorItems.length - 1];
               const firstNotCoveredItem = notCoveredItems[0];
               const majorY = lastMajorItem.getBoundingClientRect().top;
@@ -6016,7 +8256,7 @@ function updateCalculatorDisplay()
 
 
             // Then in your positioning logic:
-            if (testTab2Overflow() && sectionIndex === 3) 
+            if (testTab2Overflow() && sectionIndex === 3)
             {
               position = topSpacing - (spacing * (sectionIndex - (adjustment + 1))) - window.storedOverflowOffset;
             }
@@ -6326,9 +8566,9 @@ function addCalculatorStyles()
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 2px solid #2980b9;
+    border: 2px solid #2980b9e6;
     background: white;
-    color: #2980b9;
+    color: #2980b9e69;
     font-size: 24px;
     display: flex;
     align-items: center;
@@ -6349,12 +8589,12 @@ function addCalculatorStyles()
   }
 
   .add-to-estimate-btn {
-    background-color: #2980b9;
+    background-color: #2980b9e6;
     color: white;
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
-    font-weight: 750;
+    font-weight: 700;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -6379,7 +8619,7 @@ function addCalculatorStyles()
     position: absolute;
     top: -10px;
     right: -10px;
-    background-color: #2980b9;
+    background-color: #2980b9e6;
     color: white;
     border-radius: 50%;
     width: 24px;
@@ -6990,7 +9230,8 @@ function scrollTopSmallDistance()
 const tabContentCache = {
   tab1: null,
   tab2: null,
-  tab3: null
+  tab3: null,
+  tab4: null
 };
 
 // Function to preload tab1 in the background
@@ -7014,12 +9255,12 @@ function preloadTabContent()
     <div id="summary-card-eligibility">
     <h3 class='summary-title'>Eligibility </h3>
     <span class='eligibility-status-row'><i class="fas fa-check-circle"></i><h4>Active</h4></span>
-    <br>Your insurance is <b>${variables[2][1]}</b>.
+    <br>Your insurance is ${variables[2][1]}.
     </div> 
     <div id="summary-card-renewal" class="pop-in">
     <h3 class='summary-title' id='renewal-summary-title'> Renewal </h3>
     <span class='renewal-status-row'><i class="fas fa-clock"></i><h4>${formatDateString(variables[4][1])}</h4></span>
-    With the same plan, your benefits will renew to <b>${variables[6][1]}.</b>
+    With the same plan, your benefits will renew to <b>${variables[6][1]}</b>
     </div>
     </div>
     <div id='summary-card-benefits' class='benefits-transition'>
@@ -7084,7 +9325,7 @@ function preloadTabContent()
       <span class="remaining-text">remaining</span>
       </div>
       </div>
-      <p class='summary-benefits-info'> Your insurance pays a set percentage of your dental costs until your benefits run out.<br> Your percentages are shown in <b>Coverage</b>. </p>`;
+      <p class='summary-benefits-info'> Your insurance pays a set percentage of your dental costs until your benefits run out. Your percentages are shown in <b>Coverage</b>. </p>`;
       benefitsCard.innerHTML = infographicHTML;
     }
 
@@ -7344,5 +9585,1074 @@ document.getElementById("tab3").addEventListener("click", function()
     }
   }, 300);
 });
+document.getElementById("tab4").addEventListener("click", function()
+{
+  // Wait for content to load
+  setTimeout(function()
+  {
+    // Enable scrolling
+    document.body.style.overflow = 'auto';
+    document.body.style.touchAction = 'auto';
+
+    // Set header to fixed position
+    const header = document.querySelector('.header');
+    if (header)
+    {
+      header.style.position = 'fixed';
+      header.style.top = '0';
+      header.style.width = '100%';
+      header.style.zIndex = '1000';
+    }
+  }, 300);
+});
+
+
+
+
+function initializeTab4()
+{
+  // Simple pop-in animations like the summary tab
+  waitForElement(".pop-in", () =>
+  {
+    const popInElements = document.querySelectorAll(".pop-in");
+
+    // Add pop-in animation style if it doesn't exist yet
+    if (!document.getElementById('insights-pop-in-style'))
+    {
+      const popInStyle = document.createElement('style');
+      popInStyle.id = 'insights-pop-in-style';
+      popInStyle.textContent = `
+      @keyframes popInAnimation {
+        0% {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        70% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      `;
+      document.head.appendChild(popInStyle);
+    }
+
+    // Apply animation to each element with a slight delay between them
+    popInElements.forEach((element, index) =>
+    {
+      // Set initial state
+      element.style.opacity = "0";
+      element.style.transform = "scale(0.85)";
+      element.style.transformOrigin = "center";
+      void element.offsetWidth;
+
+      // Apply animation with increasing delay based on index
+      element.style.animation = `popInAnimation 0.65s forwards ease-out`;
+      element.style.animationDelay = `${0.15 * index}s`;
+
+      // Apply final state after animation completes
+      const animationDuration = 650 + (150 * index);
+      setTimeout(() =>
+      {
+        element.style.opacity = "1";
+        element.style.transform = "scale(1)";
+      }, animationDuration);
+    });
+  });
+}
+
+
+
+
+window.initGoogleMaps = function()
+{
+  if (!window.currentLocationInput)
+  {
+    const inputContainer = document.querySelector('.search-input-container');
+    if (inputContainer)
+    {
+      window.currentLocationInput = inputContainer;
+    }
+  }
+  if (window.currentLocationInput)
+  {
+    setupGoogleAutocomplete(window.currentLocationInput);
+  }
+};
+
+function initializeTab5()
+{
+  waitForElement(".network-search-section", () =>
+  {
+    const popInElements = document.querySelectorAll(".network-search-section");
+    if (!document.getElementById('network-pop-in-style'))
+    {
+      const popInStyle = document.createElement('style');
+      popInStyle.id = 'network-pop-in-style';
+      popInStyle.textContent = `
+      @keyframes networkPopInAnimation {
+        0% {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        70% {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      `;
+      document.head.appendChild(popInStyle);
+    }
+
+    // Apply animation to each element with a slight delay between them
+    popInElements.forEach((element, index) =>
+    {
+      // Set initial state
+      element.style.opacity = "0";
+      element.style.transform = "scale(0.85)";
+      element.style.transformOrigin = "center";
+      void element.offsetWidth;
+      // Apply animation with increasing delay based on index
+      element.style.animation = `networkPopInAnimation 0.65s forwards ease-out`;
+      element.style.animationDelay = `${0.15 * index}s`;
+      // Apply final state after animation completes
+      const animationDuration = 650 + (150 * index);
+      setTimeout(() =>
+      {
+        element.style.opacity = "1";
+        element.style.transform = "scale(1)";
+      }, animationDuration);
+    });
+  });
+
+  // Set up the search functionality
+  setTimeout(setupSearchFunctionality, 100);
+  setTimeout(addRippleToSearchButton, 150);
+
+  function setupSearchFunctionality()
+  {
+    const searchButton = document.getElementById('search-providers');
+    const locationInput = document.getElementById('location-search');
+    const specialtyFilter = document.getElementById('specialty-filter');
+    const distanceFilter = document.getElementById('distance-filter');
+    const sortSelect = document.getElementById('sort-results');
+    const resultsSection = document.getElementById('results-section');
+    const loadingState = document.getElementById('loading-state');
+    const emptyState = document.getElementById('empty-state');
+    const resultsCount = document.getElementById('results-count');
+    const providersContainer = document.getElementById('providers-container');
+
+
+    const GOOGLE_MAPS_API_KEY = 'AIzaSyBPDGPtuHWhAhL15HOrFGIynFp0AMKxMiY';
+    window.currentLocationInput = locationInput;
+    if (window.google && window.google.maps && window.google.maps.places)
+    {
+      setupGoogleAutocomplete(locationInput);
+    }
+
+    // Setup Google Places Autocomplete (NEW API)
+    function setupGoogleAutocomplete(inputContainer)
+    {
+      // Check if we got an input element or a container
+      console.log('Input container type:', inputContainer.tagName);
+      let inputElement;
+      if (inputContainer.tagName === 'INPUT')
+      {
+        inputElement = inputContainer;
+      }
+      else
+      {
+        // It's a container, find or create the input
+        inputElement = inputContainer.querySelector('input');
+
+        if (!inputElement)
+        {
+          inputElement = document.createElement('input');
+          inputElement.type = 'text';
+          inputElement.className = 'search-input';
+          inputElement.placeholder = 'Enter city, state, or zip code';
+          inputContainer.appendChild(inputElement);
+        }
+      }
+      const autocomplete = new google.maps.places.Autocomplete(inputElement,
+      {
+        types: ['geocode'],
+        componentRestrictions:
+        {
+          country: 'us'
+        }
+      });
+
+      // Implement scroll locking
+      inputElement.addEventListener('focus', function()
+      {
+        console.log('Input focused - locking scroll');
+      });
+
+      // Handle place selection
+      google.maps.event.addListener(autocomplete, 'place_changed', function()
+      {
+        const place = autocomplete.getPlace();
+        if (place.geometry)
+        {
+          // Store coordinates globally so performSearch can use them
+          window.currentUserCoordinates = {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+            formatted_address: place.formatted_address
+          };
+
+          console.log('Coordinates from autocomplete:', window.currentUserCoordinates);
+        }
+
+        /* //make it automatically search
+        if (typeof performSearch === 'function') 
+        {
+          setTimeout(performSearch, 0);
+        }
+        */
+      });
+
+      return autocomplete;
+    }
+
+
+
+
+    // Enhanced distance calculation (when you have real coordinates)
+    function calculateDistance(userLat, userLng, providerLat, providerLng)
+    {
+      const R = 3959; // Earth's radius in miles
+      const dLat = (providerLat - userLat) * Math.PI / 180;
+      const dLng = (providerLng - userLng) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(userLat * Math.PI / 180) * Math.cos(providerLat * Math.PI / 180) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // Get user's insurance from variables - this is the key filtering logic
+    function getInNetworkProviders()
+    {
+      const userInsurance = variables[2][1]; // e.g., "Delta Dental", "Blue Cross", etc.
+
+      if (!userInsurance || userInsurance === "Not Found")
+      {
+        return []; // No providers if insurance not found
+      }
+
+      // Filter providers by insurance network
+      return window.providerData.filter(provider =>
+      {
+        return provider.insuranceNetworks &&
+        provider.insuranceNetworks.includes(userInsurance) && provider.acceptingPatients === true;
+      });
+    }
+
+    function createProviderCard(provider) 
+    {
+      const stars = '★'.repeat(Math.floor(provider.rating)) +
+      (provider.rating % 1 >= 0.5 ? '☆' : '') +
+      '☆'.repeat(5 - Math.ceil(provider.rating));
+
+      // Handle name display based on whether there's a separate practice name
+      const displayName = provider.practice ? provider.name : provider.name;
+      const practiceName = provider.practice || "";
+
+      // Create specialty tags for header
+      const specialtyTags = provider.primarySpecialties.map(specialty =>
+        `<div class="specialty-tag-header">${specialty}</div>`
+        ).join('');
+
+      // Create amenities list (show first 6)
+      const topAmenities = provider.amenities.slice(0, 6).map(amenity =>
+        `<span class="amenity-tag">${amenity}</span>`
+        ).join('');
+
+      // Awards display - only show first award as badge in header
+      const firstAward = provider.awards.length > 0 ? provider.awards[0] : null;
+      const awardsInline = '';
+
+      // Combine credentials (experience, languages, awards count)
+      const credentialsItems = [
+      {
+        icon: 'fas fa-user-md',
+        text: provider.credentials.experience
+      },
+      provider.credentials.languages.length > 1 ? {
+        icon: 'fas fa-language',
+        text: provider.credentials.languages.slice(0, 2).join(', ')
+      } : null,
+      provider.awards.length > 0 ? {
+        icon: 'fas fa-award',
+        text: provider.awards[0]
+      } : null
+      ].filter(Boolean);
+
+      const credentialsHTML = credentialsItems.map(item =>
+        `<div class="credential-item">
+        <i class="${item.icon}"></i>
+        <span>${item.text}</span>
+        </div>`
+        ).join('');
+
+      return `
+      <div class="provider-card">
+      ${awardsInline}
+      <div class="provider-distance"><i class="fas fa-map-marker-alt"></i> &nbsp;${provider.distance}</div>
+      <!-- Header Section with Photo, Name, Address, and Basic Info -->
+      <div class="provider-header">
+      <div class="provider-image-container">
+      <img src="${provider.image}" alt="${provider.name}" class="provider-image">
+      <!-- Distance badge positioned over image -->
+      </div>
+
+      <div class="provider-main-info">
+      <h4 class="provider-name">${displayName}</h4>
+      ${practiceName ? `<div class="practice-name">${practiceName}</div>` : ''}
+      <!-- Specialty tags -->
+      <div class="provider-specialties-header">
+      ${specialtyTags}
+      </div>
+
+      <!-- Address section - clickable for directions -->
+      <div class="provider-address-section" onclick="getDirections('${provider.address}')">
+      <i class="fas fa-map-marker-alt address-icon"></i>
+      <span class="address-text">${provider.address}</span>
+      </div>
+
+      </div>
+      </div>
+
+      <!-- Rating Section -->
+      <div class="provider-rating-section">
+      <div class="provider-rating-compact">
+      <span class="rating-stars">${stars}</span>
+      <span class="rating-value">${provider.rating}</span>
+      <span class="review-count">(${provider.reviewCount} reviews)</span>
+      </div>
+      </div>
+
+      <!-- Combined credentials section -->
+      <div class="provider-credentials-combined">
+      ${credentialsHTML}
+      </div>
+
+      <!-- Description Section -->
+      <div class="provider-description">
+      <p>"${provider.description}"</p>
+      </div>
+
+      <!-- Amenities Section -->
+      <div class="provider-amenities">
+      <div class="amenities-label">Office Features</div>
+      ${topAmenities}
+      ${provider.amenities.length > 6 ? `<span class="amenity-more">+${provider.amenities.length - 6} more</span>` : ''}
+      </div>
+
+      <!-- Photo Gallery Preview -->
+      ${provider.photos.length > 0 ? `
+        <div class="photo-gallery-preview">
+        <span class="gallery-label">Office Photos</span>
+        <div class="gallery-images">
+        ${provider.photos.slice(0, 4).map((photo, index) => 
+          `<img src="${photo}" alt="Office photo ${index + 1}" class="gallery-thumb" onclick="openPhotoGallery(${provider.id}, ${index})">`
+          ).join('')}
+        ${provider.photos.length > 4 ? 
+          `<div class="gallery-more" onclick="openPhotoGallery(${provider.id}, 4)">
+          <span>+${provider.photos.length - 4}</span>
+          </div>` : ''}
+          </div>
+          </div>` : ''}
+
+          <!-- Action Buttons -->
+          <div class="provider-actions">
+          <div class="provider-actions-row-1">
+          <a href="tel:${provider.phone}" class="action-button call-button">
+          <i class="fas fa-phone"></i> Call Now
+          </a>
+          <button class="action-button directions-button" onclick="getDirections('${provider.address}')">
+          <i class="fas fa-directions"></i> Directions
+          </button>
+          </div>
+          <div class="provider-actions-row-2">
+          <a href="https://${provider.website}" target="_blank" class="action-button website-button">
+          <i class="fas fa-globe"></i> Visit Website
+          </a>
+          <button class="action-button details-button" onclick="showProviderDetails(${provider.id})">
+          <i class="fas fa-info-circle"></i> More Details
+          </button>
+          </div>
+          </div>
+          </div>
+          `;
+        }
+
+        function displayProviders(providers) 
+        {
+          const providersContainer = document.getElementById('providers-container');
+          const resultsCount = document.getElementById('results-count');
+
+          if (!providersContainer) return;
+
+          providersContainer.innerHTML = '';
+
+          if (providers.length === 0) {
+            showEmptyState();
+            return;
+          }
+
+          providers.forEach((provider, index) => {
+            const cardHTML = createProviderCard(provider);
+            providersContainer.insertAdjacentHTML('beforeend', cardHTML);
+
+            const card = providersContainer.lastElementChild;
+
+        // Enhanced animation with stagger
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(60px) scale(0.95)';
+        card.style.filter = 'blur(5px)';
+
+        // Force reflow
+        void card.offsetWidth;
+
+        // Apply enhanced slide up animation with stagger
+        setTimeout(() => {
+          card.style.transition = 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
+          card.style.transform = 'translateY(0) scale(1)';
+          card.style.opacity = '1';
+          card.style.filter = 'blur(0)';
+          
+          // Add subtle bounce effect after main animation
+          setTimeout(() => {
+            card.style.transform = 'translateY(-4px) scale(1.02)';
+            setTimeout(() => {
+              card.style.transform = 'translateY(0) scale(1)';
+            }, 200);
+          }, 600);
+          
+        }, 120 * index); // Stagger delay increased for better effect
+      });
+
+          const userInsurance = variables[2][1];
+          resultsCount.innerHTML = `${providers.length} in-network provider${providers.length !== 1 ? 's' : ''} found with <strong>${userInsurance}</strong>`;
+          showResultsSection();
+        }
+
+    // Function to show loading state
+    function showLoadingState()
+    {
+      resultsSection.style.display = 'none';
+      emptyState.style.display = 'none';
+      loadingState.style.display = 'block';
+    }
+
+    // Function to show results section
+    function showResultsSection()
+    {
+      loadingState.style.display = 'none';
+      emptyState.style.display = 'none';
+      resultsSection.style.display = 'block';
+    }
+
+    // Function to show empty state
+    function showEmptyState()
+    {
+      loadingState.style.display = 'none';
+      resultsSection.style.display = 'none';
+      emptyState.style.display = 'block';
+
+      // Update empty state message for insurance-specific context
+      const emptyStateElement = document.getElementById('empty-state');
+      if (emptyStateElement)
+      {
+        const userInsurance = variables[2][1];
+        emptyStateElement.innerHTML = `
+        <i class="fas fa-search"></i>
+        <h4>No ${userInsurance} providers found</h4>
+        <p>Try expanding your search area or contact ${userInsurance} directly for additional in-network providers in your area.</p>
+        `;
+      }
+    }
+
+    // Function to filter providers by specialty and distance
+    function filterProviders(providers, specialty, distance)
+    {
+      let filtered = [...providers];
+
+      // Filter by specialty
+      if (specialty)
+      {
+        filtered = filtered.filter(provider =>
+          provider.specialties.some(spec =>
+            spec.toLowerCase().includes(specialty.toLowerCase()) ||
+            (specialty === 'general' && spec.toLowerCase().includes('general'))
+            )
+          );
+      }
+
+      // Filter by distance - THIS IS THE KEY PART
+      const maxDistance = parseInt(distance);
+      filtered = filtered.filter(provider =>
+      {
+        // Parse the distance string "X.X miles" to get just the number
+        const providerDistance = parseFloat(provider.distance.replace(' miles', ''));
+        return providerDistance <= maxDistance;
+      });
+
+      return filtered;
+    }
+
+    // Function to sort providers
+    function sortProviders(providers, sortBy)
+    {
+      const sorted = [...providers];
+
+      switch (sortBy)
+      {
+        case 'distance':
+        return sorted.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        case 'rating':
+        return sorted.sort((a, b) => b.rating - a.rating);
+        case 'name':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+        default:
+        return sorted;
+      }
+    }
+
+    // Enhanced search functionality that only shows in-network providers
+    async function performSearch()
+    {
+      const location = locationInput.value.trim();
+      const specialty = specialtyFilter.value;
+      const distance = distanceFilter.value;
+      const sortBy = sortSelect.value;
+
+      // Show results if any text is entered in location field
+      if (!location)
+      {
+        // Add shake animation to input
+        locationInput.style.animation = 'shake2 0.5s ease-in-out';
+        setTimeout(() =>
+        {
+          locationInput.style.animation = '';
+        }, 500);
+        return;
+      }
+      showLoadingState();
+
+      // Get coordinates for real distance calculation (optional enhancement)
+      let userCoordinates = window.currentUserCoordinates || null;
+      try
+      {
+        if (userCoordinates)
+        {
+          console.log('Coordinates found:', userCoordinates);
+        }
+      }
+      catch (error)
+      {
+        console.log('Using sample distances instead of real coordinates');
+      }
+
+
+      setTimeout(() =>
+      {
+        let inNetworkProviders = getInNetworkProviders();
+        if (userCoordinates && inNetworkProviders.length > 0)
+        {
+          inNetworkProviders = inNetworkProviders.map(provider =>
+          {
+            const realDistance = calculateDistance(
+              userCoordinates.lat, userCoordinates.lng,
+              provider.lat, provider.lng
+              );
+            return {
+              ...provider,
+              distance: `${realDistance.toFixed(1)} miles`
+            };
+          });
+        }
+
+        let results = filterProviders(inNetworkProviders, specialty, distance);
+        results = sortProviders(results, sortBy);
+        displayProviders(results);
+        setTimeout(() => scrollToFirstProvider(), 0);
+      }, 750)
+    }
+
+    function scrollToFirstProvider() 
+    {
+      requestAnimationFrame(() => {
+        const firstProvider = document.querySelector('#providers-container .provider-card:first-child') ||
+        document.querySelector('.provider-card:first-child');
+        let goTo = "";
+
+        if (firstProvider) {
+          goTo = document.querySelector('.network-results-section');
+        } else {
+          goTo = document.querySelector('.empty-results');
+        }
+        
+        if (goTo) {
+          // Get the actual position after animations
+          const rect = goTo.getBoundingClientRect();
+          const currentScrollY = window.pageYOffset;
+
+          // Calculate the target position with better offset
+          const headerHeight = document.querySelector('.header-container')?.offsetHeight || 80;
+          const extraPadding = 30; // Increased padding for better spacing
+          const targetY = currentScrollY + rect.top - headerHeight - extraPadding;
+
+          // Enhanced smooth scroll with custom easing
+          const startY = window.pageYOffset;
+          const distance = Math.max(0, targetY) - startY;
+          const duration = 800; // Longer duration for smoother feel
+          let startTime = null;
+
+          function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+          }
+
+          function scrollAnimation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
+            const ease = easeInOutCubic(progress);
+            
+            window.scrollTo(0, startY + (distance * ease));
+            
+            if (progress < 1) {
+              requestAnimationFrame(scrollAnimation);
+            }
+          }
+          requestAnimationFrame(scrollAnimation);
+        }
+      });
+    }
+
+
+    // Event listeners
+    searchButton.addEventListener('click', performSearch);
+
+    locationInput.addEventListener('keypress', function(e)
+    {
+      if (e.key === 'Enter')
+      {
+        performSearch();
+      }
+    });
+    sortSelect.addEventListener('change', function()
+    {
+      if (resultsSection.style.display !== 'none')
+      {
+        const sortBy = this.value;
+
+        // Get current provider data from displayed cards
+        const currentProviders = Array.from(providersContainer.children).map(card =>
+        {
+          // Extract provider data from the card
+          return {
+            element: card,
+            name: card.querySelector('.provider-name').textContent,
+            rating: parseFloat(card.querySelector('.rating-value').textContent),
+            distance: parseFloat(card.querySelector('.provider-distance').textContent.replace(' miles', ''))
+          };
+        });
+
+        // Sort the array
+        switch (sortBy)
+        {
+          case 'distance':
+          currentProviders.sort((a, b) => a.distance - b.distance);
+          break;
+          case 'rating':
+          currentProviders.sort((a, b) => b.rating - a.rating);
+          break;
+          case 'name':
+          currentProviders.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        }
+
+        // Reorder DOM elements
+        currentProviders.forEach(provider =>
+        {
+          providersContainer.appendChild(provider.element);
+        });
+      }
+    });
+    // Add shake animation to CSS if not exists
+    if (!document.getElementById('shake-animation'))
+    {
+      const shakeStyle = document.createElement('style');
+      shakeStyle.id = 'shake-animation';
+      shakeStyle.textContent = `
+      @keyframes shake2 {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+      `;
+      document.head.appendChild(shakeStyle);
+    }
+  }
+}
+
+// Helper function for directions (opens in maps app)
+function getDirections(address) 
+{
+  const encodedAddress = encodeURIComponent(address);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // Try to open in native maps app with fallback
+    const mapsUrl = `https://maps.google.com/maps?daddr=${encodedAddress}`;
+    const appleUrl = `http://maps.apple.com/?daddr=${encodedAddress}`;
+    
+    // Try Apple Maps first on iOS devices
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.open(appleUrl, '_system');
+      // Fallback to Google Maps after a short delay
+      setTimeout(() => {
+        window.open(mapsUrl, '_blank');
+      }, 1000);
+    } else {
+      window.open(mapsUrl, '_blank');
+    }
+  } 
+  else 
+  {
+    // Open in Google Maps web
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
+  }
+}
+
+
+
+
+/* HELPER FUNCTIONS FOR MODALS */
+
+function openPhotoGallery(providerId, startIndex = 0)
+{
+  const provider = window.providerData.find(p => p.id === providerId);
+  if (!provider || !provider.photos.length) return;
+
+  // Create modal overlay
+  const modal = document.createElement('div');
+  modal.className = 'photo-modal-overlay';
+  modal.innerHTML = `
+  <div class="photo-modal">
+  <button class="photo-modal-close">&times;</button>
+  <div class="photo-modal-content">
+  <img src="${provider.photos[startIndex]}" alt="Office photo" class="photo-modal-image" id="modal-image">
+  <div class="photo-modal-nav">
+  <button class="photo-nav-btn prev-btn" onclick="changePhoto(-1)">&#8249;</button>
+  <span class="photo-counter">${startIndex + 1} / ${provider.photos.length}</span>
+  <button class="photo-nav-btn next-btn" onclick="changePhoto(1)">&#8250;</button>
+  </div>
+  </div>
+  <div class="photo-thumbnails">
+  ${provider.photos.map((photo, index) => 
+    `<img src="${photo}" alt="Thumbnail ${index + 1}" class="photo-thumb ${index === startIndex ? 'active' : ''}" onclick="selectPhoto(${index})">`
+    ).join('')}
+  </div>
+  </div>
+  `;
+
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+
+  // Store current photo index and provider data
+  window.currentPhotoIndex = startIndex;
+  window.currentPhotos = provider.photos;
+
+  // Close modal functionality
+  modal.querySelector('.photo-modal-close').addEventListener('click', closePhotoModal);
+  modal.addEventListener('click', (e) =>
+  {
+    if (e.target === modal) closePhotoModal();
+  });
+}
+
+// Function to change photo in gallery
+function changePhoto(direction)
+{
+  window.currentPhotoIndex += direction;
+
+  if (window.currentPhotoIndex < 0)
+  {
+    window.currentPhotoIndex = window.currentPhotos.length - 1;
+  }
+  else if (window.currentPhotoIndex >= window.currentPhotos.length)
+  {
+    window.currentPhotoIndex = 0;
+  }
+
+  updateModalPhoto();
+}
+
+// Function to select specific photo
+function selectPhoto(index)
+{
+  window.currentPhotoIndex = index;
+  updateModalPhoto();
+}
+
+// Function to update modal photo
+function updateModalPhoto()
+{
+  const modalImage = document.getElementById('modal-image');
+  const counter = document.querySelector('.photo-counter');
+  const thumbnails = document.querySelectorAll('.photo-thumb');
+
+  if (modalImage && counter)
+  {
+    modalImage.src = window.currentPhotos[window.currentPhotoIndex];
+    counter.textContent = `${window.currentPhotoIndex + 1} / ${window.currentPhotos.length}`;
+
+    // Update thumbnail active state
+    thumbnails.forEach((thumb, index) =>
+    {
+      thumb.classList.toggle('active', index === window.currentPhotoIndex);
+    });
+  }
+}
+
+// Function to close photo modal
+function closePhotoModal()
+{
+  const modal = document.querySelector('.photo-modal-overlay');
+  if (modal)
+  {
+    modal.remove();
+    document.body.style.overflow = 'auto';
+  }
+}
+
+// Function to show provider details modal
+function showProviderDetails(providerId)
+{
+  const provider = window.providerData.find(p => p.id === providerId);
+  if (!provider) return;
+
+  // Create detailed modal
+  const modal = document.createElement('div');
+  modal.className = 'details-modal-overlay';
+  modal.innerHTML = `
+  <div class="details-modal">
+  <div class="details-modal-header">
+  <h3>${provider.practice ? provider.name : provider.name}</h3>
+  ${provider.practice ? `<p class="practice-name-modal">${provider.practice}</p>` : ''}
+  <button class="details-modal-close">&times;</button>
+  </div>
+
+  <div class="details-modal-content">
+  <!-- Credentials Section -->
+  <div class="details-section">
+  <h4><i class="fas fa-graduation-cap"></i> Education & Credentials</h4>
+  <div class="credentials-info">
+  <p><strong>Education:</strong> ${provider.credentials.education}</p>
+  <p><strong>Experience:</strong> ${provider.credentials.experience}</p>
+  <p><strong>Certifications:</strong> ${provider.credentials.certifications.join(', ')}</p>
+  <p><strong>Languages:</strong> ${provider.credentials.languages.join(', ')}</p>
+  </div>
+  </div>
+
+  <!-- Services Section -->
+  <div class="details-section">
+  <h4><i class="fas fa-tools"></i> Services Offered</h4>
+  <div class="services-grid">
+  ${provider.allServices.map(service => 
+    `<span class="service-tag">${service}</span>`
+    ).join('')}
+  </div>
+  </div>
+
+  <!-- Office Hours Section -->
+  <div class="details-section">
+  <h4><i class="fas fa-clock"></i> Office Hours</h4>
+  <div class="hours-grid">
+  ${Object.entries(provider.hours).map(([day, hours]) => 
+    `<div class="hours-row">
+    <span class="day">${day.charAt(0).toUpperCase() + day.slice(1)}:</span>
+    <span class="time">${hours}</span>
+    </div>`
+    ).join('')}
+  </div>
+  </div>
+
+  <!-- Amenities Section -->
+  <div class="details-section">
+  <h4><i class="fas fa-star"></i> Office Features</h4>
+  <div class="amenities-grid">
+  ${provider.amenities.map(amenity => 
+    `<span class="amenity-tag-detailed">${amenity}</span>`
+    ).join('')}
+  </div>
+  </div>
+
+  <!-- Insurance Section -->
+  <div class="details-section">
+  <h4><i class="fas fa-shield-alt"></i> Insurances In-Network</h4>
+  <div class="insurance-grid">
+  ${provider.insuranceNetworks.map(insurance => 
+    `<span class="insurance-tag">${insurance}</span>`
+    ).join('')}
+  </div>
+  </div>
+
+  ${provider.awards.length > 0 ? `
+    <!-- Awards Section -->
+    <div class="details-section">
+    <h4><i class="fas fa-award"></i> Awards & Recognition</h4>
+    <div class="awards-list">
+    ${provider.awards.map(award => 
+      `<div class="award-item"><i class="fas fa-trophy"></i> ${award}</div>`
+      ).join('')}
+    </div>
+    </div>` : ''}
+    </div>
+    </div>
+    `;
+
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+
+  // Close modal functionality
+  modal.querySelector('.details-modal-close').addEventListener('click', closeDetailsModal);
+  modal.addEventListener('click', (e) =>
+  {
+    if (e.target === modal) closeDetailsModal();
+  });
+}
+
+// Function to close details modal
+function closeDetailsModal()
+{
+  const modal = document.querySelector('.details-modal-overlay');
+  if (modal)
+  {
+    modal.remove();
+    document.body.style.overflow = 'auto';
+  }
+}
+
+
+// Add ripple effect to search provider button (works with dynamically created elements)
+function addRippleToSearchButton() {
+  // Get the search provider button
+  const searchButton = document.getElementById('search-providers');
+  
+  // Only proceed if the button exists and doesn't already have ripple
+  if (!searchButton || searchButton.querySelector('.ripple-container')) return;
+
+  // Add ripple container to the button
+  const rippleContainer = document.createElement('div');
+  rippleContainer.className = 'ripple-container';
+  searchButton.appendChild(rippleContainer);
+
+  // Track if touch event occurred to prevent mouse event duplication
+  let touchStarted = false;
+
+  // Function to create ripple effect (identical to submit button)
+  function createRipple(event) {
+    // Prevent double ripple on devices that fire both touch and mouse events
+    if (event.type === 'mousedown' && touchStarted) {
+      return;
+    }
+    
+    if (event.type === 'touchstart') {
+      touchStarted = true;
+      // Reset touch flag after a delay
+      setTimeout(() => {
+        touchStarted = false;
+      }, 500);
+    }
+
+    // Remove any existing ripples
+    const existingRipples = rippleContainer.querySelectorAll('.ripple');
+    existingRipples.forEach(ripple => {
+      ripple.remove();
+    });
+
+    // Create new ripple element
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    rippleContainer.appendChild(ripple);
+
+    // Get position and size data
+    const buttonRect = searchButton.getBoundingClientRect();
+    const diameter = Math.max(buttonRect.width, buttonRect.height);
+    const radius = diameter / 2;
+
+    // Get coordinates for the ripple center
+    // For touch events, use the first touch point
+    let x, y;
+
+    if (event.touches && event.touches[0]) {
+      // Touch event
+      x = event.touches[0].clientX - buttonRect.left;
+      y = event.touches[0].clientY - buttonRect.top;
+    } else {
+      // Mouse event
+      x = event.clientX - buttonRect.left;
+      y = event.clientY - buttonRect.top;
+    }
+
+    // If coordinates are not available (keyboard event or programmatic trigger)
+    // center the ripple
+    if (isNaN(x) || isNaN(y)) {
+      x = buttonRect.width / 2;
+      y = buttonRect.height / 2;
+    }
+
+    // Style the ripple with the calculated dimensions
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+    ripple.style.left = `${x - radius}px`;
+    ripple.style.top = `${y - radius}px`;
+
+    // Add active class to the button (optional but adds to the effect)
+    searchButton.classList.add('button-pressed');
+
+    // Remove ripple after animation completes
+    setTimeout(() => {
+      ripple.remove();
+
+      // Remove active class if button is no longer being pressed
+      if (!searchButton.matches(':active')) {
+        searchButton.classList.remove('button-pressed');
+      }
+    }, 750); // Match the ripple animation duration
+  }
+
+  // Add event listeners for both mouse and touch events (identical to submit button)
+  searchButton.addEventListener('mousedown', createRipple);
+  searchButton.addEventListener('touchstart', createRipple, {
+    passive: true
+  });
+
+  // Remove active class when button is released (identical to submit button)
+  searchButton.addEventListener('mouseup', () => {
+    setTimeout(() => {
+      searchButton.classList.remove('button-pressed');
+    }, 150);
+  });
+
+  searchButton.addEventListener('touchend', () => {
+    setTimeout(() => {
+      searchButton.classList.remove('button-pressed');
+    }, 150);
+  });
+}
+
 
 

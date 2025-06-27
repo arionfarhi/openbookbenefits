@@ -346,7 +346,7 @@
 
 .popup-content.preventive .info-tooltip-icon 
 {
-  color: #239f8a;
+  color: #317568;
 }
 .popup-content.basic .info-tooltip-icon 
 {
@@ -463,12 +463,12 @@
 /* Color Scheme: Preventive */
 .popup-icon.preventive
 {
-  color: #239f8a;
+  color: #317568;
 }
 .popup-content.preventive .additional-info b, 
 .popup-content.preventive .frequency-info b
 {
-  color: #239f8a;
+  color: #317568;
 }
 .popup-content.preventive .copay-section
 {
@@ -477,31 +477,31 @@
 }
 .popup-content.preventive .copay-amount
 {
-  color: #239f8a;
+  color: #317568;
 }
 .popup-content.preventive .quantity-btn
 {
-  color: #239f8a;
-  border-color: #239f8a;
+  color: #317568;
+  border-color: #317568;
 }
 .popup-content.preventive .add-to-estimate-btn
 {
-  background-color: #239f8a;
+  background-color: #317568;
 }
 .popup-content.preventive .coverage-item
 {
   background-color: #f1f8f3;
   border: 2px solid #e2efe7;
-  color: #239f8a;
+  color: #317568;
 }
 .popup-content.preventive .section-title i
 {
-  color: #239f8a;
+  color: #317568;
 }
 .popup-content.preventive .additional-info
 {
   background-color: #f0f9f6;
-  border-left: 4px solid #239f8a;
+  border-left: 4px solid #317568;
 }
 /* Color Scheme: Basic */
 .popup-icon.basic

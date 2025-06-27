@@ -1,71 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-  <link rel= "stylesheet" href= "index.css">
-  <link rel= "stylesheet" href= "next.css">
-  <link rel="stylesheet" href= "popup.css">
-  <link rel="stylesheet" href= "query.css">
-
-
-  <!-- Favicons -->
+  
+  <!-- FAVICONS -->
   <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <link rel="icon" href="images/icon.svg" type="image/svg+xml">
+  <!-- ASSETS & PERFORMANCE -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="next.css">
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="query.css">
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPDGPtuHWhAhL15HOrFGIynFp0AMKxMiY&libraries=places&callback=initGoogleMaps"></script>
+  <!-- Stylesheet optimization -->
+  <link rel="preload" href="index.css" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 
-  <!-- SEO -->
-  <title>Free Insurance Benefits Checker & Verification Tool | openbook </title>
-  <meta name="title" content="Free Insurance Benefits Checker & Verification Tool | openbook">
-  <link rel="canonical" href="https://www.openbookbenefits.com/"> <!-- says this is the main website for google-->
-  <meta name="description" content="Check your insurance benefits instantly. See coverage, remaining benefits, and copay estimates — plus tips to maximize your plan.">
-  <meta name="keywords" content="dental insurance, benefits checker, insurance verification, insurance coverage, copay calculator, Delta Dental, BlueCross BlueShield">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
+
+
+  <!-- CORE SEO -->
+  <title>Free Dental Insurance Checker: Verify Benefits Instantly | openbook</title>
+  <meta name="description" content="Check your dental insurance benefits for free in minutes. Verify coverage, estimate copays, find in-network dentists, and get personalized money-saving tips. HIPAA compliant.">
+  <meta name="keywords" content="dental insurance checker, verify dental benefits, dental coverage, insurance verification, dental copay estimator">
+  <!-- ENHANCED SEO TAGS -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="language" content="en-US">
   <meta name="author" content="openbook">
-  <!-- for when you share via text and such-->
-  <meta property="og:title" content="Free Insurance Benefits Checker & Verification Tool | openbook">
-  <meta property="og:description" content="Instantly verify your insurance coverage, remaining benefits, and copay estimates — plus get tips to maximize your plan.">
-  <meta property="og:image" content="https://www.openbookbenefits.com/images/share.jpg"> <!-- make this better soon that shows what we do -->
-  <meta property="og:url" content="https://www.openbookbenefits.com/">
+  <meta name="creator" content="openbook">
+  <meta name="publisher" content="openbook">
+  <meta name="distribution" content="global">
+  <meta name="rating" content="general">
+  <meta name="revisit-after" content="7 days">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+  <!-- GEO TARGETING -->
+  <meta name="geo.region" content="US">
+  <meta name="geo.country" content="US">
+  <meta name="coverage" content="Worldwide">
+  <!-- MOBILE OPTIMIZATION -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="openbook">
+  <meta name="application-name" content="openbook">
+  <!-- CANONICAL & ALTERNATE -->
+  <link rel="canonical" href="https://www.openbookbenefits.com/">
+  <link rel="alternate" href="https://www.openbookbenefits.com/" hreflang="en-us">
+  <link rel="alternate" href="https://www.openbookbenefits.com/" hreflang="en">
+  <!-- ENHANCED OPEN GRAPH -->
   <meta property="og:type" content="website">
-  <!-- for when you share on twitter -->
+  <meta property="og:title" content="Free Dental Insurance Checker - Verify Benefits Instantly | openbook">
+  <meta property="og:site_name" content="openbook">
+  <meta property="og:description" content="Check your dental insurance benefits for free in minutes. Verify coverage, estimate copays, find in-network dentists, and save money on dental care.">
+  <meta property="og:image" content="https://www.openbookbenefits.com/images/share-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="openbook dental insurance checker - verify benefits instantly">
+  <meta property="og:url" content="https://www.openbookbenefits.com/">
+  <meta property="og:locale" content="en_US">
+  <!-- ENHANCED TWITTER CARDS -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Free Insurance Benefits Checker & Verification tool | openbook">
-  <meta name="twitter:description" content="Instantly verify your insurance coverage and estimate copays.">
-  <meta name="twitter:image" content="https://www.openbookbenefits.com/images/share.jpg"> <!-- make this better soon that shows what we do -->
+  <meta name="twitter:site" content="@openbookbenefits">
+  <meta name="twitter:creator" content="@openbookbenefits">
+  <meta name="twitter:title" content="Free Dental Insurance Checker | openbook">
+  <meta name="twitter:description" content="Check your dental insurance benefits for free. Verify coverage, estimate costs, and save money on dental care.">
+  <meta name="twitter:image" content="https://www.openbookbenefits.com/images/share-twitter.jpg">
+  <meta name="twitter:image:alt" content="openbook dental insurance benefits checker tool">
+  <!-- THEME & BRANDING -->
+  <meta name="theme-color" content="#76aed2">
+  <meta name="msapplication-TileColor" content="#76aed2">
+  <!-- ENHANCED STRUCTURED DATA -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "openbook",
+      "name": "openbook Dental Insurance Checker",
+      "alternateName": "openbook",
       "url": "https://www.openbookbenefits.com",
-      "description": "Free insurance benefits checker to verify your coverage, remaining benefits, and copay estimates - plus get tips to maximize your plan.",
+      "description": "Free tool to instantly verify and understand your dental insurance benefits. Check coverage, estimate copays, find in-network providers, and get personalized money-saving tips.",
       "applicationCategory": "HealthApplication",
+      "applicationSubCategory": "Insurance Verification",
       "operatingSystem": "Web Browser",
+      "browserRequirements": "Requires JavaScript",
+      "keywords": "dental insurance checker, verify benefits, coverage verification, copay estimator",
+      "screenshot": "https://www.openbookbenefits.com/images/app-screenshot.jpg",
       "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "validFrom": "2024-01-01"
     },
     "provider": {
     "@type": "Organization",
     "name": "openbook",
     "url": "https://www.openbookbenefits.com",
-    "sameAs": [
-    "https://openbookbenefits.com",
-    "https://openbookbenefit.com", 
-    "https://www.openbookbenefit.com"
-    ]
-    }
-    }
-  </script>
-
-
+    "logo": {
+    "@type": "ImageObject",
+    "url": "https://www.openbookbenefits.com/images/logo.png"
+  },
+  "sameAs": [
+  "https://openbookbenefits.com",
+  "https://openbookbenefit.com",
+  "https://www.openbookbenefit.com"
+  ]
+},
+"featureList": [
+"Instant benefit verification",
+"Coverage percentage analysis", 
+"Copay estimation",
+"In-network provider finder",
+"Personalized money-saving tips",
+"HIPAA compliant verification"
+],
+"audience": {
+"@type": "Audience",
+"audienceType": "People with dental insurance"
+}
+}
+</script>
+<!-- BUSINESS/ORGANIZATION STRUCTURED DATA -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "openbook",
+    "url": "https://www.openbookbenefits.com",
+    "logo": "https://www.openbookbenefits.com/images/logo.png",
+    "description": "Free dental insurance verification and benefits analysis tool",
+    "foundingDate": "2024",
+    "knowsAbout": [
+    "Dental Insurance",
+    "Benefits Verification", 
+    "Healthcare Technology",
+    "Insurance Analysis"
+    ],
+    "serviceArea": {
+    "@type": "Country",
+    "name": "United States"
+  },
+  "hasOfferCatalog": {
+  "@type": "OfferCatalog",
+  "name": "Insurance Services",
+  "itemListElement": [
+  {
+    "@type": "Offer",
+    "itemOffered": {
+    "@type": "Service",
+    "name": "Dental Insurance Verification",
+    "description": "Instant verification of dental insurance benefits and coverage"
+  }
+}
+]
+}
+}
+</script>
+<!-- WEBSITE STRUCTURED DATA -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "openbook",
+    "alternateName": "openbook Dental Insurance Checker",
+    "url": "https://www.openbookbenefits.com",
+    "description": "Free dental insurance benefits verification and analysis tool",
+    "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+    "@type": "EntryPoint",
+    "urlTemplate": "https://www.openbookbenefits.com/?q={search_term_string}"
+  },
+  "query-input": "required name=search_term_string"
+},
+"mainEntity": {
+"@type": "WebApplication",
+"name": "openbook Dental Insurance Checker"
+}
+}
+</script>
 </head>
+
+
 
 <body>
   <header class="header">
@@ -77,10 +206,10 @@
             <text font-family="'Montserrat'" font-size="55" font-weight="800" text-anchor="left" fill="rgba(41, 128, 185, .64)" letter-spacing="-.5" transform="skewX(-1.5)">
               <tspan x="0" y="0">open<tspan dx="0" font-weight="800">b</tspan><tspan letter-spacing="1" font-weight="700">oo</tspan>k</tspan><tspan font-size="40" dx=3></tspan></tspan>
             </text>
-            <path d="M215 -15 L225 -15" stroke="#7fb3d5" stroke-width="4" stroke-linecap="round" />
-            <path d="M200 15 Q 220 30 240 15" stroke="#7fb3d5" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(-43.5,-7) scale(1.2)"/>
-            <circle cx="202" cy="-17" r="2.5" fill="#7fb3d5" />
-            <circle cx="239" cy="-17" r="2.5" fill="#7fb3d5" />
+            <path d="M215 -15 L225 -15" stroke="#76aed2" stroke-width="4" stroke-linecap="round" />
+            <path d="M200 15 Q 220 30 240 15" stroke="#76aed2" stroke-width="6" fill="none" stroke-linecap="round" transform="translate(-43.5,-7) scale(1.2)"/>
+            <circle cx="202" cy="-17" r="2.5" fill="#76aed2" />
+            <circle cx="239" cy="-17" r="2.5" fill="#76aed2" />
           </g>
         </svg>
       </div>
@@ -94,11 +223,13 @@
    </div>
  </header>
  <div id="mobile-menu" class="hidden-menu">
-  <div class="menu-item">Support Center<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item external-link" onclick="showProviderModal(); toggleMenu();">List Your Practice<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item external-link" onclick='showPremiumModal(); toggleMenu();'><i class="fas fa-crown" style="color: #ffd700; position: relative; top: calc(var(--spacing-sm) * -.15) !important; left: calc(var(--spacing-sm) * -.5); font-size: calc(var(--spacing-md) * .6) !important; background-color: #317568; padding: calc(var(--spacing-sm) * .7); border-radius: 9999px; transform:scale(.9); transform-origin: center;"></i>openbook Premium<i class="fas fa-chevron-right"></i></div>
   <div class="menu-item">How openbook Works<i class="fas fa-chevron-right"></i></div>
-  <div class="menu-item">Learn More About Insurance<i class="fas fa-chevron-right"></i></div>
-  <div class="menu-item">openbook For Business<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item">Support Center<i class="fas fa-chevron-right"></i></div>
+  <div class="menu-item external-link" data-url="learn_insurance/">Learn More About Insurance<i class="fas fa-external-link-alt"></i></div>
 </div>
+
 
 
 <div class='content'>
@@ -143,7 +274,7 @@
         <i class="fas fa-building"></i>
       </div>
     </div>
-    <p> We do not store, sell, or share your data. Your data is also HIPPA + PHI compliant. <span style="text-decoration:underline;font-weight:550;">Learn more </span></p>
+    <p> We do not store, sell, or share your data. Your data is also HIPPA + PHI compliant. <span style="text-decoration:underline;font-weight:600;">Learn more about openbook! </span></p>
   </form>
 </div>
 
@@ -164,16 +295,24 @@
 </div>
 <div id="tabs-div">
   <div class="tab" id='tab1'>
-    <i class="fas fa-list"></i>
+    <i class="far fa-star"></i>
     <span>Summary</span>
   </div>
   <div class="tab" id='tab2'>
     <i class="fas fa-check-circle"></i>
     <span>Coverage</span>
   </div>
+  <div class="tab" id='tab4'>
+    <i class="fas fa-lightbulb"></i>
+    <span>Tips</span>
+  </div>
+  <div class="tab" id='tab5'>
+    <i class="fas fa-network-wired"></i>
+    <span>In-Network</span>
+  </div>
   <div class="tab" id='tab3'>
-    <i class="fas fa-info"></i>
-    <span>More Info</span>
+    <i class="fas fa-route"></i>
+    <span>Next Steps</span>
   </div>
   <div id='tabs-line'></div>
 </div>
@@ -182,6 +321,7 @@
 
 
 
+<script src="providerdata.js"></script>
 <script src="transitions.js"></script>
 <script src="ocr.js"></script>
 
@@ -193,11 +333,10 @@
   /* MENU BUTTON TRANSITION FEEDBACK */
   const menuButton = document.querySelector('.menu-button');
   const menu = document.getElementById('mobile-menu');
-  let originalOverflowStyle = "hidden";
+  let originalOverflowStyle = "auto";
 
   function toggleMenu() 
   {
-    originalOverflowStyle = document.body.style.overflow;
     menu.classList.toggle('show');
     // Toggle hamburger active state
     const hamburger = menuButton.querySelector('.hamburger');
@@ -206,6 +345,8 @@
     // Close any open tooltips when menu opens
     if (menu.classList.contains('show')) 
     {
+      originalOverflowStyle = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
       // Close "How does this work?" tooltip if open
       const customTooltip = document.getElementById('custom-learn-more-tooltip');
       if (customTooltip && customTooltip.style.display === 'block') {
@@ -227,11 +368,10 @@
         tooltip.classList.remove('show-tooltip');
         tooltip.classList.remove('visible');
       });
-      document.body.style.touchAction = "none";
     } 
     else 
     {
-      document.body.style.touchAction = "auto";
+      document.body.style.overflow = originalOverflowStyle;
     }
   }
   // Update the event listeners
@@ -245,13 +385,15 @@
   {
     if (!menu.contains(e.target) && !menuButton.contains(e.target)) 
     {
+    // Only restore overflow if menu was actually open
+    if (menu.classList.contains('show')) {
       menu.classList.remove('show');
       const hamburger = menuButton.querySelector('.hamburger');
-      hamburger.classList.remove('active'); // Also remove active state from hamburger
+      hamburger.classList.remove('active');
+      document.body.style.overflow = originalOverflowStyle;
     }
-      document.body.style.touchAction = "auto";
-  });
-
+  }
+});
 
 
   // Content for each menu section
@@ -271,7 +413,6 @@
     </div>
     </div>
     `,
-
     "openbook For Business": `
     <h3>openbook For Business</h3>
     <br>
@@ -290,58 +431,50 @@
     <div class="step-number">1</div>
     <div class="step-content">
     <h4>Enter Your Information</h4>
-    <p>Provide your name, date of birth, and member ID to verify your identity and access your benefits. We do not store, share, or sell any information.</p>
+    <p>Provide your information to verify your identity and access your benefits. We do not store, share, or sell any information.</p>
     </div>
     </div>
     <div class="how-it-works-step">
     <div class="step-number">2</div>
     <div class="step-content">
-    <h4>Review Your Benefits</h4>
-    <p>Using an API, we'll analyze your insurance policy to identify all available benefits and coverage options, and display it in a way that's easy to understand.</p>
+    <h4>Enjoy The Benefits</h4>
+    <p>We safely connect to your insurance provider to gather all your coverage details and present them clearly, so you can understand, maximize, and navigate your dental plan with confidence.</p>  
+    <div class="benefits-grid">
+    <div class="benefit-item">
+    <span class="benefit-icon">✓</span>
+    <div class="benefit-text">
+    <strong>Understand Your Benefits:</strong> View your coverage in a crystal-clear, easy-to-understand format
     </div>
     </div>
-    <div class="how-it-works-step">
-    <div class="step-number">3</div>
-    <div class="step-content">
-    <h4>Optimize Your Insurance</h4>
-    <p>openbook finds benefits you might not know about, potentially saving you money and improving your coverage. It also provides personalized reccomednations on how to maximize your insurance benefits.</p>
+    <div class="benefit-item">
+    <span class="benefit-icon">✓</span>
+    <div class="benefit-text">
+    <strong>Get Personalized Tips:</strong> Receive customized insights to maximize your insurance and budget long treatment plans
+    </div>
+    </div>
+    <div class="benefit-item">
+    <span class="benefit-icon">✓</span>
+    <div class="benefit-text">
+    <strong>Become Aware of Costs:</strong> Get transparent cost estimates before appointments or verify fair pricing after visits
+    </div>
+    </div>
+    <div class="benefit-item">
+    <span class="benefit-icon">✓</span>
+    <div class="benefit-text">
+    <strong>Verify Coverage:</strong> Instantly confirm that your insurance is active, so you are not stuck with an unexpected bill
+    </div>
+    </div>
+    <div class="benefit-item">
+    <span class="benefit-icon">✓</span>
+    <div class="benefit-text">
+    <strong>Find In-Network Providers:</strong> Locate providers in your network for massive savings
     </div>
     </div>
     </div>
-    `,
-
-
-    "Learn More About Insurance": `
-    <h3 id='section3-h3'> Learn More About Insurance <span class='small-menu-text'> (Coming Soon) </span></h3>
-    <div class='section-content' id='section3'>
-    <h4>Finding Dental Coverage</h4>
-    <ul>
-    <li><a href="#">How to choose the right dental plan</a></li>
-    <li><a href="#">Dental insurance through employers vs. marketplace</a></li>
-    <li><a href="#">Dental discount plans as alternatives to insurance</a></li>
-    <li><a href="#">Self-employed dental insurance options</a></li>
-    <li><a href="#">Medicare and dental coverage options</a></li>
-    </ul>
-
-    <h4>Understanding Benefits</h4>
-    <ul>
-    <li><a href="#">What's typically covered by dental insurance</a></li>
-    <li><a href="#">Preventive, basic, and major dental services explained</a></li>
-    <li><a href="#">Dental insurance for orthodontics and cosmetic procedures</a></li>
-    <li><a href="#">Annual maximums and how they affect your coverage</a></li>
-    <li><a href="#">In-network vs. out-of-network dental providers</a></li>
-    </ul>
-
-    <h4>Maximizing Your Coverage</h4>
-    <ul class="ul-last">
-    <li><a href="#">How to get the most from your dental benefits</a></li>
-    <li><a href="#">Timing dental procedures for optimal coverage</a></li>
-    <li><a href="#">Understanding dental insurance waiting periods</a></li>
-    <li><a href="#">Supplementing dental insurance for major procedures</a></li>
-    <li class='li-last'><a href="#">Health savings accounts for dental expenses</a></li>
-    </ul>
     </div>
-    `,
+    </div>
+    </div>
+    `
   };
 
   // Add CSS for menu section styling
@@ -391,7 +524,7 @@
   .support-item i 
   {
     font-size: 24px;
-    color: #7fb3d5;
+    color: #76aed2;
     width: 30px;
     text-align: center;
     position: relative;
@@ -414,21 +547,26 @@
     margin-bottom: 5px;
     padding-right: 20%;
   }
+  .email
+  {
+    font-size: 14.5px;
+  }
 
 
 
-  /* How Opeonbook Works */
+
+  /* How openbook Works */
   #section2
   {
-    padding-top: 25px;
+    padding-top: 7.5px;
   }
-  .how-it-works-step 
+  .how-it-works-step
   {
     display: flex;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     align-items: flex-start;
   }
-  .step-number 
+  .step-number
   {
     display: flex;
     align-items: center;
@@ -445,12 +583,12 @@
     margin-bottom: 0px;
     position: relative;
   }
-  .step-content 
+  .step-content
   {
     flex-grow: 1;
-    padding-right: 10%
+    padding-right: 7.5%;
   }
-  .step-content h4 
+  .step-content h4
   {
     font-size: 17px;
     font-weight: 600;
@@ -458,62 +596,53 @@
     color: #666;
     padding-right: 10%;
   }
-  .step-content p 
+  .step-content p
   {
     margin-top: 0px;
     padding-top: 0px;
-    font-size: 13px;
+    font-size: 12px;
     color: #666;
     position: relative;
     top: 3px;
     padding-right: 5%;
   }
-
-
-  #section3
+  .benefits-grid
   {
-    padding-top: 0px;
-    padding-bottom: 140px;
+    margin-top: 10px;
+    padding-right: 5%;
+    position: relative;
+    right: 5px;
+    margin-bottom: 0px;
   }
-  .small-menu-text
+  .benefit-item
   {
-    font-size: 15px;
-    font-style: italic;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
   }
-  #section3 h4
+  .benefit-icon
   {
-    margin-top: 15px;
-    margin-bottom: 5px;
+    color: rgba(41, 128, 185, 0.64);
+    font-weight: 700;
+    font-size: 12px;
+    margin-right: 7.5px;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
-  .section-content ul
+  .benefit-text
   {
-    padding-left: 10%;
-    padding-right: 10%;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 12px;
+    color: #666;
+    flex: 1;
   }
-  .section-content li
+  .benefit-text strong
   {
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-  .section-content a 
-  {
-    color: #2980b9;
-    opacity: .75;
-    text-decoration: none;
-  }
-  .email
-  {
-    font-size: 14.5px;
+    color: #555;
+    font-weight: 600;
   }
 
 
-/* openbook for business */
-  a:visited
-  {
-    color: inherit;
-  }
+
 
   /* Animation classes */
   .menu-fade-out {
@@ -577,6 +706,18 @@
       transform: translateX(0);
     }
   }
+
+
+  /* External Link */
+  .menu-item.external-link {
+    color: #666;
+    font-weight: 600;
+  }
+
+  .menu-item.external-link i {
+    color: #aaa;
+    font-size: 16.5px;
+  }
   `;
   document.head.appendChild(menuStyles);
 
@@ -585,32 +726,44 @@
   function initMenuTransitions() 
   {
     const mobileMenu = document.getElementById('mobile-menu');
-    
-    // Add click event listeners to all menu items
+
     const menuItems = mobileMenu.querySelectorAll('.menu-item');
     menuItems.forEach(item => {
       item.addEventListener('click', function() {
         const sectionTitle = item.textContent.trim();
-        
-        // Slide out all menu items with a slight stagger effect
-        menuItems.forEach((menuItem, index) => {
-          setTimeout(() => {
-            menuItem.classList.add('slide-left-out');
-          }, index * 50); // Staggered timing for nice effect
+
+      // Handle external links
+      if (item.classList.contains('external-link')) {
+        const url = item.getAttribute('data-url');
+        if (url) {
+          // Close the menu
+          menu.classList.remove('show');
+          const hamburger = menuButton.querySelector('.hamburger');
+          hamburger.classList.remove('active');
+          document.body.style.overflow = originalOverflowStyle;
+          
+          // Open external link
+          window.open(url, '_blank', 'noopener,noreferrer');
+        }
+        return;
+      }
+      
+      // Handle regular menu items (existing slide animation code)
+      menuItems.forEach((menuItem, index) => {
+        setTimeout(() => {
+          menuItem.classList.add('slide-left-out');
+        }, index * 50);
+      });
+      
+      setTimeout(() => {
+        menuItems.forEach(menuItem => {
+          menuItem.style.display = 'none';
+          menuItem.classList.remove('slide-left-out');
         });
         
-        // Show the selected section after the slide-out
-        setTimeout(() => {
-          // Hide all menu items
-          menuItems.forEach(menuItem => {
-            menuItem.style.display = 'none';
-            menuItem.classList.remove('slide-left-out');
-          });
-          
-          // Display the content section
-          showMenuSection(sectionTitle);
-        }, 300);
-      });
+        showMenuSection(sectionTitle);
+      }, 300);
+    });
     });
   }
 
